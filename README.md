@@ -28,6 +28,22 @@ Outros comandos: `pnpm test` (Vitest), `pnpm e2e` (Playwright), `pnpm lint`, `pn
 
 E-mails locais (recuperação de senha) ficam no Mailpit: http://127.0.0.1:54324.
 
+### Testando tudo localmente
+
+- **Painel**: `/painel/login` → "Esqueci minha senha" → abra o link no Mailpit → defina a senha. Studio do Supabase local em http://127.0.0.1:54323 para ver as tabelas.
+- **Formulário público**: crie um evento no painel com inscrições liberadas e abra `/<slug>` no celular ou no modo responsivo do navegador. Cadastre brincadeiras antes para ver as etapas de brincadeiras, duplas e WhatsApp.
+- **WhatsApp simulado**: com `WHATSAPP_ENVIO_ATIVO=false` o worker gera as mensagens e marca como enviadas sem chamar a Evolution API; o texto fica em cada aviso (página do inscrito no painel). Para envio real, aponte `EVOLUTION_*` para uma instância conectada e ligue a flag.
+- **Agendamento local** (retentativas e lembrete de 1 hora): o pg_cron roda dentro do Docker e precisa alcançar o app pelo host. Uma vez por banco local, no Studio ou via `psql`:
+
+  ```sql
+  select vault.create_secret('http://host.docker.internal:3000/api/tarefas/outbox', 'worker_url');
+  select vault.create_secret('<valor de CRON_SECRET do .env.local>', 'cron_secret');
+  ```
+
+  Sem isso, use o botão **Processar fila** na página do evento.
+- **Times**: encerre as inscrições (chave na página do evento), cadastre 2+ times e use Montar → Confirmar. Para testar o lembrete, ajuste temporariamente a data e a hora do evento para daqui a 1 hora.
+- **Recomeçar do zero**: `pnpm db:reset` apaga os dados locais, reaplica as migrations e recria o administrador inicial (repita o fluxo de senha).
+
 ## Primeiro acesso ao painel
 
 Não existe cadastro público. O administrador inicial é criado pela migration `0003_usuarios_painel.sql` com senha aleatória. Para entrar:
