@@ -1,7 +1,7 @@
 "use client";
 
 import { ChoiceCards, type Opcao } from "@/components/inscricao/ChoiceCards";
-import { ROTULO_COMIDA, TIPOS_COMIDA } from "@/lib/eventos/schema";
+import { ROTULO_COMIDA, TIPOS_COMIDA } from "@/lib/eventos/comida";
 import { useInscricao } from "../estado/InscricaoProvider";
 import type { Etapa } from "../modelo/etapas";
 import { pessoaPorKey } from "../modelo/regras";

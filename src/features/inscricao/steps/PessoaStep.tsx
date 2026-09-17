@@ -8,7 +8,7 @@ import { normalizarNome } from "@/lib/pessoas/nome";
 import { useInscricao } from "../estado/InscricaoProvider";
 import type { Etapa } from "../modelo/etapas";
 import { idadeNoEvento } from "../modelo/regras";
-import { primeiraMensagem, schemaNascimento, schemaNome } from "../modelo/schemas";
+import { validarNascimento, validarNome } from "../modelo/validacoes";
 import type { InscricaoDraft, Pessoa } from "../modelo/tipos";
 import { StepShell } from "../ui/StepShell";
 
@@ -33,17 +33,18 @@ export function PessoaStep({ etapa }: { etapa: Etapa }) {
   }
 
   async function avancar() {
-    const rn = schemaNome.safeParse(nome);
-    const rd = schemaNascimento.safeParse(nascimento);
+    const rn = validarNome(nome);
+    const rd = validarNascimento(nascimento);
     const novos: typeof erros = {};
-    if (!rn.success) novos.nome = primeiraMensagem(rn);
-    else if (nomeRepetidoNoFluxo(rn.data)) novos.nome = "Esse nome já foi usado nesta inscrição.";
-    else if (!(await verificarNome(evento.id, rn.data))) novos.nome = "Este nome já está inscrito neste evento.";
-    if (!rd.success) novos.nascimento = primeiraMensagem(rd);
+    if (!rn.ok) novos.nome = rn.erro;
+    else if (nomeRepetidoNoFluxo(rn.valor)) novos.nome = "Esse nome já foi usado nesta inscrição.";
+    else if (!(await verificarNome(evento.id, rn.valor))) novos.nome = "Este nome já está inscrito neste evento.";
+    if (!rd.ok) novos.nascimento = rd.erro;
     else if (ehFilho && idade !== null && idade >= 18) novos.nascimento = "Só filhos menores de 18 anos são cadastrados aqui.";
     if (novos.nome || novos.nascimento) return setErros(novos);
 
-    const pessoa: Pessoa = { nome: rn.data!, nascimento: rd.data! };
+    if (!rn.ok || !rd.ok) return;
+    const pessoa: Pessoa = { nome: rn.valor, nascimento: rd.valor };
     concluir(ehFilho ? escreverFilho(d, indice, pessoa) : { ...d, conjuge: pessoa });
   }
 

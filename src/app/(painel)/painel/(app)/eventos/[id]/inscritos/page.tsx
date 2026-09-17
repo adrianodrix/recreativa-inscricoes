@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { Alerta } from "@/components/formulario/Alerta";
-import { formatarWhatsapp } from "@/features/inscricao/modelo/schemas";
+import { formatarWhatsapp } from "@/features/inscricao/modelo/validacoes";
 import { ROTULO_COMIDA } from "@/lib/eventos/schema";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { listarInscritos } from "@/lib/inscritos/consultas";

@@ -4,7 +4,7 @@ import { eventoFixture, familia, solteiro35 } from "./fixtures";
 import { paiMaeDisponivel, pessoasDoDraft, responsavelBloqueado } from "./regras";
 import { montarPayload } from "./payload";
 import { etapaDoErro } from "./erros";
-import { normalizarWhatsapp } from "./schemas";
+import { normalizarWhatsapp } from "./validacoes";
 
 const evento = eventoFixture();
 const ids = (d: Parameters<typeof montarEtapas>[0]) => montarEtapas(d, evento).map((e) => e.id);

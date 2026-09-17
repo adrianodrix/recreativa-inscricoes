@@ -1,44 +1,34 @@
-import { z } from "zod";
 import { conjugeCadastrado, filhosCadastrados, pessoasDoDraft } from "./regras";
-import type { EventoPublico, InscricaoDraft, PessoaKey } from "./tipos";
+import type { EventoPublico, InscricaoDraft, PessoaKey, TipoComida } from "./tipos";
 
-/* Contrato da RPC public.criar_inscricao (ver migration 0007). */
-const pessoa = z.object({
-  nome_completo: z.string().min(10),
-  data_nascimento: z.iso.date(),
-  comida: z.enum(["salgado", "doce", "refrigerante", "suco"]).optional(),
-});
+/* Contrato da RPC public.criar_inscricao (migration 0007). Validado no servidor por payload-schema.ts. */
+export type SituacaoDependente = "cadastrado" | "vai_se_cadastrar" | "nao_quer_cadastrar";
 
-const parceiro = z.union([z.enum(["principal", "conjuge"]), z.object({ responsavel_id: z.uuid() })]);
+export interface PessoaPayload {
+  nome_completo: string;
+  data_nascimento: string;
+  comida?: TipoComida;
+}
 
-const participacao = z.discriminatedUnion("tipo", [
-  z.object({ tipo: z.literal("pessoa"), brincadeira_id: z.uuid(), pessoa: z.string() }),
-  z.object({ tipo: z.literal("casal"), brincadeira_id: z.uuid() }),
-  z.object({
-    tipo: z.literal("dupla"),
-    brincadeira_id: z.uuid(),
-    filho: z.string(),
-    parceiro,
-    papel: z.enum(["pai", "mae", "responsavel"]),
-  }),
-]);
+export type ParticipacaoPayload =
+  | { tipo: "pessoa"; brincadeira_id: string; pessoa: string }
+  | { tipo: "casal"; brincadeira_id: string }
+  | { tipo: "dupla"; brincadeira_id: string; filho: string; parceiro: "principal" | "conjuge" | { responsavel_id: string }; papel: "pai" | "mae" | "responsavel" };
 
-export const schemaPayload = z.object({
-  evento_id: z.uuid(),
-  principal: pessoa.extend({
-    apelido: z.string().max(40).optional(),
-    casado: z.boolean(),
-    tem_filhos_menores: z.boolean(),
-    conjuge_situacao: z.enum(["cadastrado", "vai_se_cadastrar", "nao_quer_cadastrar"]).optional(),
-    filhos_situacao: z.enum(["cadastrado", "vai_se_cadastrar", "nao_quer_cadastrar"]).optional(),
-    whatsapp: z.string().regex(/^55\d{10,11}$/).optional(),
-  }),
-  conjuge: pessoa.optional(),
-  filhos: z.array(pessoa.extend({ ref: z.string() })).max(20),
-  participacoes: z.array(participacao).max(200),
-});
-
-export type PayloadInscricao = z.infer<typeof schemaPayload>;
+export interface PayloadInscricao {
+  evento_id: string;
+  principal: PessoaPayload & {
+    apelido?: string;
+    casado: boolean;
+    tem_filhos_menores: boolean;
+    conjuge_situacao?: SituacaoDependente;
+    filhos_situacao?: SituacaoDependente;
+    whatsapp?: string;
+  };
+  conjuge?: PessoaPayload;
+  filhos: Array<PessoaPayload & { ref: string }>;
+  participacoes: ParticipacaoPayload[];
+}
 
 export function refDe(key: PessoaKey): string {
   if (key === "principal" || key === "conjuge") return key;
@@ -84,7 +74,7 @@ export function montarPayload(d: InscricaoDraft, evento: EventoPublico): Payload
           comida: comidaDe(`filho:${i}`),
         }))
       : [],
-    participacoes: d.participacoes.flatMap((p): PayloadInscricao["participacoes"] => {
+    participacoes: d.participacoes.flatMap((p): ParticipacaoPayload[] => {
       if ("casal" in p) return visiveis.has("conjuge") ? [{ tipo: "casal" as const, brincadeira_id: p.brincadeiraId }] : [];
       if ("pessoa" in p) return visiveis.has(p.pessoa) ? [{ tipo: "pessoa" as const, brincadeira_id: p.brincadeiraId, pessoa: refDe(p.pessoa) }] : [];
       if (!visiveis.has(p.filho)) return [];

@@ -6,8 +6,9 @@ import { after } from "next/server";
 import { processarPendentes } from "@/lib/whatsapp/outbox";
 import { detalheDe } from "@/app/(publico)/[slug]/actions";
 import type { ResultadoEnvio } from "@/features/inscricao/modelo/erros";
-import { schemaPayload, type PayloadInscricao } from "@/features/inscricao/modelo/payload";
-import { primeiraMensagem, schemaApelido, schemaNascimento, schemaNome, schemaWhatsapp } from "@/features/inscricao/modelo/schemas";
+import type { PayloadInscricao } from "@/features/inscricao/modelo/payload";
+import { schemaPayload } from "@/features/inscricao/modelo/payload-schema";
+import { validarApelido, validarNascimento, validarNome, validarWhatsapp } from "@/features/inscricao/modelo/validacoes";
 import { exigirPerfil } from "@/lib/auth/perfil";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { calcularIdade } from "@/lib/pessoas/idade";
@@ -38,28 +39,28 @@ export async function atualizarInscrito(eventoId: string, id: string, _: EstadoI
   const evento = await obterEvento(eventoId);
   if (!evento) return { erro: "Evento não encontrado." };
 
-  const nome = schemaNome.safeParse(form.get("nome_completo") ?? "");
-  const apelido = schemaApelido.safeParse(form.get("apelido") ?? "");
-  const nascimento = schemaNascimento.safeParse(form.get("data_nascimento") ?? "");
+  const nome = validarNome(String(form.get("nome_completo") ?? ""));
+  const apelido = validarApelido(String(form.get("apelido") ?? ""));
+  const nascimento = validarNascimento(String(form.get("data_nascimento") ?? ""));
   const whatsappBruto = String(form.get("whatsapp") ?? "").trim();
-  const whatsapp = whatsappBruto ? schemaWhatsapp.safeParse(whatsappBruto) : null;
+  const whatsapp = whatsappBruto ? validarWhatsapp(whatsappBruto) : null;
 
   const erros: Record<string, string> = {};
-  if (!nome.success) erros.nome_completo = primeiraMensagem(nome);
-  if (!apelido.success) erros.apelido = primeiraMensagem(apelido);
-  if (!nascimento.success) erros.data_nascimento = primeiraMensagem(nascimento);
-  if (whatsapp && !whatsapp.success) erros.whatsapp = primeiraMensagem(whatsapp);
-  if (Object.keys(erros).length) return { erros, erro: "Confira os campos destacados." };
+  if (!nome.ok) erros.nome_completo = nome.erro;
+  if (!apelido.ok) erros.apelido = apelido.erro;
+  if (!nascimento.ok) erros.data_nascimento = nascimento.erro;
+  if (whatsapp && !whatsapp.ok) erros.whatsapp = whatsapp.erro;
+  if (!nome.ok || !apelido.ok || !nascimento.ok || (whatsapp && !whatsapp.ok)) return { erros, erro: "Confira os campos destacados." };
 
   const supabase = await criarClienteServidor();
   const { error } = await supabase
     .from("inscritos")
     .update({
-      nome_completo: nome.data!,
-      apelido: apelido.data || null,
-      data_nascimento: nascimento.data!,
-      idade: calcularIdade(nascimento.data!, evento.data_evento),
-      whatsapp: whatsapp?.success ? whatsapp.data : null,
+      nome_completo: nome.valor,
+      apelido: apelido.valor || null,
+      data_nascimento: nascimento.valor,
+      idade: calcularIdade(nascimento.valor, evento.data_evento),
+      whatsapp: whatsapp?.ok ? whatsapp.valor : null,
     })
     .eq("id", id)
     .eq("evento_id", eventoId);

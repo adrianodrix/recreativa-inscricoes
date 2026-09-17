@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, type InputHTMLAttributes } from "react";
-import type { ZodType } from "zod";
 import { CampoTexto } from "@/components/formulario/CampoTexto";
 import { verificarNome } from "@/app/(publico)/[slug]/actions";
 import { useInscricao } from "../estado/InscricaoProvider";
-import { formatarWhatsapp, primeiraMensagem, schemaApelido, schemaNome, schemaWhatsapp } from "../modelo/schemas";
+import { formatarWhatsapp, validarApelido, validarNome, validarWhatsapp, type Validado } from "../modelo/validacoes";
 import type { InscricaoDraft } from "../modelo/tipos";
 import { StepShell } from "../ui/StepShell";
 
@@ -14,7 +13,7 @@ interface Config {
   rotulo: string;
   descricao?: string;
   opcional?: boolean;
-  schema: ZodType<string, string>;
+  validar: (v: string) => Validado<string>;
   ler: (d: InscricaoDraft) => string;
   escrever: (d: InscricaoDraft, v: string) => InscricaoDraft;
   input: InputHTMLAttributes<HTMLInputElement>;
@@ -25,7 +24,7 @@ const CONFIG = {
     titulo: "Qual é o seu nome completo?",
     rotulo: "Nome completo",
     descricao: "Como está no seu documento.",
-    schema: schemaNome,
+    validar: validarNome,
     ler: (d) => d.principal.nome,
     escrever: (d, v) => ({ ...d, principal: { ...d.principal, nome: v } }),
     input: { autoComplete: "name", autoCapitalize: "words", placeholder: "Nome e sobrenome" },
@@ -35,7 +34,7 @@ const CONFIG = {
     rotulo: "Apelido",
     descricao: "Apelido ou como as pessoas te conhecem. Pode deixar em branco.",
     opcional: true,
-    schema: schemaApelido,
+    validar: validarApelido,
     ler: (d) => d.principal.apelido ?? "",
     escrever: (d, v) => ({ ...d, principal: { ...d.principal, apelido: v || undefined } }),
     input: { autoComplete: "nickname", autoCapitalize: "words" },
@@ -44,7 +43,7 @@ const CONFIG = {
     titulo: "Qual é o seu WhatsApp?",
     rotulo: "WhatsApp",
     descricao: "Vamos confirmar a inscrição e avisar os times por ele.",
-    schema: schemaWhatsapp,
+    validar: validarWhatsapp,
     ler: (d) => (d.whatsapp ? formatarWhatsapp(d.whatsapp) : ""),
     escrever: (d, v) => ({ ...d, whatsapp: v }),
     input: { type: "tel", inputMode: "tel", autoComplete: "tel-national", placeholder: "(11) 99999-9999" },
@@ -59,15 +58,15 @@ export function TextoStep({ tipo }: { tipo: keyof typeof CONFIG }) {
   const [verificando, setVerificando] = useState(false);
 
   async function avancar() {
-    const r = cfg.schema.safeParse(valor);
-    if (!r.success) return setErro(primeiraMensagem(r));
+    const r = cfg.validar(valor);
+    if (!r.ok) return setErro(r.erro);
     if (tipo === "nome") {
       setVerificando(true);
-      const livre = await verificarNome(evento.id, r.data).finally(() => setVerificando(false));
+      const livre = await verificarNome(evento.id, r.valor).finally(() => setVerificando(false));
       if (!livre) return setErro("Este nome já está inscrito neste evento. Cada pessoa se inscreve uma vez.");
     }
     setErro(undefined);
-    concluir(cfg.escrever(estado.draft, r.data));
+    concluir(cfg.escrever(estado.draft, r.valor));
   }
 
   return (

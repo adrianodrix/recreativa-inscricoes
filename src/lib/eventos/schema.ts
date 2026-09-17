@@ -3,14 +3,8 @@ import { localParaIso } from "@/lib/datas";
 import { schemaTextoRico, textoRicoVazio, type TextoRico } from "@/lib/texto-rico/schema";
 import { gerarSlug, slugValido } from "./slug";
 
-export const TIPOS_COMIDA = ["salgado", "doce", "refrigerante", "suco"] as const;
-export type TipoComida = (typeof TIPOS_COMIDA)[number];
-export const ROTULO_COMIDA: Record<TipoComida, string> = {
-  salgado: "Salgado",
-  doce: "Doce",
-  refrigerante: "Refrigerante",
-  suco: "Suco",
-};
+
+export { ROTULO_COMIDA, TIPOS_COMIDA, type TipoComida } from "./comida";
 
 const inteiro = (min: number, msg: string) => z.coerce.number().int(msg).min(min, msg);
 const hora = z.string().regex(/^\d{2}:\d{2}$/, "Informe a hora (hh:mm)");

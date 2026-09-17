@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Alerta } from "@/components/formulario/Alerta";
 import { BotaoEnviar } from "@/components/formulario/BotaoEnviar";
 import { CampoTexto } from "@/components/formulario/CampoTexto";
-import { formatarWhatsapp } from "@/features/inscricao/modelo/schemas";
+import { formatarWhatsapp } from "@/features/inscricao/modelo/validacoes";
 import type { InscritoResumo } from "@/lib/inscritos/consultas";
 import { atualizarInscrito, type EstadoInscrito } from "../actions";
 import styles from "../../../../painel.module.css";

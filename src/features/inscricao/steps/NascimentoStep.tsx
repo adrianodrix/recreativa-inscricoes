@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CampoTexto } from "@/components/formulario/CampoTexto";
 import { useInscricao } from "../estado/InscricaoProvider";
 import { idadeNoEvento } from "../modelo/regras";
-import { primeiraMensagem, schemaNascimento } from "../modelo/schemas";
+import { validarNascimento } from "../modelo/validacoes";
 import { StepShell } from "../ui/StepShell";
 
 export function NascimentoStep() {
@@ -14,10 +14,10 @@ export function NascimentoStep() {
   const idade = idadeNoEvento(valor, evento);
 
   function avancar() {
-    const r = schemaNascimento.safeParse(valor);
-    if (!r.success) return setErro(primeiraMensagem(r));
+    const r = validarNascimento(valor);
+    if (!r.ok) return setErro(r.erro);
     setErro(undefined);
-    concluir({ ...estado.draft, principal: { ...estado.draft.principal, nascimento: r.data } });
+    concluir({ ...estado.draft, principal: { ...estado.draft.principal, nascimento: r.valor } });
   }
 
   return (

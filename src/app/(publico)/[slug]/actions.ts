@@ -3,7 +3,8 @@
 import { after } from "next/server";
 import { processarPendentes } from "@/lib/whatsapp/outbox";
 import type { ResultadoEnvio } from "@/features/inscricao/modelo/erros";
-import { schemaPayload, type PayloadInscricao } from "@/features/inscricao/modelo/payload";
+import type { PayloadInscricao } from "@/features/inscricao/modelo/payload";
+import { schemaPayload } from "@/features/inscricao/modelo/payload-schema";
 import type { PessoaEncontrada } from "@/components/inscricao/PersonSearch";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";

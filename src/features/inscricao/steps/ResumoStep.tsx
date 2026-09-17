@@ -4,14 +4,14 @@ import { LoaderCircle, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Alerta } from "@/components/formulario/Alerta";
-import { ROTULO_COMIDA } from "@/lib/eventos/schema";
+import { ROTULO_COMIDA } from "@/lib/eventos/comida";
 import { formatarData, formatarValor } from "@/lib/datas";
 import { useInscricao } from "../estado/InscricaoProvider";
 import { limparRascunho } from "../estado/useRascunho";
 import { etapaDoErro, mensagemDoErro } from "../modelo/erros";
 import { montarPayload } from "../modelo/payload";
 import { pessoasDoDraft } from "../modelo/regras";
-import { formatarWhatsapp } from "../modelo/schemas";
+import { formatarWhatsapp } from "../modelo/validacoes";
 import { StepShell } from "../ui/StepShell";
 import styles from "../ui/formulario.module.css";
 
