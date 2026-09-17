@@ -1,4 +1,6 @@
 import "server-only";
+import type { TipoComida } from "@/lib/eventos/comida";
+import { categoriaDaPessoa, type CategoriaPessoa } from "@/lib/pessoas/categoria";
 import { normalizarNome } from "@/lib/pessoas/nome";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
@@ -60,4 +62,24 @@ export async function contarInscritosDoEvento(eventoId: string): Promise<number>
   const supabase = await criarClienteServidor();
   const { count } = await supabase.from("inscritos").select("id", { count: "exact", head: true }).eq("evento_id", eventoId);
   return count ?? 0;
+}
+
+export interface ResumoInscritos {
+  porCategoria: Record<CategoriaPessoa, number>;
+  comida: Record<TipoComida, number>;
+}
+
+/* Números do painel do evento: inscritos por categoria de pessoa e colaborações por tipo. */
+export async function resumirInscritos(eventoId: string): Promise<ResumoInscritos> {
+  const supabase = await criarClienteServidor();
+  const [inscritos, colaboracoes] = await Promise.all([
+    supabase.from("inscritos").select("idade, casado").eq("evento_id", eventoId),
+    supabase.from("colaboracoes").select("tipo").eq("evento_id", eventoId),
+  ]);
+  if (inscritos.error) throw new Error(`Falha ao resumir inscritos: ${inscritos.error.message}`);
+  const porCategoria: Record<CategoriaPessoa, number> = { crianca: 0, jovem: 0, casado: 0, adulto: 0 };
+  for (const i of inscritos.data) porCategoria[categoriaDaPessoa(i.idade, i.casado)]++;
+  const comida: Record<TipoComida, number> = { salgado: 0, doce: 0, refrigerante: 0, suco: 0 };
+  for (const col of colaboracoes.data ?? []) comida[col.tipo]++;
+  return { porCategoria, comida };
 }

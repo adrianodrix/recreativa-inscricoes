@@ -5,7 +5,7 @@ import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
 import { pode, type Perfil } from "@/lib/auth/permissoes";
 import { alternarInscricoes } from "./actions";
 import { Ocupacao } from "@/components/painel/Ocupacao";
-import ocupacao from "@/components/painel/Ocupacao.module.css";
+import indicadores from "@/components/painel/indicadores.module.css";
 import painel from "../painel.module.css";
 
 interface Props {
@@ -19,7 +19,7 @@ export function PainelStatus({ evento, perfil }: Props) {
   const alternar = alternarInscricoes.bind(null, evento.id, !evento.aberto_manual);
   return (
     <article className={`rc-card ${painel.status}`}>
-      <div className={ocupacao.comOcupacao}>
+      <div className={indicadores.comOcupacao}>
         <div>
           <header className="rc-card__header">
             <h3 className="rc-card__title">Inscrições</h3>

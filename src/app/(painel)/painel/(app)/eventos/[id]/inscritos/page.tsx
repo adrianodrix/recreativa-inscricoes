@@ -5,7 +5,7 @@ import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { Alerta } from "@/components/formulario/Alerta";
 import { Ocupacao } from "@/components/painel/Ocupacao";
-import ocupacao from "@/components/painel/Ocupacao.module.css";
+import indicadores from "@/components/painel/indicadores.module.css";
 import { formatarWhatsapp } from "@/features/inscricao/modelo/validacoes";
 import { ROTULO_COMIDA } from "@/lib/eventos/schema";
 import { obterEvento } from "@/lib/eventos/consultas";
@@ -62,7 +62,7 @@ export default async function PaginaInscritos({ params, searchParams }: Props) {
         </button>
       </form>
       <section className={`rc-card ${styles.resumoLista}`} aria-label="Resumo">
-        <div className={ocupacao.comOcupacao}>
+        <div className={indicadores.comOcupacao}>
           <header className="rc-card__header">
             <h3 className="rc-card__title">
               {inscritos.length} {inscritos.length === 1 ? "pessoa" : "pessoas"}

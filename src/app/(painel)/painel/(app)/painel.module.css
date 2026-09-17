@@ -75,6 +75,18 @@
   color: var(--color-text-muted);
 }
 
+.painelEvento {
+  display: grid;
+  gap: var(--spacing-5);
+}
+
+/* Indicadores lado a lado: 4 no desktop, 2 por linha no celular. */
+.mosaico {
+  display: grid;
+  gap: var(--spacing-5);
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+}
+
 .resumoLista {
   margin: var(--spacing-4) 0;
 }

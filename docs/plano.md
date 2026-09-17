@@ -226,7 +226,7 @@ _(nenhum; levantamento de requisitos concluído e revisado)_
 
 ## Rotas
 - Público: `/[slug]` (formulário) e `/[slug]/obrigado`. Slugs reservados: `painel`, `api`, `obrigado`.
-- Painel: `/painel/login` e `/painel/redefinir-senha` (únicas rotas públicas do painel; não há cadastro), `/painel/trocar-senha`, `/painel/eventos`, `/painel/eventos/[id]` (dados + status), `/painel/eventos/[id]/brincadeiras[/[bid]]`, `/painel/eventos/[id]/times` (CRUD + quadro de montagem), `/painel/eventos/[id]/inscritos[/[iid]]`, `/painel/usuarios`.
+- Painel: `/painel/login` e `/painel/redefinir-senha` (únicas rotas públicas do painel; não há cadastro), `/painel/trocar-senha`, `/painel/eventos`, `/painel/eventos/[id]` (painel: status, números e atalhos), `/painel/eventos/[id]/editar` (dados do evento), `/painel/eventos/[id]/brincadeiras[/[bid]]`, `/painel/eventos/[id]/times` (CRUD + quadro de montagem), `/painel/eventos/[id]/inscritos[/[iid]]`, `/painel/usuarios`.
 - API: `POST /api/tarefas/outbox` (worker WhatsApp, `Bearer CRON_SECRET`), `GET /api/eventos/[id]/exportar?formato=csv|xlsx` (sessão + RLS).
 
 ## Estrutura de pastas

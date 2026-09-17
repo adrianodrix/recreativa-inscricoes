@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Alerta } from "@/components/formulario/Alerta";
 import { Ocupacao } from "@/components/painel/Ocupacao";
-import ocupacao from "@/components/painel/Ocupacao.module.css";
+import indicadores from "@/components/painel/indicadores.module.css";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { obterEvento } from "@/lib/eventos/consultas";
@@ -54,7 +54,7 @@ export default async function PaginaTimes({ params, searchParams }: Props) {
                 const eq = equilibrioDoTime(t.membros, contagens, elegiveis);
                 return (
                   <li key={t.id} className="rc-card">
-                    <div className={ocupacao.comOcupacao}>
+                    <div className={indicadores.comOcupacao}>
                       <div className={styles.acoes}>
                         <IconeTime imagemPath={t.imagem_path} cor={t.cor_padrao} icone={t.icone_padrao} />
                         <strong>{t.nome}</strong>

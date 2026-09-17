@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Alerta } from "@/components/formulario/Alerta";
 import { Ocupacao } from "@/components/painel/Ocupacao";
-import ocupacao from "@/components/painel/Ocupacao.module.css";
+import indicadores from "@/components/painel/indicadores.module.css";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { listarBrincadeiras } from "@/lib/brincadeiras/consultas";
@@ -47,7 +47,7 @@ export default async function PaginaBrincadeiras({ params, searchParams }: Props
           {brincadeiras.map((b) => (
             <li key={b.id}>
               <Link href={`/painel/eventos/${id}/brincadeiras/${b.id}`} className="rc-card rc-card--interactive">
-                <div className={ocupacao.comOcupacao}>
+                <div className={indicadores.comOcupacao}>
                   <div>
                     <header className="rc-card__header">
                       <h3 className="rc-card__title">{b.nome}</h3>

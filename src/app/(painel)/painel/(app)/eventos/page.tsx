@@ -6,7 +6,7 @@ import { pode } from "@/lib/auth/permissoes";
 import { contarInscritos, listarEventos } from "@/lib/eventos/consultas";
 import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
 import { Ocupacao } from "@/components/painel/Ocupacao";
-import ocupacao from "@/components/painel/Ocupacao.module.css";
+import indicadores from "@/components/painel/indicadores.module.css";
 import styles from "../painel.module.css";
 
 export const metadata = { title: "Eventos" };
@@ -35,7 +35,7 @@ export default async function PaginaEventos() {
             return (
               <li key={evento.id}>
                 <Link href={`/painel/eventos/${evento.id}`} className="rc-card rc-card--interactive">
-                  <div className={ocupacao.comOcupacao}>
+                  <div className={indicadores.comOcupacao}>
                     <div>
                       <header className="rc-card__header">
                         <h3 className="rc-card__title">{evento.nome}</h3>
