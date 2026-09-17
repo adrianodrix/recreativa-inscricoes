@@ -1,10 +1,10 @@
-/* Cartão de inscrições: situação à esquerda, ocupação das vagas à direita. */
-.corpo {
+/* Corpo de cartão com a ocupação à direita; empilha no celular. */
+.comOcupacao {
   display: grid;
   gap: var(--spacing-5);
 }
 @media (min-width: 40rem) {
-  .corpo {
+  .comOcupacao {
     grid-template-columns: 1fr minmax(11rem, 15rem);
     column-gap: var(--spacing-8);
     align-items: end;

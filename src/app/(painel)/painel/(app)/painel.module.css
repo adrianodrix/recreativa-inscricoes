@@ -19,6 +19,11 @@
   list-style: none;
 }
 
+/* O cartão inteiro é o link; o sublinhado do navegador não faz sentido nele. */
+.lista a {
+  text-decoration: none;
+}
+
 .formulario {
   display: grid;
   gap: var(--spacing-8);

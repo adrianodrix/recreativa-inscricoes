@@ -4,8 +4,9 @@ import type { EventoCompleto } from "@/lib/eventos/consultas";
 import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
 import { pode, type Perfil } from "@/lib/auth/permissoes";
 import { alternarInscricoes } from "./actions";
+import { Ocupacao } from "./Ocupacao";
+import ocupacao from "./Ocupacao.module.css";
 import painel from "../painel.module.css";
-import styles from "./PainelStatus.module.css";
 
 interface Props {
   evento: EventoCompleto;
@@ -18,7 +19,7 @@ export function PainelStatus({ evento, perfil }: Props) {
   const alternar = alternarInscricoes.bind(null, evento.id, !evento.aberto_manual);
   return (
     <article className={`rc-card ${painel.status}`}>
-      <div className={styles.corpo}>
+      <div className={ocupacao.comOcupacao}>
         <div>
           <header className="rc-card__header">
             <h3 className="rc-card__title">Inscrições</h3>
@@ -48,25 +49,5 @@ export function PainelStatus({ evento, perfil }: Props) {
         </footer>
       )}
     </article>
-  );
-}
-
-/* Inscritos contra o limite do evento: número grande, barra proporcional e vagas livres. */
-function Ocupacao({ total, limite }: { total: number; limite: number }) {
-  const fracao = limite > 0 ? Math.min(total / limite, 1) : 1;
-  const livres = limite - total;
-  const nivel = livres <= 0 ? "lotado" : fracao >= 0.9 ? "quase" : "normal";
-  const legenda = livres > 0 ? `${livres} ${livres === 1 ? "vaga livre" : "vagas livres"}` : livres === 0 ? "Lotado" : `${-livres} acima do limite`;
-  return (
-    <div className={styles.ocupacao} data-nivel={nivel}>
-      <span className={styles.ocupacaoRotulo}>Inscritos</span>
-      <p className={styles.ocupacaoNumero}>
-        <strong>{total}</strong> <span>de {limite}</span>
-      </p>
-      <div className={styles.ocupacaoBarra} role="meter" aria-label="Vagas ocupadas" aria-valuemin={0} aria-valuemax={limite} aria-valuenow={Math.min(total, limite)}>
-        <span style={{ width: `${fracao * 100}%` }} />
-      </div>
-      <span className={styles.ocupacaoLegenda}>{legenda}</span>
-    </div>
   );
 }

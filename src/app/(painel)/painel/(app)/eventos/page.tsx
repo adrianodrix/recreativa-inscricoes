@@ -5,6 +5,8 @@ import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { contarInscritos, listarEventos } from "@/lib/eventos/consultas";
 import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
+import { Ocupacao } from "./Ocupacao";
+import ocupacao from "./Ocupacao.module.css";
 import styles from "../painel.module.css";
 
 export const metadata = { title: "Eventos" };
@@ -33,24 +35,29 @@ export default async function PaginaEventos() {
             return (
               <li key={evento.id}>
                 <Link href={`/painel/eventos/${evento.id}`} className="rc-card rc-card--interactive">
-                  <header className="rc-card__header">
-                    <h3 className="rc-card__title">{evento.nome}</h3>
-                    {status.aberto ? (
-                      <span className="rc-badge rc-badge--success">Inscrições abertas</span>
-                    ) : (
-                      <span className="rc-badge">{ROTULO_MOTIVO[status.motivo]}</span>
-                    )}
-                  </header>
-                  <ul className="rc-card__meta">
-                    <li>
-                      <Calendar className="rc-icon" aria-hidden="true" />
-                      {formatarData(evento.data_evento)}, {formatarHora(evento.hora_inicio)} às {formatarHora(evento.hora_fim)}
-                    </li>
-                    <li>
-                      <MapPin className="rc-icon" aria-hidden="true" />
-                      {evento.endereco}
-                    </li>
-                  </ul>
+                  <div className={ocupacao.comOcupacao}>
+                    <div>
+                      <header className="rc-card__header">
+                        <h3 className="rc-card__title">{evento.nome}</h3>
+                        {status.aberto ? (
+                          <span className="rc-badge rc-badge--success">Inscrições abertas</span>
+                        ) : (
+                          <span className="rc-badge">{ROTULO_MOTIVO[status.motivo]}</span>
+                        )}
+                      </header>
+                      <ul className="rc-card__meta">
+                        <li>
+                          <Calendar className="rc-icon" aria-hidden="true" />
+                          {formatarData(evento.data_evento)}, {formatarHora(evento.hora_inicio)} às {formatarHora(evento.hora_fim)}
+                        </li>
+                        <li>
+                          <MapPin className="rc-icon" aria-hidden="true" />
+                          {evento.endereco}
+                        </li>
+                      </ul>
+                    </div>
+                    <Ocupacao total={totais[i]} limite={evento.limite_inscritos} />
+                  </div>
                 </Link>
               </li>
             );
