@@ -67,3 +67,11 @@ export function diasAte(data: string, agora: Date = new Date()): number {
   };
   return Math.round((utc(alvo) - utc(hoje)) / 86_400_000);
 }
+
+/* Distância em dias para leitura: "hoje", "amanhã", "ontem", "em 3 dias", "há 3 dias". */
+export function emDias(dias: number): string {
+  if (dias === 0) return "hoje";
+  if (dias === 1) return "amanhã";
+  if (dias === -1) return "ontem";
+  return dias > 0 ? `em ${dias} dias` : `há ${-dias} dias`;
+}

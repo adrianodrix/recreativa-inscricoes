@@ -15,7 +15,7 @@ interface Props {
 
 export function CartaoBrincadeiras({ eventoId, perfil, brincadeiras }: Props) {
   return (
-    <article className="rc-card">
+    <article className={`rc-card ${styles.cartao}`}>
       <header className="rc-card__header">
         <TituloCartao icone={PartyPopper} acao={{ href: `/painel/eventos/${eventoId}/brincadeiras`, rotulo: "Ver brincadeiras" }}>
           Vagas por brincadeira

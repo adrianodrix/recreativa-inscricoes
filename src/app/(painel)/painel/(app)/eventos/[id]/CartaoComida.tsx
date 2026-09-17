@@ -17,7 +17,7 @@ interface Props {
 export function CartaoComida({ eventoId, perfil, limites, contagem }: Props) {
   const tipos = TIPOS_COMIDA.filter((t) => limites[t] > 0);
   return (
-    <article className="rc-card">
+    <article className={`rc-card ${styles.cartao}`}>
       <header className="rc-card__header">
         <TituloCartao icone={Utensils}>Comida e bebida</TituloCartao>
       </header>

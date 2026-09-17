@@ -21,7 +21,7 @@ export function PainelStatus({ evento, perfil, passo }: Props) {
   const status = statusInscricoes(evento, evento.total_inscritos);
   const alternar = alternarInscricoes.bind(null, evento.id, !evento.aberto_manual);
   return (
-    <article className={`rc-card ${painel.status}`}>
+    <article className={`rc-card ${painel.status} ${painel.largura}`}>
       <div className={indicadores.comOcupacao}>
         <div>
           <header className="rc-card__header">

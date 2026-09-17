@@ -12,7 +12,7 @@ interface Props {
 
 export function CartaoCategorias({ eventoId, contagem }: Props) {
   return (
-    <article className="rc-card">
+    <article className={`rc-card ${styles.cartao}`}>
       <header className="rc-card__header">
         <TituloCartao icone={Users} acao={{ href: `/painel/eventos/${eventoId}/inscritos`, rotulo: "Ver inscritos" }}>
           Inscritos por categoria

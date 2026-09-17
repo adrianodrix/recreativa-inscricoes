@@ -75,16 +75,33 @@
   color: var(--color-text-muted);
 }
 
+/* Painel do evento: uma coluna; em telas largas, duas, com os cartões marcados como .largura ocupando as duas. */
 .painelEvento {
   display: grid;
   gap: var(--spacing-5);
 }
+@media (min-width: 64rem) {
+  .painelEvento {
+    grid-template-columns: 1fr 1fr;
+  }
+  .painelEvento > .largura {
+    grid-column: 1 / -1;
+  }
+}
 
-/* Indicadores lado a lado: 4 no desktop, 2 por linha no celular. */
+/* Cartão com mosaico de indicadores: a quantidade de colunas segue a largura do cartão, não a da tela. */
+.cartao {
+  container-type: inline-size;
+}
 .mosaico {
   display: grid;
   gap: var(--spacing-5);
-  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  grid-template-columns: repeat(2, 1fr);
+}
+@container (min-width: 40rem) {
+  .mosaico {
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  }
 }
 
 .resumoLista {

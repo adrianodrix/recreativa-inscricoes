@@ -16,7 +16,7 @@ export async function CartaoWhatsapp({ eventoId, perfil }: { eventoId: string; p
   const ativo = env().WHATSAPP_ENVIO_ATIVO;
   const processar = processarFilaAction.bind(null, eventoId);
   return (
-    <article className={`rc-card ${styles.status}`}>
+    <article className={`rc-card ${styles.status} ${styles.largura}`}>
       <header className="rc-card__header">
         <TituloCartao icone={MessageCircle}>WhatsApp</TituloCartao>
         {!configurado ? (

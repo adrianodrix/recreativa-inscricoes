@@ -2,6 +2,7 @@ import { ExternalLink, Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Alerta } from "@/components/formulario/Alerta";
+import { diasAte, emDias, formatarDataExtenso, formatarHora } from "@/lib/datas";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { listarBrincadeiras } from "@/lib/brincadeiras/consultas";
@@ -46,10 +47,17 @@ export default async function PaginaEvento({ params, searchParams }: Props) {
     elegiveis,
   });
 
+  const dataExtenso = formatarDataExtenso(evento.data_evento);
+
   return (
     <>
       <div className={styles.titulo}>
-        <h1>{evento.nome}</h1>
+        <div>
+          <h1>{evento.nome}</h1>
+          <p className="rc-hint">
+            {dataExtenso.charAt(0).toUpperCase() + dataExtenso.slice(1)} · {formatarHora(evento.hora_inicio)} às {formatarHora(evento.hora_fim)} · {emDias(diasAte(evento.data_evento))}
+          </p>
+        </div>
         <div className={styles.acoes}>
           {pode(usuario.perfil, "editar_evento") && (
             <Link href={`/painel/eventos/${id}/editar`} className="rc-btn rc-btn--secondary rc-btn--sm">

@@ -21,7 +21,7 @@ export function CartaoTimes({ eventoId, perfil, times, elegiveis, montagem }: Pr
   const contagens = times.map((t) => t.membros);
   const montados = contagens.some((n) => n > 0);
   return (
-    <article className="rc-card">
+    <article className={`rc-card ${styles.cartao}`}>
       <header className="rc-card__header">
         <TituloCartao icone={Flag} acao={{ href: `/painel/eventos/${eventoId}/times`, rotulo: "Ver times" }}>
           Times
