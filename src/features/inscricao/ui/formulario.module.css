@@ -121,3 +121,20 @@
   gap: var(--spacing-3);
   align-items: baseline;
 }
+
+/* Boas-vindas: capa do evento e a linha do subtítulo acima do título. */
+.capa {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.chapeu {
+  margin: 0;
+  font-family: var(--font-detail);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-on-primary-soft);
+}

@@ -7,6 +7,8 @@ import styles from "./formulario.module.css";
 
 interface Props {
   titulo: string;
+  /* Linha curta acima do título, como o subtítulo do evento nas boas-vindas. */
+  chapeu?: ReactNode;
   descricao?: ReactNode;
   erro?: string;
   rotuloAvancar?: string;
@@ -16,10 +18,13 @@ interface Props {
 }
 
 /* Casca de uma pergunta: título, conteúdo, erro e botões. Enter avança. */
-export function StepShell({ titulo, descricao, erro, rotuloAvancar = "Continuar", mostrarAvancar = true, onAvancar, children }: Props) {
+export function StepShell({ titulo, chapeu, descricao, erro, rotuloAvancar = "Continuar", mostrarAvancar = true, onAvancar, children }: Props) {
   const { indice, etapas, voltar, estado, etapaAtual } = useInscricao();
   const corpo = useRef<HTMLDivElement>(null);
   const erroServidor = estado.errosServidor[etapaAtual.id];
+  // As boas-vindas não são pergunta: a contagem começa na primeira de verdade.
+  const perguntas = etapas.filter((e) => e.tipo !== "boas_vindas");
+  const posicao = perguntas.findIndex((e) => e.id === etapaAtual.id);
   const mensagemErro = erro ?? erroServidor;
 
   useEffect(() => {
@@ -40,9 +45,12 @@ export function StepShell({ titulo, descricao, erro, rotuloAvancar = "Continuar"
       }}
     >
       <header className={styles.cabecalho}>
-        <p className={styles.contador} aria-live="polite">
-          Pergunta {indice + 1} de {etapas.length}
-        </p>
+        {posicao >= 0 && (
+          <p className={styles.contador} aria-live="polite">
+            Pergunta {posicao + 1} de {perguntas.length}
+          </p>
+        )}
+        {chapeu && <p className={styles.chapeu}>{chapeu}</p>}
         <h1 className={styles.titulo}>{titulo}</h1>
         {descricao && <div className={styles.descricao}>{descricao}</div>}
       </header>

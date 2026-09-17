@@ -10,17 +10,21 @@ const evento = eventoFixture();
 const ids = (d: Parameters<typeof montarEtapas>[0]) => montarEtapas(d, evento).map((e) => e.id);
 
 describe("montarEtapas", () => {
+  it("abre sempre pelas boas-vindas, mesmo sem texto cadastrado", () => {
+    expect(ids(solteiro35)[0]).toBe("boas_vindas");
+  });
+
   it("solteiro de 35 anos: pergunta casado, não tem brincadeiras nem WhatsApp", () => {
-    expect(ids(solteiro35)).toEqual(["nome", "apelido", "nascimento", "casado", "comida:principal", "resumo"]);
+    expect(ids(solteiro35)).toEqual(["boas_vindas", "nome", "apelido", "nascimento", "casado", "comida:principal", "resumo"]);
   });
 
   it("antes de responder o nascimento só mostra as etapas iniciais", () => {
-    expect(ids({ ...solteiro35, principal: { nome: "", nascimento: "" } })).toEqual(["nome", "apelido", "nascimento", "resumo"]);
+    expect(ids({ ...solteiro35, principal: { nome: "", nascimento: "" } })).toEqual(["boas_vindas", "nome", "apelido", "nascimento", "resumo"]);
   });
 
   it("família: cônjuge, 3 filhos, papel, comida para > 12, brincadeiras por categoria e WhatsApp", () => {
     const lista = ids({ ...familia, participacoes: [{ brincadeiraId: "c0000000-0000-0000-0000-00000000000c", casal: true }] });
-    expect(lista.slice(0, 5)).toEqual(["nome", "apelido", "nascimento", "casado", "conjuge_opcao"]);
+    expect(lista.slice(0, 6)).toEqual(["boas_vindas", "nome", "apelido", "nascimento", "casado", "conjuge_opcao"]);
     expect(lista).toContain("conjuge_dados");
     expect(lista.filter((i) => i.startsWith("filho_dados:"))).toHaveLength(3);
     expect(lista).toContain("papel");

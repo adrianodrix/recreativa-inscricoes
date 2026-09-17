@@ -1,10 +1,12 @@
 import { Calendar, MapPin } from "lucide-react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Logo } from "@/components/marca/Logo";
 import { Formulario } from "@/features/inscricao/ui/Formulario";
 import { formatarDataExtenso, formatarHora } from "@/lib/datas";
 import { ROTULO_MOTIVO, type MotivoFechado } from "@/lib/eventos/status";
 import { obterEventoPublico } from "@/lib/inscricao/publico";
+import { urlImagem } from "@/lib/storage/url";
 import { enviarInscricao } from "./actions";
 import styles from "./publico.module.css";
 
@@ -14,10 +16,21 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const evento = await obterEventoPublico(slug);
-  return { title: evento ? `Inscrição · ${evento.nome}` : "Evento" };
+  if (!evento) return { title: "Evento" };
+  const descricao = evento.descricao ?? `Inscrições da ${evento.nome}.`;
+  return {
+    title: `Inscrição · ${evento.nome}`,
+    description: descricao,
+    openGraph: {
+      title: `Inscrição · ${evento.nome}`,
+      description: descricao,
+      type: "website",
+      images: [urlImagem(evento.capa_path) ?? "/marca/og-recreativa.png"],
+    },
+  };
 }
 
 export default async function PaginaInscricao({ params }: Props) {

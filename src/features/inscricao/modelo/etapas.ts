@@ -46,7 +46,7 @@ export function montarEtapas(d: InscricaoDraft, evento: EventoPublico): Etapa[] 
   const etapas: Etapa[] = [];
   const add = (e: Etapa) => etapas.push(e);
 
-  if (evento.boas_vindas) add({ id: "boas_vindas", tipo: "boas_vindas" });
+  add({ id: "boas_vindas", tipo: "boas_vindas" }); // sempre, com capa e dados do evento (P12)
   add({ id: "nome", tipo: "nome" });
   add({ id: "apelido", tipo: "apelido" });
   add({ id: "nascimento", tipo: "nascimento" });

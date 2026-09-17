@@ -14,6 +14,12 @@ for (const interfaces of Object.values(networkInterfaces())) {
 const nextConfig: NextConfig = {
   allowedDevOrigins: ipsLocais,
   images: {
+    /*
+     * Em desenvolvimento o Supabase serve as imagens em 127.0.0.1 e o Next 16
+     * bloqueia otimizar IP local (responde 400). Em produção o host é
+     * *.supabase.co, então a liberação vale só aqui.
+     */
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
     remotePatterns: [
       { protocol: "http", hostname: "127.0.0.1", port: "54321", pathname: "/storage/v1/object/public/**" },
       { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },

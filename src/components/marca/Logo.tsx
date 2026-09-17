@@ -28,7 +28,7 @@ export function Logo({ variante = "auto", formato = "empilhada", largura = 192, 
       alt="Recreativa"
       width={largura}
       height={altura}
-      priority={prioridade}
+      preload={prioridade}
       style={{ width: "100%", height: "auto" }}
       className={`${styles.logo} ${extra ?? ""}`}
     />

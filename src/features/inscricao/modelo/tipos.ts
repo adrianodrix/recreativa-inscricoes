@@ -63,6 +63,9 @@ export interface EventoPublico {
   id: string;
   nome: string;
   slug: string;
+  subtitulo: string | null;
+  descricao: string | null;
+  capa_path: string | null;
   data_evento: string;
   hora_inicio: string;
   hora_fim: string;
