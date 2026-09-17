@@ -14,11 +14,19 @@ import type {
 type Bruto = Record<string, unknown>;
 const lista = (valor: unknown): Bruto[] => (Array.isArray(valor) ? (valor as Bruto[]) : []);
 
-/* Evento em destaque com tudo o que a página mostra, por uma RPC pública (anon). */
+/*
+ * Evento em destaque com tudo o que a página mostra, por uma RPC pública (anon).
+ * A "/" é a porta de entrada do site: se o banco falhar (migration ainda não
+ * aplicada, indisponibilidade), registra o erro e devolve null, e a página cai
+ * na capa da marca em vez de responder erro para quem chegou pelo link.
+ */
 export async function carregarPaginaInicial(): Promise<DadosPaginaInicial | null> {
   const supabase = await criarClienteServidor();
   const { data, error } = await supabase.rpc("obter_pagina_inicial");
-  if (error) throw new Error(`Falha ao carregar a página inicial: ${error.message}`);
+  if (error) {
+    console.error(`Falha ao carregar a página inicial: ${error.message}`);
+    return null;
+  }
   if (!data || typeof data !== "object" || Array.isArray(data)) return null;
   return montar(data as Bruto);
 }

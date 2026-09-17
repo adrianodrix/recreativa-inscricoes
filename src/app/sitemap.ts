@@ -7,7 +7,9 @@ export const dynamic = "force-dynamic";
 /* Página inicial e a inscrição de cada evento publicado. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await criarClienteServidor();
-  const { data } = await supabase.rpc("listar_eventos_publicados");
+  const { data, error } = await supabase.rpc("listar_eventos_publicados");
+  // Sem a lista, o sitemap sai só com a home em vez de responder erro.
+  if (error) console.error(`Falha ao listar eventos no sitemap: ${error.message}`);
 
   return [
     { url: urlAbsoluta("/"), changeFrequency: "daily", priority: 1 },
