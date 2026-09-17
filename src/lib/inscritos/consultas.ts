@@ -1,4 +1,5 @@
 import "server-only";
+import { normalizarNome } from "@/lib/pessoas/nome";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
 
@@ -39,9 +40,9 @@ export async function listarInscritos(eventoId: string, busca = ""): Promise<Ins
     porInscrito.set(p.inscrito_id, lista);
   }
 
-  const termo = busca.trim().toLowerCase();
+  const termo = normalizarNome(busca);
   return inscritos.data
-    .filter((i) => !termo || (i.nome_normalizado ?? "").includes(termo) || (i.apelido ?? "").toLowerCase().includes(termo))
+    .filter((i) => !termo || (i.nome_normalizado ?? "").includes(termo) || normalizarNome(i.apelido ?? "").includes(termo))
     .map((i) => ({
       ...i,
       comida: comida.get(i.id) ?? null,
