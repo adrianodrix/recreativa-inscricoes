@@ -13,6 +13,12 @@ interface Props {
   params: Promise<{ id: string; tid: string }>;
 }
 
+export async function generateMetadata({ params }: Props) {
+  const { id, tid } = await params;
+  const time = await obterTime(id, tid);
+  return { title: time?.nome ?? "Time" };
+}
+
 export default async function PaginaTime({ params }: Props) {
   const [{ id, tid }] = await Promise.all([params, exigirPerfil("gerir_times")]);
   const [evento, time] = await Promise.all([obterEvento(id), obterTime(id, tid)]);
