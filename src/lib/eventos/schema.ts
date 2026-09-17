@@ -62,6 +62,7 @@ export const schemaEvento = z
     limite_doce: inteiro(0, "Informe um número"),
     limite_refrigerante: inteiro(0, "Informe um número"),
     limite_suco: inteiro(0, "Informe um número"),
+    capa_path: z.string().optional().transform((v) => v || null),
     boas_vindas: textoRicoOpcional,
     agradecimento: textoRicoObrigatorio,
     recomendacoes: textoRicoOpcional,

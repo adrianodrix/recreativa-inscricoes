@@ -11,6 +11,7 @@ import { StepShell } from "../ui/StepShell";
 
 interface Config {
   titulo: string;
+  rotulo: string;
   descricao?: string;
   opcional?: boolean;
   schema: ZodType<string, string>;
@@ -22,6 +23,7 @@ interface Config {
 const CONFIG = {
   nome: {
     titulo: "Qual é o seu nome completo?",
+    rotulo: "Nome completo",
     descricao: "Como está no seu documento.",
     schema: schemaNome,
     ler: (d) => d.principal.nome,
@@ -30,6 +32,7 @@ const CONFIG = {
   },
   apelido: {
     titulo: "Como você gosta de ser chamado(a)?",
+    rotulo: "Apelido",
     descricao: "Apelido ou como as pessoas te conhecem. Pode deixar em branco.",
     opcional: true,
     schema: schemaApelido,
@@ -39,6 +42,7 @@ const CONFIG = {
   },
   whatsapp: {
     titulo: "Qual é o seu WhatsApp?",
+    rotulo: "WhatsApp",
     descricao: "Vamos confirmar a inscrição e avisar os times por ele.",
     schema: schemaWhatsapp,
     ler: (d) => (d.whatsapp ? formatarWhatsapp(d.whatsapp) : ""),
@@ -71,7 +75,7 @@ export function TextoStep({ tipo }: { tipo: keyof typeof CONFIG }) {
       <div className="campo-anima">
         <CampoTexto
           id={`campo-${tipo}`}
-          rotulo={cfg.titulo}
+          rotulo={cfg.rotulo}
           opcional={cfg.opcional}
           value={valor}
           onChange={(e) => {

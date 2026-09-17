@@ -30,9 +30,10 @@ export function Logo({ variante = "auto", largura = 192, prioridade, className }
       className={`${styles.logo} ${extra ?? ""}`}
     />
   );
-  if (variante !== "auto") return <span className={className}>{imagem(ARQUIVO[variante])}</span>;
+  const estilo = { display: "block", width: `${largura}px`, maxWidth: "100%" } as const;
+  if (variante !== "auto") return <span className={className} style={estilo}>{imagem(ARQUIVO[variante])}</span>;
   return (
-    <span className={className}>
+    <span className={className} style={estilo}>
       {imagem(ARQUIVO.roxo, styles.claro)}
       {imagem(ARQUIVO.branco, styles.escuro)}
     </span>

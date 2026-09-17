@@ -26,6 +26,7 @@ function linhaEvento(d: DadosEvento) {
     aberto_manual: d.aberto_manual,
     limite_inscritos: d.limite_inscritos,
     valor_inscricao: d.valor_inscricao,
+    capa_path: d.capa_path,
     boas_vindas: d.boas_vindas as Json,
     agradecimento: d.agradecimento as Json,
     recomendacoes: d.recomendacoes as Json,

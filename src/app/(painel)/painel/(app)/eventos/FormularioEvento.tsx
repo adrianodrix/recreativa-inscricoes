@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { Alerta } from "@/components/formulario/Alerta";
 import { BotaoEnviar } from "@/components/formulario/BotaoEnviar";
 import { CampoTexto } from "@/components/formulario/CampoTexto";
+import { UploadImagem } from "@/components/upload/UploadImagem";
 import { isoParaLocal } from "@/lib/datas";
 import type { EventoCompleto } from "@/lib/eventos/consultas";
 import { ROTULO_COMIDA, TIPOS_COMIDA } from "@/lib/eventos/schema";
@@ -75,6 +76,11 @@ export function FormularioEvento({ evento }: Props) {
             <CampoTexto key={tipo} id={`limite_${tipo}`} name={`limite_${tipo}`} type="number" inputMode="numeric" min={0} rotulo={ROTULO_COMIDA[tipo]} defaultValue={evento?.limites[tipo] ?? 0} erro={e[`limite_${tipo}`]} required />
           ))}
         </div>
+      </section>
+
+      <section className={styles.secao}>
+        <h2>Capa</h2>
+        <UploadImagem name="capa_path" rotulo="Imagem de capa" prefixo={`capas/${evento?.id ?? "novo"}`} valorInicial={evento?.capa_path} ajuda="Opcional. Aparece no topo do formulário." />
       </section>
 
       <section className={styles.secao}>
