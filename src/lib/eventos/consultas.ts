@@ -3,6 +3,7 @@ import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
 import type { TextoRico } from "@/lib/texto-rico/schema";
 import type { TipoComida } from "./schema";
+import { contarInscritosDoEvento } from "@/lib/inscritos/consultas";
 
 export type EventoLinha = Database["public"]["Tables"]["eventos"]["Row"];
 
@@ -40,8 +41,6 @@ export async function obterEvento(id: string): Promise<EventoCompleto | null> {
   };
 }
 
-/* Até a fase F2 (tabela de inscritos) o total é zero. */
 export async function contarInscritos(eventoId: string): Promise<number> {
-  void eventoId;
-  return 0;
+  return contarInscritosDoEvento(eventoId);
 }
