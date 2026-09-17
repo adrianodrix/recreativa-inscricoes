@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { servicoIndisponivel } from "@/lib/auth/indisponivel";
 import { envPublico } from "@/lib/env-publico";
 
 /* Rotas do painel acessíveis sem sessão. Não existe cadastro público. */
@@ -26,8 +27,15 @@ export async function proxy(request: NextRequest) {
   });
 
   // getClaims valida o token localmente; nunca usar getSession() aqui.
-  const { data } = await supabase.auth.getClaims();
-  const logado = Boolean(data?.claims);
+  // Falha de infraestrutura não é ausência de sessão: deixa passar e a página mostra o aviso.
+  let logado = false;
+  try {
+    const { data, error } = await supabase.auth.getClaims();
+    if (error && servicoIndisponivel(error)) return response;
+    logado = Boolean(data?.claims);
+  } catch {
+    return response;
+  }
   const { pathname } = request.nextUrl;
   const rotaAberta = ROTAS_ABERTAS.some((rota) => pathname.startsWith(rota));
 

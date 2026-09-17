@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
+import { Tema } from "@/components/marca/Tema";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -40,7 +41,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: scriptTema }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <Tema />
+        {children}
+      </body>
     </html>
   );
 }

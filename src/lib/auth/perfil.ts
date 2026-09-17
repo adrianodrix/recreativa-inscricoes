@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { criarClienteServidor } from "@/lib/supabase/server";
+import { DIGEST_INDISPONIVEL, servicoIndisponivel } from "./indisponivel";
 import { pode, type Acao, type Perfil } from "./permissoes";
 
 export interface UsuarioPainel {
@@ -11,19 +12,37 @@ export interface UsuarioPainel {
   perfil: Perfil;
 }
 
+/*
+ * Autenticação ou banco fora do ar. O digest chega ao error.tsx do painel,
+ * que mostra um aviso com "Tentar de novo" em vez de mandar para o login.
+ */
+export class ServicoIndisponivel extends Error {
+  readonly digest = DIGEST_INDISPONIVEL;
+  constructor(causa: unknown) {
+    super("Serviço de autenticação indisponível", { cause: causa });
+    this.name = "ServicoIndisponivel";
+  }
+}
+
 /* Usuário do painel logado e ativo, ou null. Cacheado por requisição. */
 export const usuarioAtual = cache(async (): Promise<UsuarioPainel | null> => {
   const supabase = await criarClienteServidor();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user;
+  try {
+    const r = await supabase.auth.getUser();
+    if (r.error && servicoIndisponivel(r.error)) throw new ServicoIndisponivel(r.error);
+    user = r.data.user;
+  } catch (e) {
+    throw e instanceof ServicoIndisponivel ? e : new ServicoIndisponivel(e);
+  }
   if (!user) return null;
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("usuarios_painel")
     .select("id, email, nome, perfil, ativo")
     .eq("id", user.id)
     .maybeSingle();
+  if (error) throw new ServicoIndisponivel(error); // consulta falhou, não é perfil inexistente
   if (!data || !data.ativo) return null;
   return { id: data.id, email: data.email, nome: data.nome, perfil: data.perfil };
 });
