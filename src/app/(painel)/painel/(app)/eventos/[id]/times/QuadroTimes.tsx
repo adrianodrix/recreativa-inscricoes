@@ -1,6 +1,6 @@
 "use client";
 
-import { DndContext, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { CircleCheck, RefreshCw, Save, Shuffle } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 import { Alerta } from "@/components/formulario/Alerta";
@@ -26,7 +26,12 @@ export function QuadroTimes({ eventoId, dados, times, status, inscricoesEncerrad
   const [sujo, setSujo] = useState(false);
   const [mensagem, setMensagem] = useState<{ tipo: "success" | "danger"; texto: string }>();
   const [pendente, iniciar] = useTransition();
-  const sensores = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }), useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }), useSensor(KeyboardSensor));
+  // Mouse: arrasta após 6px. Toque: segurar 200ms e arrastar (a rolagem continua livre fora da alça). Teclado: Espaço, setas, Espaço.
+  const sensores = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
+    useSensor(KeyboardSensor),
+  );
 
   const { entrada } = dados;
   const avisos = useMemo(() => avaliarAlocacao(entrada, alocacao), [entrada, alocacao]);
@@ -109,9 +114,9 @@ export function QuadroTimes({ eventoId, dados, times, status, inscricoesEncerrad
       <DndContext sensors={sensores} onDragEnd={aoSoltar}>
         <div className={styles.quadro}>
           {times.map((t) => (
-            <ColunaTime key={t.id} id={t.id} titulo={t.nome} time={t} pessoas={entrada.pessoas.filter((p) => alocacao[p.id] === t.id)} times={entrada.times} vinculadas={vinculadas} aoMover={mover} />
+            <ColunaTime key={t.id} id={t.id} titulo={t.nome} time={t} pessoas={entrada.pessoas.filter((p) => alocacao[p.id] === t.id)} vinculadas={vinculadas} />
           ))}
-          <ColunaTime id="sem-time" titulo="Sem time" pessoas={semTime} times={entrada.times} vinculadas={vinculadas} aoMover={mover} />
+          <ColunaTime id="sem-time" titulo="Sem time" pessoas={semTime} vinculadas={vinculadas} />
         </div>
       </DndContext>
     </div>

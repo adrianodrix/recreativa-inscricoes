@@ -2,7 +2,7 @@
 
 import { useDroppable } from "@dnd-kit/core";
 import type { TimeComContagem } from "@/lib/times/consultas";
-import type { PessoaTime, TimeDef } from "@/lib/times/tipos";
+import type { PessoaTime } from "@/lib/times/tipos";
 import { CartaoPessoa } from "./CartaoPessoa";
 import { IconeTime } from "./IconeTime";
 import styles from "./quadro.module.css";
@@ -12,12 +12,10 @@ interface Props {
   titulo: string;
   time?: TimeComContagem;
   pessoas: PessoaTime[];
-  times: TimeDef[];
   vinculadas: Set<string>;
-  aoMover: (pessoaId: string, timeId: string | null) => void;
 }
 
-export function ColunaTime({ id, titulo, time, pessoas, times, vinculadas, aoMover }: Props) {
+export function ColunaTime({ id, titulo, time, pessoas, vinculadas }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id });
   const criancas = pessoas.filter((p) => p.categoria === "crianca");
   const jovens = pessoas.filter((p) => p.categoria === "jovem");
@@ -34,7 +32,7 @@ export function ColunaTime({ id, titulo, time, pessoas, times, vinculadas, aoMov
         </div>
       </header>
       {pessoas.map((p) => (
-        <CartaoPessoa key={p.id} pessoa={p} times={times} timeAtual={time?.id ?? null} vinculada={vinculadas.has(p.id)} aoMover={aoMover} />
+        <CartaoPessoa key={p.id} pessoa={p} vinculada={vinculadas.has(p.id)} />
       ))}
       {pessoas.length === 0 && <p className="rc-hint">Arraste pessoas para cá.</p>}
     </section>

@@ -36,13 +36,14 @@
 }
 
 .cartao {
-  display: grid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-2);
   padding: var(--spacing-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-bg);
-  touch-action: none;
 }
 
 .cartaoArrastando {
@@ -50,23 +51,33 @@
   opacity: 0.9;
 }
 
-.cartaoLinha {
-  display: flex;
+.cartaoInfo {
+  display: inline-flex;
+  flex: none;
   align-items: center;
-  justify-content: space-between;
   gap: var(--spacing-2);
 }
 
+/* Alça de arrastar: só aqui o toque não rola a página nem seleciona texto (iOS). */
 .alca {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
+  min-height: 2.75rem;
   cursor: grab;
   font-weight: var(--font-weight-medium);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
-
-.mover {
-  font-size: var(--text-sm);
+.alca:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+.cartaoArrastando .alca {
+  cursor: grabbing;
 }
 
 .acoes {
