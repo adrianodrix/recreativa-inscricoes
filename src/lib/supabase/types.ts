@@ -307,6 +307,52 @@ export type Database = {
           },
         ]
       }
+      membros_time: {
+        Row: {
+          atualizado_em: string
+          evento_id: string
+          inscrito_id: string
+          time_id: string
+          time_notificado_id: string | null
+        }
+        Insert: {
+          atualizado_em?: string
+          evento_id: string
+          inscrito_id: string
+          time_id: string
+          time_notificado_id?: string | null
+        }
+        Update: {
+          atualizado_em?: string
+          evento_id?: string
+          inscrito_id?: string
+          time_id?: string
+          time_notificado_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membros_time_inscrito_id_evento_id_fkey"
+            columns: ["inscrito_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "inscritos"
+            referencedColumns: ["id", "evento_id"]
+          },
+          {
+            foreignKeyName: "membros_time_time_id_evento_id_fkey"
+            columns: ["time_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "times"
+            referencedColumns: ["id", "evento_id"]
+          },
+          {
+            foreignKeyName: "membros_time_time_notificado_id_fkey"
+            columns: ["time_notificado_id"]
+            isOneToOne: false
+            referencedRelation: "times"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       participacoes: {
         Row: {
           brincadeira_id: string
@@ -385,6 +431,50 @@ export type Database = {
           },
         ]
       }
+      times: {
+        Row: {
+          atualizado_em: string
+          cor_padrao: string
+          criado_em: string
+          evento_id: string
+          icone_padrao: string
+          id: string
+          imagem_path: string | null
+          nome: string
+          ordem: number
+        }
+        Insert: {
+          atualizado_em?: string
+          cor_padrao?: string
+          criado_em?: string
+          evento_id: string
+          icone_padrao?: string
+          id?: string
+          imagem_path?: string | null
+          nome: string
+          ordem?: number
+        }
+        Update: {
+          atualizado_em?: string
+          cor_padrao?: string
+          criado_em?: string
+          evento_id?: string
+          icone_padrao?: string
+          id?: string
+          imagem_path?: string | null
+          nome?: string
+          ordem?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "times_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       usuarios_painel: {
         Row: {
           ativo: boolean
@@ -441,6 +531,7 @@ export type Database = {
         Returns: boolean
       }
       comida_disponivel: { Args: { p_evento_id: string }; Returns: Json }
+      confirmar_montagem: { Args: { p_evento_id: string }; Returns: string[] }
       criar_inscricao: { Args: { p: Json }; Returns: Json }
       criar_inscricao_interno: {
         Args: { p: Json; p_ignorar_status: boolean }
@@ -509,6 +600,10 @@ export type Database = {
       }
       registrar_participacao: {
         Args: { p_evento_id: string; p_ids: Json; p_part: Json }
+        Returns: undefined
+      }
+      salvar_montagem: {
+        Args: { p_alocacao: Json; p_evento_id: string; p_semente: number }
         Returns: undefined
       }
       total_inscritos: { Args: { p_evento_id: string }; Returns: number }
