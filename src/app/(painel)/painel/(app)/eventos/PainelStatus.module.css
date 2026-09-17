@@ -1,0 +1,84 @@
+/* Cartão de inscrições: situação à esquerda, ocupação das vagas à direita. */
+.corpo {
+  display: grid;
+  gap: var(--spacing-5);
+}
+@media (min-width: 40rem) {
+  .corpo {
+    grid-template-columns: 1fr minmax(11rem, 15rem);
+    column-gap: var(--spacing-8);
+    align-items: end;
+  }
+}
+
+/* A cor da barra e da legenda acompanha o nível de ocupação. */
+.ocupacao {
+  --ocupacao-cor: var(--color-primary);
+  display: grid;
+  gap: var(--spacing-2);
+}
+.ocupacao[data-nivel="quase"] {
+  --ocupacao-cor: var(--color-warning);
+}
+.ocupacao[data-nivel="lotado"] {
+  --ocupacao-cor: var(--color-danger);
+}
+@media (min-width: 40rem) {
+  .ocupacao {
+    text-align: right;
+  }
+  .ocupacaoNumero {
+    justify-content: flex-end;
+  }
+}
+
+.ocupacaoRotulo {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.ocupacaoNumero {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2);
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: 1;
+  color: var(--color-text-muted);
+}
+.ocupacaoNumero strong {
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-variation);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-weight-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1;
+  color: var(--color-text-heading);
+}
+
+.ocupacaoBarra {
+  height: 0.375rem;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--color-neutral-soft);
+}
+.ocupacaoBarra > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ocupacao-cor);
+}
+
+.ocupacaoLegenda {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.ocupacao[data-nivel="quase"] .ocupacaoLegenda,
+.ocupacao[data-nivel="lotado"] .ocupacaoLegenda {
+  font-weight: var(--font-weight-medium);
+  color: var(--ocupacao-cor);
+}
