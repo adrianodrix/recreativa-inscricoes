@@ -1,0 +1,42 @@
+/* Transições entre perguntas do formulário (React ViewTransition). */
+@keyframes etapa-entra-dir {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes etapa-entra-esq {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes etapa-sai-esq {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(-24px); }
+}
+@keyframes etapa-sai-dir {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(24px); }
+}
+::view-transition-new(.etapa-entra-dir) { animation: etapa-entra-dir 220ms var(--ease-standard) both; }
+::view-transition-new(.etapa-entra-esq) { animation: etapa-entra-esq 220ms var(--ease-standard) both; }
+::view-transition-old(.etapa-sai-esq) { animation: etapa-sai-esq 180ms var(--ease-standard) both; }
+::view-transition-old(.etapa-sai-dir) { animation: etapa-sai-dir 180ms var(--ease-standard) both; }
+
+/* Campos entram escalonados dentro da pergunta. */
+@keyframes campo-entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.campo-anima {
+  animation: campo-entra 260ms var(--ease-standard) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  .campo-anima {
+    animation: none !important;
+  }
+}

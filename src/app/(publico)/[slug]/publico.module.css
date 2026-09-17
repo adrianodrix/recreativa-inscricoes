@@ -1,0 +1,22 @@
+.fechado {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--spacing-4);
+  min-height: 100dvh;
+  padding: var(--spacing-8) var(--spacing-4);
+  text-align: center;
+}
+
+.obrigado {
+  display: grid;
+  gap: var(--spacing-6);
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--spacing-8) var(--spacing-4) var(--spacing-12);
+}
+
+.obrigado h1 {
+  font-size: var(--text-3xl);
+}
