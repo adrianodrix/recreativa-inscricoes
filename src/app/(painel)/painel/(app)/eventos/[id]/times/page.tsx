@@ -65,7 +65,7 @@ export default async function PaginaTimes({ params, searchParams }: Props) {
                     rotulo: t.nome,
                     conteudo: (
                       <div className="rc-card">
-                        <div className={indicadores.comOcupacao}>
+                        <div className={`${indicadores.comOcupacao} ${indicadores.aoCentro}`}>
                           <div className={styles.acoes}>
                             <IconeTime imagemPath={t.imagem_path} cor={t.cor_padrao} icone={t.icone_padrao} />
                             <strong>{t.nome}</strong>
