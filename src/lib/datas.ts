@@ -42,6 +42,14 @@ export function instanteDoEvento(data: string, hora: string): Date {
   return new Date(`${data}T${formatarHora(hora)}:00${OFFSET}`);
 }
 
+/* "2026-09-01" → "1 de setembro de 2026" (sem o dia da semana) */
+export function formatarDataLonga(dataIso: string): string {
+  const [ano, mes, dia] = dataIso.split("-").map(Number);
+  return new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC", dateStyle: "long" }).format(
+    new Date(Date.UTC(ano, mes - 1, dia)),
+  );
+}
+
 /* "08:30:00" ou "08:30" → "08:30" */
 export function formatarHora(hora: string): string {
   return hora.slice(0, 5);

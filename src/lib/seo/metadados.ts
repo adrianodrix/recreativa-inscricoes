@@ -11,14 +11,12 @@ export function urlAbsoluta(caminho: string): string {
   return new URL(caminho, urlDoSite()).toString();
 }
 
-export const IMAGEM_PADRAO = "/marca/og-recreativa.png";
-
 interface Entrada {
   titulo: string;
   descricao: string;
   /* Caminho da própria página, para canonical e og:url. */
   caminho: string;
-  /* URL absoluta da imagem; sem ela, usa a imagem da marca. */
+  /* Capa do evento. Sem ela, vale a imagem gerada por opengraph-image.tsx. */
   imagem?: string | null;
   /* Páginas de uso pessoal (confirmação) ficam fora dos buscadores. */
   indexar?: boolean;
@@ -30,7 +28,9 @@ interface Entrada {
  * vem do layout raiz.
  */
 export function metadadosPagina({ titulo, descricao, caminho, imagem, indexar = true }: Entrada): Metadata {
-  const imagens = [{ url: imagem || IMAGEM_PADRAO, width: 1200, height: 630, alt: titulo }];
+  /* A chave `images` só entra quando há capa: declará-la vazia cancelaria a
+     imagem gerada por opengraph-image.tsx. */
+  const imagens = imagem ? { images: [{ url: imagem, width: 1200, height: 630, alt: titulo }] } : {};
   return {
     title: titulo,
     description: descricao,
@@ -44,13 +44,13 @@ export function metadadosPagina({ titulo, descricao, caminho, imagem, indexar = 
       type: "website",
       siteName: "Recreativa",
       locale: "pt_BR",
-      images: imagens,
+      ...imagens,
     },
     twitter: {
       card: "summary_large_image",
       title: titulo,
       description: descricao,
-      images: imagens,
+      ...imagens,
     },
   };
 }

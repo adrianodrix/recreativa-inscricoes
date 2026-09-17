@@ -1,0 +1,9 @@
+Baloo 2 e Inter são distribuídas sob a SIL Open Font License 1.1.
+
+- Baloo 2: https://fonts.google.com/specimen/Baloo+2 (Ek Type)
+- Inter: https://fonts.google.com/specimen/Inter (Rasmus Andersson)
+
+Texto da licença: https://openfontlicense.org
+
+Os arquivos .ttf desta pasta existem para gerar a imagem de prévia dos links
+(next/og). No site, as fontes são carregadas por next/font.

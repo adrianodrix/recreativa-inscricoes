@@ -13,6 +13,17 @@ for (const interfaces of Object.values(networkInterfaces())) {
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ipsLocais,
+  /*
+   * As imagens de prévia leem fontes e logo do kit em tempo de execução. Como o
+   * caminho é montado em variável, o rastreio automático não os enxerga: aqui
+   * garantimos que vão junto no deploy.
+   */
+  outputFileTracingIncludes: {
+    "/opengraph-image": ["./branding/assets/fontes/**", "./branding/assets/logo-recreativa-horizontal-laranja.png"],
+    "/twitter-image": ["./branding/assets/fontes/**", "./branding/assets/logo-recreativa-horizontal-laranja.png"],
+    "/[slug]/opengraph-image": ["./branding/assets/fontes/**", "./branding/assets/logo-recreativa-horizontal-laranja.png"],
+    "/[slug]/twitter-image": ["./branding/assets/fontes/**", "./branding/assets/logo-recreativa-horizontal-laranja.png"],
+  },
   images: {
     /*
      * Em desenvolvimento o Supabase serve as imagens em 127.0.0.1 e o Next 16

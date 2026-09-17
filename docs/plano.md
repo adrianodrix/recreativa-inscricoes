@@ -405,7 +405,7 @@ Requisitos P1–P12. Visual: template do designer sobre o kit `branding/` (degra
 
 **Público**
 - `src/features/pagina-inicial/`: `carregar.ts` (RPC → tipos) e `PaginaInicial.tsx`, que recebe os dados prontos (reusada na prévia do painel). Seções em Server Components, **sem JS no cliente** (menu do celular e dúvidas com `<details>`): `Topo` (logo horizontal, âncoras das seções presentes, botão), `Destaque` (degradê, subtítulo, título, descrição, botão conforme a fase, imagens dos times), `Numeros` (edição, horário, times), `Programacao` (resumo em cartões + lista completa), `AntesDeVir` (recomendações), `Regras`, `Brincadeiras`, `Times`, `Duvidas`, `Fotos`, `Rodape` (subtítulo, data, local, contatos com `wa.me`). Seção sem dados não renderiza, nem a âncora dela.
-- `src/app/page.tsx`: `force-dynamic` (mesmo critério do `/[slug]`); sem evento publicado, mantém a capa atual. `generateMetadata`: título, descrição e imagem de prévia (capa; sem capa, `branding/assets/og-recreativa.png` 1200×630 com degradê e logo, gerado uma vez).
+- `src/app/page.tsx`: `force-dynamic` (mesmo critério do `/[slug]`); sem evento publicado, mantém a capa atual. `generateMetadata`: título, descrição e imagem de prévia. A imagem é gerada por evento com `next/og` (`opengraph-image.tsx`, degradê da marca, logo, nome, data e local, fontes do kit em `branding/assets/fontes/`); a capa do evento, quando existe, tem preferência.
 - `/[slug]`: boas-vindas sempre (`montarEtapas` sem condição); `BoasVindasStep` redesenhado com capa (ou degradê), subtítulo, nome, data, horário, local com Maps, valor (se > 0) e texto; `generateMetadata` com descrição e imagem. Ajuste na ajuda do campo capa.
 
 **Painel**
