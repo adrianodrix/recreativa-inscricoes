@@ -197,12 +197,58 @@ Cada brincadeira pertence a um evento e tem os campos:
 - **Montagem**: evento, status (rascunho | confirmado), confirmado em, confirmado por.
 - **Aviso de time**: evento, inscrito destinatário (com WhatsApp), tipo (confirmação | lembrete 1h antes), status de envio, enviado em.
 
+### Página inicial e divulgação (levantamento fechado em 17/09/2026)
+Referência visual: template do designer (`recreativa-design-system/site/prototipo`) e `branding/diretrizes/`. A especificação funcional do designer **não** será implementada; só a ideia da página inicial.
+- [P1] `/` passa a ser a **landing page do evento em destaque**: o próximo evento; se não houver, o último realizado.
+- [P2] O botão principal ("Me inscrever") leva para `/[slug]` do evento em destaque.
+- [P3] O administrador divulga `/` ou `/[slug]`, como preferir; os dois links funcionam sempre.
+- [P4] `/[slug]` continua sendo o formulário de inscrição, começando pela tela de boas-vindas.
+- [P5] **Evento de `/`** escolhido automaticamente entre os eventos **publicados**: o próximo (o do dia conta); se não houver, o último realizado. Sem evento publicado, `/` mantém a capa atual (logo e aviso).
+- [P6] **Publicado** é uma chave do evento, controlada pelo administrador. Evento não publicado **não aparece em `/` nem em `/[slug]`** (nem aceita inscrição). Eventos novos nascem não publicados; os já existentes migram como publicados.
+- [P7] **Evento já realizado**: a página continua no ar com uma mensagem padrão de agradecimento e o botão "Ver fotos" (se houver link); o botão de inscrição some.
+- [P8] **Todas as seções do template entram**, em uma página só: destaque, números, programação (resumo e completa), antes de vir, regras gerais, brincadeiras, times, dúvidas, fotos e contatos. Seção sem dados não aparece.
+- [P9] **Programação completa**: horário de início e fim, título, detalhe, vínculo opcional com brincadeira e marcação de destaque para o resumo.
+- [P10] **"Antes de vir"** reaproveita as recomendações (V5). **Regras gerais** é um campo novo de texto rico.
+- [P11] **Contatos e dúvidas são por evento**; ao criar um evento, são copiados do evento mais recente para o administrador só ajustar.
+- [P12] **Boas-vindas do `/[slug]` sempre aparecem**, com capa, data, horário e local, mesmo sem texto de boas-vindas.
+
+**Premissas**
+- Nenhuma página nova (Dúvidas, Sugestões, Fotos): tudo fica na própria `/`, em seções com âncoras.
+- Tudo o que o template mostra fixo no HTML (data, horários, textos, contatos) vem do cadastro do evento.
+- As "bolhas" do template são as imagens dos times já cadastrados; nada muda na inscrição.
+
+**De onde vem cada bloco do template**
+
+| Bloco | Dado | Situação |
+|---|---|---|
+| Topo e botão "Me inscrever" | nome, slug, status efetivo (aberto, abre em, encerrado) | já existe |
+| Chamada "4ª Recreação de Iguatemi" | subtítulo | **novo** |
+| Texto de apoio do destaque | descrição curta (também prévia do link no WhatsApp) | **novo** |
+| Ilustrações e "4 equipes disputando" | times: nome, imagem, cor, contagem | já existe |
+| "4ª edição" | número da edição | **novo** |
+| "13h–18h30 de brincadeira", data, local | data, horários, endereço, link do Maps | já existe |
+| "O dia, resumido" e cronograma | programação: horário, título, detalhe, destaque | **novo** |
+| "Antes de vir, já separa" | recomendações (hoje só no obrigado e no WhatsApp) | já existe (reuso confirmado) |
+| Regras gerais (ex.: brinquedos infláveis) | texto rico | **novo** |
+| Dúvidas | perguntas e respostas | **novo** |
+| Fotos das edições anteriores | link do álbum | **novo** |
+| Rodapé "Fale com a gente" | contatos: nome e WhatsApp | **novo** |
+| Imagem ao compartilhar o link | imagem de capa | já existe (**hoje não aparece em lugar nenhum**, apesar da ajuda do campo dizer "topo do formulário") |
+| Qual evento vai para `/` | evento publicado ou em preparação | **novo** |
+
+**Dados novos** (detalhe técnico em "Página inicial (F7)")
+- **eventos** (colunas): `publicado` boolean (eventos atuais migram como publicados), `edicao` smallint, `subtitulo` text (≤ 80), `descricao` text (≤ 300), `link_fotos` text (https), `regras_gerais` jsonb (texto rico).
+- **programacao**: id, evento_id, `hora_inicio`, `hora_fim` (opcional), `titulo`, `detalhe` (ex.: "casais: Sopro do Amor"), `brincadeira_id` (opcional, mesmo evento), `destaque` (entra no resumo), ordem pelo horário.
+- **perguntas_frequentes**: id, evento_id, `pergunta`, `resposta` (texto rico), `ordem`.
+- **contatos**: id, evento_id, `nome`, `whatsapp` (`^55\d{10,11}$`), `ordem`.
+- Leitura pública por uma RPC nova (`obter_pagina_inicial()`), no mesmo padrão das atuais: anônimo nunca lê tabelas.
+
 ## Decisões menores confirmadas
 - Itens 6 e 7 da mensagem original eram duplicados.
 - Brincadeiras **individuais** (um contra o outro): o sistema **não sorteia confrontos**; só lista os participantes. Os confrontos são feitos no dia.
 
 ## Pontos ainda em aberto
-_(nenhum; levantamento de requisitos concluído e revisado)_
+_(nenhum; página inicial P1–P12 respondida em 17/09/2026: 1 sim, 2 todas as seções, 3 completa, 4 recomendado, 5 por evento, 6 sempre)_
 
 ---
 
@@ -331,6 +377,40 @@ Outbox → worker `POST /api/tarefas/outbox` (responde 202 e processa em `after(
 - `.env.example`: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `APP_URL`, `CRON_SECRET`, `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCE`, `WHATSAPP_ENVIO_ATIVO`. Validados em `src/lib/env.ts`. Nunca sobrescrever `.env` existente sem perguntar.
 - dev: `supabase start` + `supabase db reset`; test: `.env.test` contra o mesmo Supabase local, reset antes da suíte; prod: projeto Supabase cloud + Vercel (Vault com `worker_url` e `cron_secret`, `supabase db push`).
 
+## Página inicial (F7)
+Requisitos P1–P12. Visual: template do designer sobre o kit `branding/` (degradê com grão, Baloo 2, Caveat no subtítulo).
+
+**Banco — `0014_pagina_inicial.sql`**
+- `eventos` ganha: `publicado boolean not null default false` (a migration marca os existentes como `true`), `edicao smallint check (> 0)`, `subtitulo text` (≤ 80), `descricao text` (≤ 300), `link_fotos text` (`^https://`), `regras_gerais jsonb`.
+- **programacao**: id, evento_id, `hora_inicio time not null`, `hora_fim time` (nulo ou > início), `titulo` (2–80), `detalhe` (≤ 120), `brincadeira_id` com FK composta `(brincadeira_id, evento_id)` e `on delete set null (brincadeira_id)` (Postgres 17), `destaque boolean default false`. Ordem sempre pelo horário, sem coluna de ordem.
+- **perguntas_frequentes**: id, evento_id, `pergunta` (5–160), `resposta jsonb not null` (texto rico), `ordem`.
+- **contatos**: id, evento_id, `nome` (2–60), `whatsapp` (`^55\d{10,11}$`), `ordem`.
+- RLS igual à de times: leitura para qualquer perfil ativo, escrita só administrador.
+- `evento_publico_json(e)`: extrai o JSON que `obter_evento_publico` já monta (mais `subtitulo`, `descricao`, `edicao`), para as duas RPCs não duplicarem campos.
+- `obter_evento_publico(slug)` passa a filtrar `publicado`. `/[slug]` e `/[slug]/obrigado` dão 404 para evento não publicado.
+- `obter_pagina_inicial()` (anon, `security definer`): escolhe o evento (publicado; menor `data_evento >= hoje` em `America/Sao_Paulo`, senão o maior `data_evento` anterior) e devolve `evento_publico_json` + `programacao[]` + `perguntas[]` + `contatos[]` + `times[]` (nome, imagem, cor, ícone) + `brincadeiras[]` ativas (nome, foto, categoria, formato, lotada). Nunca expõe inscritos.
+- `criar_inscricao` recusa evento não publicado (`inscricoes_fechadas`, motivo `nao_publicado`). `motivo_fechado` não muda, porque a montagem de times depende dele; a inclusão pelo painel continua liberada.
+- `copiar_contatos_e_duvidas(p_evento_id)` (security invoker): copia do evento mais recente anterior; chamada ao criar evento (P11).
+- `pnpm db:types`.
+
+**Módulos puros (`src/lib/pagina-inicial/`, com testes)**
+- `fase.ts`: `faseDaPagina(evento, agora)` → `em_breve` (inscrições ainda não abriram) | `abertas` | `encerradas` (motivo) | `realizado` (depois de data + hora de fim, em São Paulo). Reusa `statusInscricoes`.
+- `programacao.ts`: `resumoDoDia(itens)` (destaques; sem destaque marcado, os 4 primeiros) e `faixaHorario(inicio, fim)` ("14h30 – 15h15").
+- `schema.ts`: zod de programação, pergunta e contato; campos novos em `schemaEvento`.
+
+**Público**
+- `src/features/pagina-inicial/`: `carregar.ts` (RPC → tipos) e `PaginaInicial.tsx`, que recebe os dados prontos (reusada na prévia do painel). Seções em Server Components, **sem JS no cliente** (menu do celular e dúvidas com `<details>`): `Topo` (logo horizontal, âncoras das seções presentes, botão), `Destaque` (degradê, subtítulo, título, descrição, botão conforme a fase, imagens dos times), `Numeros` (edição, horário, times), `Programacao` (resumo em cartões + lista completa), `AntesDeVir` (recomendações), `Regras`, `Brincadeiras`, `Times`, `Duvidas`, `Fotos`, `Rodape` (subtítulo, data, local, contatos com `wa.me`). Seção sem dados não renderiza, nem a âncora dela.
+- `src/app/page.tsx`: `force-dynamic` (mesmo critério do `/[slug]`); sem evento publicado, mantém a capa atual. `generateMetadata`: título, descrição e imagem de prévia (capa; sem capa, `branding/assets/og-recreativa.png` 1200×630 com degradê e logo, gerado uma vez).
+- `/[slug]`: boas-vindas sempre (`montarEtapas` sem condição); `BoasVindasStep` redesenhado com capa (ou degradê), subtítulo, nome, data, horário, local com Maps, valor (se > 0) e texto; `generateMetadata` com descrição e imagem. Ajuste na ajuda do campo capa.
+
+**Painel**
+- `FormularioEvento`: nova seção "Página inicial" (edição, subtítulo, descrição com contador, link das fotos, regras gerais). Se passar de ~250 linhas, dividir em componentes por seção.
+- `PainelStatus`: chave **Publicado / Em preparação** (ação `publicar_evento`, só administrador), link `/[slug]`, link `/` quando o evento é o da página inicial e botão **Prévia**.
+- `CartaoPaginaInicial` no painel do evento: contagem de itens de programação, dúvidas e contatos, com atalhos.
+- Rotas `/painel/eventos/[id]/programacao`, `/duvidas`, `/contatos`: lista + `nova` + `[item]/editar`, no padrão de brincadeiras. Dúvidas e contatos reordenáveis com `ListaOrdenavel`; programação ordenada pelo horário, com seletor de brincadeira e chave de destaque.
+- `/painel/eventos/[id]/previa`: `PaginaInicial` com dados lidos pelo cliente autenticado (RLS), faixa "Prévia" no topo. Funciona com o evento ainda não publicado.
+- `salvarEvento` (criação): chama `copiar_contatos_e_duvidas` e o evento nasce não publicado.
+
 ## Fases de entrega
 Cada fase termina com commit e push na `main` (ver "Git e GitHub").
 1. **F0 Bootstrap**: `git init` + `.gitignore` + primeiro commit + `gh repo create --public`; Next 16 + kit CSS + fontes; Supabase local com `enable_signup = false`; migrations base (extensões, enums, eventos, usuarios_painel, admin inicial, RLS); `env.ts`; Vitest/Playwright; lint/typecheck; CI no GitHub Actions; Vercel conectada ao repositório. Verificável: repositório público no ar com CI verde, `supabase db reset` limpo cria o admin inicial, `pnpm test` verde, deploy de produção mostrando a logo.
@@ -340,6 +420,11 @@ Cada fase termina com commit e push na `main` (ver "Git e GitHub").
 5. **F4 Times**: módulo puro com testes primeiro; CRUD de times; montagem, DnD, confirmação e diff. Verificável: 4 times com 30 crianças e 20 jovens ficam ±1 e média de idade próxima; conflito responsável+irmãos retorna erro estruturado.
 6. **F5 WhatsApp**: Evolution, outbox, templates, worker, pg_cron + Vault, lembrete, reenvio, status no painel. Verificável: mensagem chega no número de teste; chave duplicada não reenvia; 5xx entra em retentativa; lembrete enfileirado uma única vez no minuto certo.
 7. **F6 Operação**: README (restaurar projeto Supabase pausado, primeiro acesso do admin, rotacionar segredos, aplicar migrations), Lighthouse e bundle analyzer, revisão de acessibilidade.
+8. **F7 Página inicial** (ver "Página inicial (F7)"), em quatro etapas com commit e push cada:
+   - **F7.1 Banco**: migration 0014, RPCs, tipos, schemas e módulos puros com testes. Verificável: `db reset` limpo; `obter_pagina_inicial` escolhe o próximo evento, cai para o último realizado e ignora não publicados; `/[slug]` de evento não publicado dá 404; `criar_inscricao` recusa não publicado.
+   - **F7.2 Painel**: campos novos, chave publicar, programação/dúvidas/contatos, cópia ao criar evento e prévia. Verificável: operador e analítico não editam; evento novo nasce não publicado já com contatos e dúvidas do anterior; prévia mostra o evento em preparação.
+   - **F7.3 Página inicial `/`**: seções, fases e metadados. Verificável no navegador (celular e desktop, claro e escuro): sem evento publicado; inscrições em breve, abertas, encerradas por limite; evento realizado; seções vazias somem; prévia do link com título, descrição e imagem.
+   - **F7.4 Boas-vindas do `/[slug]`**: tela sempre visível com capa e dados do evento. Verificável: fluxo completo de inscrição a partir da `/`; testes de `montarEtapas` atualizados.
 
 ## Verificação
 - Automatizada: `pnpm typecheck && pnpm lint && pnpm test` (unitários: idade, nome, elegibilidade, reducer/etapas, montagem, templates; integração: RPCs contra Supabase local), `pnpm e2e` (Playwright, iPhone 13: casado com 1 filho até "obrigado"; recarga preservando rascunho; nome duplicado volta à etapa do nome).

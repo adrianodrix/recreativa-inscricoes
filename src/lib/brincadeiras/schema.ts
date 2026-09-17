@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { schemaTextoRico, textoRicoVazio, type TextoRico } from "@/lib/texto-rico/schema";
+import { textoRicoObrigatorio } from "@/lib/texto-rico/campo";
 
 export const CATEGORIAS = ["casais", "jovens", "criancas", "pais_e_filhos"] as const;
 export type Categoria = (typeof CATEGORIAS)[number];
@@ -16,15 +16,6 @@ export const UNIDADE_VAGA: Record<Categoria, string> = {
   pais_e_filhos: "duplas",
 };
 
-const regras = z.string().transform((v, ctx): TextoRico => {
-  const parsed = v.trim() ? schemaTextoRico.safeParse(JSON.parse(v)) : null;
-  if (!parsed?.success || textoRicoVazio(parsed.data)) {
-    ctx.addIssue({ code: "custom", message: "Escreva as regras da brincadeira" });
-    return z.NEVER;
-  }
-  return parsed.data;
-});
-
 export const schemaBrincadeira = z
   .object({
     nome: z.string().trim().min(2, "Informe o nome").max(120, "Nome muito longo"),
@@ -37,7 +28,7 @@ export const schemaBrincadeira = z
       .transform((v) => v || null)
       .refine((v) => v === null || /^https:\/\//.test(v), "O link do vídeo precisa começar com https://"),
     foto_path: z.string().transform((v) => v || null),
-    regras,
+    regras: textoRicoObrigatorio("Escreva as regras da brincadeira"),
     ativo: z.preprocess((v) => v === "on" || v === "true", z.boolean()),
   })
   .transform((d) => ({ ...d, formato: d.categoria === "casais" ? null : d.formato || "em_grupo" }));

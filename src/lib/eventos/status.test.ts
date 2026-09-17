@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { statusInscricoes } from "./status";
 
 const evento = {
+  publicado: true,
   aberto_manual: true,
   inscricoes_inicio: "2026-09-01T00:00:00-03:00",
   inscricoes_fim: "2026-10-01T00:00:00-03:00",
@@ -12,6 +13,10 @@ const dentro = new Date("2026-09-15T12:00:00-03:00");
 describe("statusInscricoes", () => {
   it("abre dentro do período com vagas e chave ligada", () => {
     expect(statusInscricoes(evento, 10, dentro)).toEqual({ aberto: true, motivo: null });
+  });
+
+  it("fecha enquanto o evento está em preparação", () => {
+    expect(statusInscricoes({ ...evento, publicado: false }, 10, dentro).motivo).toBe("nao_publicado");
   });
 
   it("fecha por chave manual, mesmo dentro do período", () => {

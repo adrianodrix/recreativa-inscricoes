@@ -37,6 +37,11 @@ export function formatarDataExtenso(dataIso: string): string {
   );
 }
 
+/* Data do evento + hora no fuso de Brasília → instante exato. */
+export function instanteDoEvento(data: string, hora: string): Date {
+  return new Date(`${data}T${formatarHora(hora)}:00${OFFSET}`);
+}
+
 /* "08:30:00" ou "08:30" → "08:30" */
 export function formatarHora(hora: string): string {
   return hora.slice(0, 5);

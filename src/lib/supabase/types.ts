@@ -182,6 +182,44 @@ export type Database = {
           },
         ]
       }
+      contatos: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          evento_id: string
+          id: string
+          nome: string
+          ordem: number
+          whatsapp: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          evento_id: string
+          id?: string
+          nome: string
+          ordem?: number
+          whatsapp: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          evento_id?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          whatsapp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contatos_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eventos: {
         Row: {
           aberto_manual: boolean
@@ -191,6 +229,8 @@ export type Database = {
           capa_path: string | null
           criado_em: string
           data_evento: string
+          descricao: string | null
+          edicao: number | null
           endereco: string
           hora_fim: string
           hora_inicio: string
@@ -198,14 +238,18 @@ export type Database = {
           inscricoes_fim: string
           inscricoes_inicio: string
           limite_inscritos: number
+          link_fotos: string | null
           link_maps: string
           montagem_confirmada_em: string | null
           montagem_confirmada_por: string | null
           montagem_semente: number | null
           montagem_status: Database["public"]["Enums"]["status_montagem"]
           nome: string
+          publicado: boolean
           recomendacoes: Json | null
+          regras_gerais: Json | null
           slug: string
+          subtitulo: string | null
           valor_inscricao: number
         }
         Insert: {
@@ -216,6 +260,8 @@ export type Database = {
           capa_path?: string | null
           criado_em?: string
           data_evento: string
+          descricao?: string | null
+          edicao?: number | null
           endereco: string
           hora_fim: string
           hora_inicio: string
@@ -223,14 +269,18 @@ export type Database = {
           inscricoes_fim: string
           inscricoes_inicio: string
           limite_inscritos: number
+          link_fotos?: string | null
           link_maps: string
           montagem_confirmada_em?: string | null
           montagem_confirmada_por?: string | null
           montagem_semente?: number | null
           montagem_status?: Database["public"]["Enums"]["status_montagem"]
           nome: string
+          publicado?: boolean
           recomendacoes?: Json | null
+          regras_gerais?: Json | null
           slug: string
+          subtitulo?: string | null
           valor_inscricao?: number
         }
         Update: {
@@ -241,6 +291,8 @@ export type Database = {
           capa_path?: string | null
           criado_em?: string
           data_evento?: string
+          descricao?: string | null
+          edicao?: number | null
           endereco?: string
           hora_fim?: string
           hora_inicio?: string
@@ -248,14 +300,18 @@ export type Database = {
           inscricoes_fim?: string
           inscricoes_inicio?: string
           limite_inscritos?: number
+          link_fotos?: string | null
           link_maps?: string
           montagem_confirmada_em?: string | null
           montagem_confirmada_por?: string | null
           montagem_semente?: number | null
           montagem_status?: Database["public"]["Enums"]["status_montagem"]
           nome?: string
+          publicado?: boolean
           recomendacoes?: Json | null
+          regras_gerais?: Json | null
           slug?: string
+          subtitulo?: string | null
           valor_inscricao?: number
         }
         Relationships: []
@@ -497,6 +553,98 @@ export type Database = {
           },
         ]
       }
+      perguntas_frequentes: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          evento_id: string
+          id: string
+          ordem: number
+          pergunta: string
+          resposta: Json
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          evento_id: string
+          id?: string
+          ordem?: number
+          pergunta: string
+          resposta: Json
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          evento_id?: string
+          id?: string
+          ordem?: number
+          pergunta?: string
+          resposta?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perguntas_frequentes_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      programacao: {
+        Row: {
+          atualizado_em: string
+          brincadeira_id: string | null
+          criado_em: string
+          destaque: boolean
+          detalhe: string | null
+          evento_id: string
+          hora_fim: string | null
+          hora_inicio: string
+          id: string
+          titulo: string
+        }
+        Insert: {
+          atualizado_em?: string
+          brincadeira_id?: string | null
+          criado_em?: string
+          destaque?: boolean
+          detalhe?: string | null
+          evento_id: string
+          hora_fim?: string | null
+          hora_inicio: string
+          id?: string
+          titulo: string
+        }
+        Update: {
+          atualizado_em?: string
+          brincadeira_id?: string | null
+          criado_em?: string
+          destaque?: boolean
+          detalhe?: string | null
+          evento_id?: string
+          hora_fim?: string | null
+          hora_inicio?: string
+          id?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "programacao_brincadeira_id_evento_id_fkey"
+            columns: ["brincadeira_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "brincadeiras"
+            referencedColumns: ["id", "evento_id"]
+          },
+          {
+            foreignKeyName: "programacao_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       times: {
         Row: {
           atualizado_em: string
@@ -599,6 +747,10 @@ export type Database = {
       chamar_worker_whatsapp: { Args: never; Returns: undefined }
       comida_disponivel: { Args: { p_evento_id: string }; Returns: Json }
       confirmar_montagem: { Args: { p_evento_id: string }; Returns: string[] }
+      copiar_contatos_e_duvidas: {
+        Args: { p_evento_id: string }
+        Returns: undefined
+      }
       criar_inscricao: { Args: { p: Json }; Returns: Json }
       criar_inscricao_interno: {
         Args: { p: Json; p_ignorar_status: boolean }
@@ -634,6 +786,14 @@ export type Database = {
         Args: { e: Database["public"]["Tables"]["eventos"]["Row"] }
         Returns: string
       }
+      evento_publico_json: {
+        Args: {
+          e: Database["public"]["Tables"]["eventos"]["Row"]
+          p_total: number
+        }
+        Returns: Json
+      }
+      exigir_administrador: { Args: never; Returns: undefined }
       exigir_operador: { Args: never; Returns: undefined }
       inserir_pessoa: {
         Args: {
@@ -669,6 +829,7 @@ export type Database = {
       }
       normalizar_nome: { Args: { nome: string }; Returns: string }
       obter_evento_publico: { Args: { p_slug: string }; Returns: Json }
+      obter_pagina_inicial: { Args: never; Returns: Json }
       painel_definir_comida: {
         Args: { p_inscrito_id: string; p_tipo: string }
         Returns: undefined
