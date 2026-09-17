@@ -7,11 +7,13 @@ import { pode } from "@/lib/auth/permissoes";
 import { listarBrincadeiras } from "@/lib/brincadeiras/consultas";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { resumirInscritos } from "@/lib/inscritos/consultas";
+import { listarTimes } from "@/lib/times/consultas";
 import { PainelStatus } from "../PainelStatus";
 import { CartaoWhatsapp } from "../CartaoWhatsapp";
 import { CartaoBrincadeiras } from "./CartaoBrincadeiras";
 import { CartaoCategorias } from "./CartaoCategorias";
 import { CartaoComida } from "./CartaoComida";
+import { CartaoTimes } from "./CartaoTimes";
 import styles from "../../painel.module.css";
 
 interface Props {
@@ -28,7 +30,7 @@ export async function generateMetadata({ params }: Pick<Props, "params">) {
 /* Painel do evento: situação das inscrições, atalhos e números. A edição fica em /editar. */
 export default async function PaginaEvento({ params, searchParams }: Props) {
   const [{ id }, query, usuario] = await Promise.all([params, searchParams, exigirLogin()]);
-  const [evento, resumo, brincadeiras] = await Promise.all([obterEvento(id), resumirInscritos(id), listarBrincadeiras(id)]);
+  const [evento, resumo, brincadeiras, times] = await Promise.all([obterEvento(id), resumirInscritos(id), listarBrincadeiras(id), listarTimes(id)]);
   if (!evento) notFound();
 
   return (
@@ -56,6 +58,7 @@ export default async function PaginaEvento({ params, searchParams }: Props) {
         </nav>
         <CartaoCategorias contagem={resumo.porCategoria} />
         <CartaoBrincadeiras brincadeiras={brincadeiras} />
+        <CartaoTimes times={times} elegiveis={resumo.porCategoria.crianca + resumo.porCategoria.jovem} montagem={evento.montagem_status} />
         <CartaoComida limites={evento.limites} contagem={resumo.comida} />
         <CartaoWhatsapp eventoId={id} perfil={usuario.perfil} />
       </div>
