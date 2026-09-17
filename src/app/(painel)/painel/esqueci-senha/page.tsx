@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Logo } from "@/components/marca/Logo";
 import { FormularioEsqueci } from "./FormularioEsqueci";
 import styles from "../auth.module.css";
 
@@ -8,7 +8,7 @@ export default function PaginaEsqueciSenha() {
   return (
     <main className={styles.pagina}>
       <div className={styles.cartao}>
-        <Image src="/marca/logo-recreativa-roxo.svg" alt="Recreativa" width={192} height={114} className={styles.logo} priority />
+        <Logo largura={192} prioridade className={styles.logo} />
         <h1 className={styles.titulo}>Definir nova senha</h1>
         <FormularioEsqueci />
       </div>

@@ -19,9 +19,14 @@ export type Env = z.infer<typeof schema>;
 
 let cache: Env | undefined;
 
+/* Linhas vazias no .env (ex.: EVOLUTION_API_URL=) contam como ausentes. */
+function semVazios(origem: NodeJS.ProcessEnv): Record<string, string | undefined> {
+  return Object.fromEntries(Object.entries(origem).map(([k, v]) => [k, v === "" ? undefined : v]));
+}
+
 export function env(): Env {
   if (cache) return cache;
-  const resultado = schema.safeParse(process.env);
+  const resultado = schema.safeParse(semVazios(process.env));
   if (!resultado.success) {
     const problemas = resultado.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`);
     throw new Error(`Variáveis de ambiente inválidas:\n${problemas.join("\n")}`);

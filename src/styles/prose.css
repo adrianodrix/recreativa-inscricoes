@@ -1,0 +1,107 @@
+/* Texto rico (regras, agradecimento, recomendações) e área do editor. */
+.rc-prose {
+  display: grid;
+  gap: var(--spacing-3);
+  font-family: var(--font-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.rc-prose p {
+  margin: 0;
+}
+.rc-prose ul,
+.rc-prose ol {
+  margin: 0;
+  padding-left: var(--spacing-6);
+  display: grid;
+  gap: var(--spacing-1);
+}
+.rc-prose strong {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Editor Tiptap dentro de um campo do kit */
+.rc-editor {
+  display: grid;
+  gap: var(--spacing-2);
+}
+.rc-editor__area {
+  min-height: 8rem;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.rc-editor__area:focus-within {
+  border-color: var(--color-focus-ring);
+  outline: 2px solid var(--rc-focus, var(--color-focus-ring));
+  outline-offset: 1px;
+}
+.rc-editor__area[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+.rc-editor__area .tiptap {
+  outline: none;
+  min-height: 7rem;
+}
+.rc-editor__area .tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--color-text-placeholder);
+  pointer-events: none;
+}
+.rc-editor__barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+}
+.rc-editor__botao {
+  --btn-height: 2.25rem;
+  width: var(--btn-height);
+  padding-inline: 0;
+}
+.rc-editor__botao[aria-pressed="true"] {
+  background: var(--color-secondary-soft);
+  color: var(--color-on-secondary-soft);
+}
+.rc-editor__cores {
+  display: flex;
+  gap: var(--spacing-1);
+  align-items: center;
+}
+.rc-editor__cor {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+.rc-editor__cor[aria-pressed="true"] {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+.rc-editor__emojis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-md);
+}
+.rc-editor__emoji {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--text-xl);
+  cursor: pointer;
+}
+.rc-editor__emoji:hover {
+  background: var(--color-neutral-soft);
+}

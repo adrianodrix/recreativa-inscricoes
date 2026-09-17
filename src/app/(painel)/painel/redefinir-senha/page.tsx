@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Logo } from "@/components/marca/Logo";
 import { redirect } from "next/navigation";
 import { FormularioSenha } from "@/components/formulario/FormularioSenha";
 import { criarClienteServidor } from "@/lib/supabase/server";
@@ -17,7 +17,7 @@ export default async function PaginaRedefinirSenha() {
   return (
     <main className={styles.pagina}>
       <div className={styles.cartao}>
-        <Image src="/marca/logo-recreativa-roxo.svg" alt="Recreativa" width={192} height={114} className={styles.logo} priority />
+        <Logo largura={192} prioridade className={styles.logo} />
         <h1 className={styles.titulo}>Escolha sua senha</h1>
         <p className="rc-hint">Conta: {user.email}</p>
         <FormularioSenha acao={redefinirSenha} className={styles.formulario} />

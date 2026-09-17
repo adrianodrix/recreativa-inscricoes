@@ -215,9 +215,10 @@ web3 = 30
 # provider = "hcaptcha"
 # secret = ""
 
+# enable_signup aqui liga o PROVEDOR de e-mail (login e recuperação). Novos cadastros são bloqueados por [auth] enable_signup = false.
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-enable_signup = false
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true

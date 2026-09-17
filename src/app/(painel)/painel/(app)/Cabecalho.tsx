@@ -1,5 +1,5 @@
 import { KeyRound, LogOut } from "lucide-react";
-import Image from "next/image";
+import { Logo } from "@/components/marca/Logo";
 import Link from "next/link";
 import type { UsuarioPainel } from "@/lib/auth/perfil";
 import { pode, ROTULO_PERFIL } from "@/lib/auth/permissoes";
@@ -11,7 +11,7 @@ export function Cabecalho({ usuario }: { usuario: UsuarioPainel }) {
     <header className={`rc-surface-brand ${styles.cabecalho}`}>
       <div className={styles.barra}>
         <Link href="/painel/eventos" aria-label="Painel · início">
-          <Image src="/marca/logo-recreativa-branco.svg" alt="Recreativa" width={120} height={71} className={styles.logo} priority />
+          <Logo variante="branco" largura={120} prioridade className={styles.logo} />
         </Link>
         <nav aria-label="Principal">
           <ul className={styles.nav}>

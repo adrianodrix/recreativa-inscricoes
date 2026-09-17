@@ -19,8 +19,8 @@
 }
 
 .logo {
+  display: block;
   width: 7.5rem;
-  height: auto;
 }
 
 .nav {

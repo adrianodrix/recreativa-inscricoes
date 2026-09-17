@@ -2,6 +2,7 @@
 @import "../../branding/tokens.css";
 @import "../../branding/theme-dark.css";
 @import "../../branding/components/index.css";
+@import "../styles/prose.css";
 
 /* Fontes carregadas por next/font (ver app/layout.tsx) substituem o <link> do kit. */
 :root {

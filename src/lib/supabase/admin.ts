@@ -2,6 +2,7 @@ import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { env } from "@/lib/env";
 import { envPublico } from "@/lib/env-publico";
+import type { Database } from "./types";
 
 /*
  * Cliente com a chave secreta (ignora RLS). Uso restrito: worker de WhatsApp e
@@ -10,7 +11,7 @@ import { envPublico } from "@/lib/env-publico";
 export function criarClienteAdmin() {
   const chave = env().SUPABASE_SECRET_KEY;
   if (!chave) throw new Error("SUPABASE_SECRET_KEY não configurada");
-  return createClient(envPublico.supabaseUrl, chave, {
+  return createClient<Database>(envPublico.supabaseUrl, chave, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

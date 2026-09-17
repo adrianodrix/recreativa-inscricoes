@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Logo } from "@/components/marca/Logo";
 import { FormularioLogin } from "./FormularioLogin";
 import styles from "../auth.module.css";
 
@@ -15,7 +15,7 @@ export default async function PaginaLogin({ searchParams }: Props) {
   return (
     <main className={styles.pagina}>
       <div className={styles.cartao}>
-        <Image src="/marca/logo-recreativa-roxo.svg" alt="Recreativa" width={192} height={114} className={styles.logo} priority />
+        <Logo largura={192} prioridade className={styles.logo} />
         <h1 className={styles.titulo}>Painel dos organizadores</h1>
         <FormularioLogin voltar={voltar} avisoInicial={aviso} />
       </div>

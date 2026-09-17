@@ -1,0 +1,21 @@
+.logo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.claro {
+  display: block;
+}
+
+.escuro {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .claro {
+  display: none;
+}
+
+:global(:root[data-theme="dark"]) .escuro {
+  display: block;
+}
