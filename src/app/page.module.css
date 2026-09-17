@@ -1,0 +1,19 @@
+.capa {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--spacing-6);
+  min-height: 100dvh;
+  padding: var(--spacing-8) var(--spacing-4);
+  text-align: center;
+}
+
+.logo {
+  width: min(320px, 80vw);
+  height: auto;
+}
+
+.texto {
+  max-width: 28rem;
+  color: var(--color-text-on-brand);
+}

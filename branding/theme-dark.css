@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Recreativa — tema escuro
+   --------------------------------------------------------------------------
+   Carregue DEPOIS de tokens.css. Só os tokens semânticos e as sombras mudam;
+   a paleta (laranja, roxo, neutro, noite) é a mesma nos dois temas.
+
+   Ativação: data-theme="dark" | "light" no <html>. Para seguir o sistema e
+   lembrar a escolha, rode este script no <head>, antes do CSS pintar:
+
+   <script>
+     try {
+       var tema = localStorage.getItem("theme") ||
+         (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+       document.documentElement.dataset.theme = tema;
+     } catch (e) {}
+   </script>
+
+   Next.js: next-themes com <ThemeProvider attribute="data-theme" defaultTheme="system">.
+   Contrastes WCAG medidos contra o fundo escuro indicado entre parênteses.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark; /* controles nativos (checkbox, select, rolagem) no escuro */
+
+  /* Superfícies — fundo quase preto no matiz do roxo; quanto mais alto, mais claro */
+  --color-bg: var(--color-noite-900);
+  --color-surface: var(--color-noite-800);
+  --color-surface-raised: var(--color-noite-700);
+  --color-surface-brand: var(--color-roxo-900);
+
+  /* Texto */
+  --color-text: var(--color-neutro-50); /* 17.8:1 (bg) · 14.7:1 (raised) */
+  --color-text-heading: var(--color-roxo-100); /* 16.3:1 (bg) · 13.5:1 (raised) */
+  --color-text-muted: var(--color-neutro-400); /* 9.1:1 (bg) · 7.5:1 (raised) */
+  --color-text-placeholder: var(--color-neutro-400);
+  --color-text-on-brand: var(--color-neutro-0); /* 12.6:1 (surface-brand) */
+  --color-text-accent-on-brand: var(--color-laranja-400); /* 5.4:1 (surface-brand) */
+
+  /* Bordas */
+  --color-border: var(--color-noite-600);
+  --color-border-strong: var(--color-noite-500);
+  --color-border-input: var(--color-noite-400); /* 5.2:1 (bg) · 4.4:1 (raised) */
+
+  /* Ações — primária continua laranja com texto roxo; secundária clareia */
+  --color-primary: var(--color-laranja-400);
+  --color-primary-hover: var(--color-laranja-300);
+  --color-on-primary: var(--color-roxo-950); /* 6.8:1 · 9.2:1 no hover */
+  --color-secondary: var(--color-roxo-300);
+  --color-secondary-hover: var(--color-roxo-200);
+  --color-on-secondary: var(--color-roxo-950); /* 9.4:1 · 11.4:1 no hover */
+
+  /* Tons suaves */
+  --color-primary-soft: #492614;
+  --color-on-primary-soft: var(--color-laranja-200); /* 9.5:1 */
+  --color-secondary-soft: #332754;
+  --color-on-secondary-soft: var(--color-roxo-200); /* 9.6:1 · link 7.9:1 */
+  --color-neutral-soft: var(--color-noite-600);
+  --color-on-neutral-soft: var(--color-neutro-200);
+  --color-disabled: var(--color-noite-800);
+  --color-on-disabled: var(--color-neutro-600);
+
+  /* Links e foco — no escuro o anel de foco é laranja em todo lugar */
+  --color-link: var(--color-roxo-300); /* 11.2:1 (bg) · 9.3:1 (raised) */
+  --color-link-hover: var(--color-roxo-200);
+  --color-focus-ring: var(--color-laranja-400); /* 8.2:1 (bg) · 6.8:1 (raised) */
+  --color-focus-ring-on-brand: var(--color-laranja-400); /* 5.4:1 */
+
+  /* Feedback — texto claro sobre fundo escuro do mesmo matiz */
+  --color-success: #7fe196; /* 9.3:1 (success-bg) · 9.9:1 (raised) */
+  --color-success-bg: #132d19;
+  --color-success-border: #32653e;
+  --color-warning: #f9ba5f; /* 8.8:1 (warning-bg) · 9.3:1 (raised) */
+  --color-warning-bg: #33230a;
+  --color-warning-border: #715120;
+  --color-danger: #ffb0a6; /* 8.8:1 (danger-bg) · 9.1:1 (raised) */
+  --color-danger-bg: #3c1b18;
+  --color-danger-border: #83423c;
+  --color-info: #9cccff; /* 8.9:1 (info-bg) · 9.5:1 (raised) */
+  --color-info-bg: #16283a;
+  --color-info-border: #375b7f;
+
+  /* Sombras — no escuro, preto mais denso; a elevação vem da superfície mais clara */
+  --shadow-sm: 0 1px 2px #00000066;
+  --shadow-md: 0 2px 4px #0000004d, 0 6px 16px -4px #00000080;
+  --shadow-lg: 0 4px 12px #00000066, 0 20px 40px -12px #000000b3;
+}

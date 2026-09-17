@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Botão — pílula que ecoa a órbita do logo
+   <button class="rc-btn rc-btn--primary">Fazer inscrição</button>
+   Sem modificador de cor = botão discreto (texto roxo, sem fundo).
+   Em .rc-surface-brand use só primária ou discreto (secundária some no roxo).
+   ========================================================================== */
+
+.rc-btn {
+  --btn-bg: transparent;
+  --btn-bg-hover: var(--rc-quiet-hover, var(--color-secondary-soft));
+  --btn-fg: var(--rc-quiet-fg, var(--color-link));
+  --btn-height: 2.75rem; /* 44px: alvo de toque mínimo */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  box-sizing: border-box;
+  min-height: var(--btn-height);
+  padding-inline: var(--spacing-6);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-snug);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+.rc-btn:hover {
+  background: var(--btn-bg-hover);
+}
+.rc-btn:focus-visible {
+  outline: 2px solid var(--rc-focus, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+
+/* Cores */
+.rc-btn--primary {
+  --btn-bg: var(--color-primary);
+  --btn-bg-hover: var(--color-primary-hover);
+  --btn-fg: var(--color-on-primary);
+}
+.rc-btn--secondary {
+  --btn-bg: var(--color-secondary);
+  --btn-bg-hover: var(--color-secondary-hover);
+  --btn-fg: var(--color-on-secondary);
+}
+
+/* Tamanhos */
+.rc-btn--sm {
+  --btn-height: 2.25rem;
+  padding-inline: var(--spacing-4);
+  font-size: var(--text-sm);
+}
+.rc-btn--lg {
+  --btn-height: 3.25rem;
+  padding-inline: var(--spacing-8);
+  font-size: var(--text-lg);
+}
+.rc-btn--block {
+  display: flex;
+  width: 100%;
+}
+/* Só ícone: exige aria-label */
+.rc-btn--icon {
+  width: var(--btn-height);
+  padding-inline: 0;
+}
+
+/* Estados */
+.rc-btn:disabled,
+.rc-btn[aria-disabled="true"] {
+  background: var(--color-disabled);
+  color: var(--color-on-disabled);
+  cursor: not-allowed;
+}
+.rc-btn[aria-busy="true"] {
+  cursor: progress;
+}
+.rc-btn[aria-busy="true"] .rc-icon {
+  animation: rc-spin 1s linear infinite;
+}
+@keyframes rc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

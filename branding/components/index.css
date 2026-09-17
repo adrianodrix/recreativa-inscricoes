@@ -1,0 +1,13 @@
+/* ==========================================================================
+   Recreativa — componentes
+   Carregue ../tokens.css ANTES deste arquivo. Cada componente também pode
+   ser importado sozinho, desde que base.css venha primeiro.
+   ========================================================================== */
+
+@import "./base.css";
+@import "./button.css";
+@import "./field.css";
+@import "./choice.css";
+@import "./alert.css";
+@import "./badge.css";
+@import "./card.css";

@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Campo — rótulo, controle (input, textarea, select), ajuda e erro
+   <div class="rc-field">
+     <label class="rc-label" for="nome">Nome completo</label>
+     <input class="rc-input" id="nome" aria-describedby="nome-ajuda">
+     <p class="rc-hint" id="nome-ajuda">Como aparece no documento.</p>
+   </div>
+   Select: <div class="rc-select"><select class="rc-input">…</select></div>
+   ========================================================================== */
+
+.rc-field {
+  display: grid;
+  align-content: start; /* não estica ao lado de um campo com erro */
+  gap: var(--spacing-2);
+}
+
+.rc-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+}
+.rc-label__optional {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+}
+
+.rc-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base); /* nunca menor: evita zoom no iOS */
+  line-height: var(--leading-normal);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.rc-input::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+.rc-input:hover {
+  border-color: var(--color-text-muted);
+}
+.rc-input:focus-visible {
+  border-color: var(--color-focus-ring);
+  outline: 2px solid var(--rc-focus, var(--color-focus-ring));
+  outline-offset: 1px;
+}
+.rc-input[aria-invalid="true"] {
+  border-color: var(--color-danger); /* danger-border não atinge 3:1 */
+}
+.rc-input:disabled {
+  border-color: var(--color-border);
+  background: var(--color-disabled);
+  color: var(--color-on-disabled);
+  cursor: not-allowed;
+}
+textarea.rc-input {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.rc-hint,
+.rc-error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+.rc-hint {
+  color: var(--color-text-muted);
+}
+.rc-error {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-danger);
+}
+.rc-error .rc-icon {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+
+/* Select com seta Lucide chevron-down */
+.rc-select {
+  position: relative;
+}
+.rc-select .rc-input {
+  appearance: none;
+  padding-right: calc(var(--spacing-4) * 2 + var(--icon-md));
+  cursor: pointer;
+}
+.rc-select::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-4);
+  width: var(--icon-md);
+  height: var(--icon-md);
+  transform: translateY(-50%);
+  background: var(--color-text-muted);
+  pointer-events: none;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}

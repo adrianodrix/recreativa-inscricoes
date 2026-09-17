@@ -1,0 +1,75 @@
+/* ==========================================================================
+   Escolha — checkbox e radio nativos, em lista ou em cartão
+   <fieldset class="rc-fieldset">
+     <legend class="rc-legend">Turno</legend>
+     <label class="rc-choice"><input type="radio" name="turno"> Manhã</label>
+   </fieldset>
+   ========================================================================== */
+
+.rc-fieldset {
+  display: grid;
+  align-content: start;
+  gap: var(--spacing-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.rc-legend {
+  margin-bottom: var(--spacing-1);
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.rc-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.rc-choice input {
+  flex: none;
+  width: var(--icon-md);
+  height: var(--icon-md);
+  margin: 0.125rem 0 0; /* alinha com a 1ª linha do texto */
+  accent-color: var(--color-secondary);
+  cursor: pointer;
+}
+.rc-choice input:focus-visible {
+  outline: 2px solid var(--rc-focus, var(--color-focus-ring));
+  outline-offset: 2px;
+}
+.rc-choice__hint {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.rc-choice:has(input:disabled) {
+  color: var(--color-on-disabled);
+  cursor: not-allowed;
+}
+
+/* Opção em cartão: escolhas com descrição (turma, pacote, horário) */
+.rc-choice--card {
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+.rc-choice--card:hover {
+  border-color: var(--color-text-muted);
+}
+.rc-choice--card:has(input:checked) {
+  border-color: var(--color-secondary);
+  background: var(--color-secondary-soft);
+  box-shadow: inset 0 0 0 1px var(--color-secondary);
+}

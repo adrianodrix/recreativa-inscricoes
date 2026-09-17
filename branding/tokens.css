@@ -1,0 +1,224 @@
+/* ==========================================================================
+   Recreativa — tokens de marca
+   --------------------------------------------------------------------------
+   Fonte única da verdade da identidade visual. Os componentes devem usar os
+   tokens SEMÂNTICOS (seção 2); a paleta bruta (seção 1) existe para compor
+   os semânticos e para casos pontuais. Componentes prontos: components/.
+   Tema escuro: carregue theme-dark.css depois deste arquivo.
+
+   Tailwind v4: os nomes seguem os namespaces do tema (--color-*, --font-*,
+   --text-*, --leading-*, --tracking-*, --spacing-*, --radius-*, --shadow-*,
+   --ease-*). Troque `:root` por `@theme inline` para gerar utilitários como
+   `bg-primary`, `text-roxo-900`, `font-display`, `p-4`, `rounded-lg`.
+
+   Fontes (Google Fonts):
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,600..900,0..100,0..1&display=swap">
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------------
+     1. PALETA DA MARCA
+     Âncoras extraídas da arte original: laranja-400 (logo) e roxo-900
+     (fundo). Demais tons gerados em OKLCH para passos visuais uniformes.
+     ------------------------------------------------------------------------ */
+
+  /* Laranja — cor do logo. ATENÇÃO: 400 sobre branco tem contraste 2.3:1;
+     nunca use como texto/ícone em fundo claro (use 700). */
+  --color-laranja-50: #fff4ef;
+  --color-laranja-100: #ffe7dc;
+  --color-laranja-200: #ffcfb7;
+  --color-laranja-300: #ffb38d;
+  --color-laranja-400: #ff8a4a; /* logo */
+  --color-laranja-500: #e6793c;
+  --color-laranja-600: #c96225;
+  --color-laranja-700: #a14e1d;
+  --color-laranja-800: #7e3c16;
+  --color-laranja-900: #5c2b0f;
+  --color-laranja-950: #3c1b08;
+
+  /* Roxo — fundo da marca */
+  --color-roxo-50: #f7f5ff;
+  --color-roxo-100: #edeaff;
+  --color-roxo-200: #dcd5f9;
+  --color-roxo-300: #c9c1eb;
+  --color-roxo-400: #b4abdb;
+  --color-roxo-500: #9d92ca;
+  --color-roxo-600: #8678b7;
+  --color-roxo-700: #6d5ba2;
+  --color-roxo-800: #56408e;
+  --color-roxo-900: #3e2076; /* fundo da arte */
+  --color-roxo-950: #2b0e5a;
+
+  /* Neutros levemente arroxeados, para harmonizar com a marca */
+  --color-neutro-0: #ffffff;
+  --color-neutro-50: #f7f5fe;
+  --color-neutro-100: #edebf4;
+  --color-neutro-200: #dbd9e2;
+  --color-neutro-300: #c7c6cf;
+  --color-neutro-400: #b3b1ba;
+  --color-neutro-500: #9b9aa2;
+  --color-neutro-600: #83828a;
+  --color-neutro-700: #69686f;
+  --color-neutro-800: #514f5b;
+  --color-neutro-900: #3b3944;
+  --color-neutro-950: #25232e;
+
+  /* Noite — fundos do tema escuro, no mesmo matiz do roxo (ver theme-dark.css) */
+  --color-noite-400: #868494;
+  --color-noite-500: #504d5f;
+  --color-noite-600: #363245;
+  --color-noite-700: #241f33;
+  --color-noite-800: #191526;
+  --color-noite-900: #100d1a;
+
+  /* ------------------------------------------------------------------------
+     2. CORES SEMÂNTICAS (tema claro; o escuro redefine em theme-dark.css)
+     Contrastes WCAG medidos contra o fundo indicado entre parênteses.
+     ------------------------------------------------------------------------ */
+
+  /* Superfícies */
+  --color-bg: var(--color-neutro-0);
+  --color-surface: var(--color-neutro-50);
+  --color-surface-raised: var(--color-neutro-0); /* cartões sobre surface */
+  --color-surface-brand: var(--color-roxo-900);
+
+  /* Texto */
+  --color-text: var(--color-neutro-950); /* 15.5:1 (bg) */
+  --color-text-heading: var(--color-roxo-900); /* 12.6:1 (bg) */
+  --color-text-muted: var(--color-neutro-700); /* 5.5:1 (bg) · 5.1:1 (surface) */
+  --color-text-placeholder: var(--color-neutro-700);
+  --color-text-on-brand: var(--color-neutro-0); /* 12.6:1 (surface-brand) */
+  --color-text-accent-on-brand: var(--color-laranja-400); /* 5.4:1 (surface-brand) */
+
+  /* Bordas */
+  --color-border: var(--color-neutro-200); /* divisórias, decorativa */
+  --color-border-strong: var(--color-neutro-300); /* hover de cartão, decorativa */
+  --color-border-input: var(--color-neutro-600); /* 3.8:1 — campos de formulário */
+
+  /* Tons suaves — badges, hover discreto, opção marcada */
+  --color-primary-soft: var(--color-laranja-100);
+  --color-on-primary-soft: var(--color-laranja-800); /* 7.0:1 */
+  --color-secondary-soft: var(--color-roxo-100);
+  --color-on-secondary-soft: var(--color-roxo-900); /* 10.7:1 · link 7.1:1 */
+  --color-neutral-soft: var(--color-neutro-100);
+  --color-on-neutral-soft: var(--color-neutro-800); /* 6.8:1 */
+  --color-disabled: var(--color-neutro-100);
+  --color-on-disabled: var(--color-neutro-600); /* isento de contraste mínimo */
+
+  /* Ações — primária é laranja com texto roxo (assinatura da marca) */
+  --color-primary: var(--color-laranja-400);
+  --color-primary-hover: var(--color-laranja-500);
+  --color-on-primary: var(--color-roxo-950); /* 6.8:1 · 5.5:1 no hover */
+  --color-secondary: var(--color-roxo-900);
+  --color-secondary-hover: var(--color-roxo-800);
+  --color-on-secondary: var(--color-neutro-0); /* 12.6:1 · 8.3:1 no hover */
+
+  /* Links e foco */
+  --color-link: var(--color-roxo-800); /* 8.3:1 (bg) */
+  --color-link-hover: var(--color-roxo-900);
+  --color-focus-ring: var(--color-roxo-700); /* 5.7:1 (bg) */
+  --color-focus-ring-on-brand: var(--color-laranja-400); /* 5.4:1 (surface-brand) */
+
+  /* Feedback — texto passa AA sobre o próprio fundo e sobre branco */
+  --color-success: #137738; /* 5.1:1 (success-bg) */
+  --color-success-bg: #e7f9ea;
+  --color-success-border: #9acca3;
+  --color-warning: #915b00; /* 5.1:1 (warning-bg) */
+  --color-warning-bg: #fff1e2;
+  --color-warning-border: #e1b582;
+  --color-danger: #b02b27; /* 5.8:1 (danger-bg) */
+  --color-danger-bg: #ffefed;
+  --color-danger-border: #f9a49a; /* só mensagens (1.9:1); campo inválido usa --color-danger */
+  --color-info: #2266a4; /* 5.4:1 (info-bg) */
+  --color-info-bg: #ebf5ff;
+  --color-info-border: #9bc2eb;
+
+  /* ------------------------------------------------------------------------
+     3. TIPOGRAFIA
+     Display: Fraunces com eixos SOFT/WONK — serifa retrô anos 70, próxima
+     do lettering do logo. Uso em títulos e destaques, peso 600–900.
+     Texto: DM Sans — legível em formulários e tamanhos pequenos.
+     O logo é desenho próprio: use sempre o SVG, nunca recrie com fonte.
+     ------------------------------------------------------------------------ */
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display-variation: "SOFT" 100, "WONK" 1; /* aplicar em font-variation-settings */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-display: 800;
+
+  /* Escala 1.25 (terça maior), base 16px. Inputs nunca abaixo de --text-base
+     (evita zoom automático no iOS). 3xl+ são fluidos entre mobile e desktop. */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: 1.5rem; /* 24px */
+  --text-3xl: clamp(1.75rem, 1.5rem + 1vw, 2rem); /* 28→32px */
+  --text-4xl: clamp(2rem, 1.6rem + 2vw, 2.75rem); /* 32→44px */
+  --text-5xl: clamp(2.5rem, 1.8rem + 3.5vw, 4rem); /* 40→64px */
+
+  --leading-tight: 1.1; /* display */
+  --leading-snug: 1.25; /* subtítulos */
+  --leading-normal: 1.5; /* texto corrido */
+  --leading-relaxed: 1.65; /* textos longos */
+
+  --tracking-tight: -0.02em; /* display grande */
+  --tracking-normal: 0em;
+  --tracking-wide: 0.06em; /* rótulos em caixa alta */
+
+  /* ------------------------------------------------------------------------
+     4. ESPAÇAMENTO
+     Base 4px; o sufixo é o múltiplo (spacing-4 = 16px), como no Tailwind.
+     ------------------------------------------------------------------------ */
+
+  --spacing-1: 0.25rem; /* 4px — ícone ↔ texto curto */
+  --spacing-2: 0.5rem; /* 8px — rótulo ↔ campo, ícone ↔ texto em botões */
+  --spacing-3: 0.75rem; /* 12px — entre opções, itens de lista */
+  --spacing-4: 1rem; /* 16px — padding de campos e mensagens */
+  --spacing-5: 1.25rem; /* 20px — padding de cartão no mobile */
+  --spacing-6: 1.5rem; /* 24px — padding de cartão, entre campos */
+  --spacing-8: 2rem; /* 32px — entre grupos de campos */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-12: 3rem; /* 48px — entre seções no mobile */
+  --spacing-16: 4rem; /* 64px — entre seções no desktop */
+  --spacing-20: 5rem; /* 80px — respiro de capa */
+
+  /* ------------------------------------------------------------------------
+     5. RAIOS
+     Formas macias como o lettering; a pílula ecoa a órbita do logo.
+     ------------------------------------------------------------------------ */
+
+  --radius-sm: 0.375rem; /* 6px — foco de links, elementos pequenos */
+  --radius-md: 0.625rem; /* 10px — campos, mensagens */
+  --radius-lg: 1rem; /* 16px — cartões */
+  --radius-xl: 1.5rem; /* 24px — modais, painéis grandes */
+  --radius-full: 9999px; /* botões, badges, avatares */
+
+  /* ------------------------------------------------------------------------
+     6. SOMBRAS
+     Tingidas com roxo-950, nunca preto. A borda separa; a sombra só eleva.
+     ------------------------------------------------------------------------ */
+
+  --shadow-sm: 0 1px 2px #2b0e5a14; /* cartões em repouso */
+  --shadow-md: 0 2px 4px #2b0e5a0f, 0 6px 16px -4px #2b0e5a1f; /* hover de cartão, menus */
+  --shadow-lg: 0 4px 12px #2b0e5a14, 0 20px 40px -12px #2b0e5a3d; /* modais, elementos flutuantes */
+
+  /* ------------------------------------------------------------------------
+     7. ÍCONES E MOVIMENTO
+     Ícones: Lucide (lucide.dev), traço 2px, cor herdada do texto.
+     ------------------------------------------------------------------------ */
+
+  --icon-sm: 1rem; /* 16px — junto de text-sm */
+  --icon-md: 1.25rem; /* 20px — padrão, junto de text-base */
+  --icon-lg: 1.5rem; /* 24px — destaque, navegação */
+
+  --duration-fast: 150ms; /* hover, foco, troca de cor */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}

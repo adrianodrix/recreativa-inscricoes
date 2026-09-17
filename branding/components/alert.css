@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Mensagem — sempre com ícone e palavra, nunca só cor
+   <div class="rc-alert rc-alert--success" role="status">
+     <svg class="rc-icon" aria-hidden="true">…circle-check…</svg>
+     <div><strong class="rc-alert__title">Inscrição confirmada</strong> Texto.</div>
+   </div>
+   Erro que exige ação: role="alert".
+   ========================================================================== */
+
+.rc-alert {
+  --alert-fg: var(--color-info);
+  --alert-bg: var(--color-info-bg);
+  --alert-border: var(--color-info-border);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 1px solid var(--alert-border);
+  border-radius: var(--radius-md);
+  background: var(--alert-bg);
+  color: var(--alert-fg);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+.rc-alert > .rc-icon {
+  margin-top: 0.0625rem; /* centra o ícone de 20px na 1ª linha */
+}
+.rc-alert__title {
+  display: block;
+  font-weight: var(--font-weight-bold);
+}
+
+.rc-alert--success {
+  --alert-fg: var(--color-success);
+  --alert-bg: var(--color-success-bg);
+  --alert-border: var(--color-success-border);
+}
+.rc-alert--warning {
+  --alert-fg: var(--color-warning);
+  --alert-bg: var(--color-warning-bg);
+  --alert-border: var(--color-warning-border);
+}
+.rc-alert--danger {
+  --alert-fg: var(--color-danger);
+  --alert-bg: var(--color-danger-bg);
+  --alert-border: var(--color-danger-border);
+}

@@ -1,0 +1,53 @@
+/* ==========================================================================
+   Recreativa — base compartilhada dos componentes
+   Requer tokens.css carregado antes. Prefixo de classes: rc-
+   ========================================================================== */
+
+/* Ícone Lucide inline: <svg class="rc-icon" aria-hidden="true">…</svg> */
+.rc-icon {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  flex: none;
+  vertical-align: middle;
+}
+.rc-icon--sm {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+.rc-icon--lg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+}
+
+/* Faixa da marca: troca texto e anel de foco para o fundo roxo */
+.rc-surface-brand {
+  --rc-focus: var(--color-focus-ring-on-brand);
+  --rc-quiet-fg: var(--color-text-on-brand); /* botão discreto: 12.6:1 */
+  --rc-quiet-hover: var(--color-roxo-800); /* 8.3:1 */
+  background: var(--color-surface-brand);
+  color: var(--color-text-on-brand);
+}
+
+/* Link dentro de texto: sublinhado, para não depender só da cor */
+.rc-link {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.rc-link:hover {
+  color: var(--color-link-hover);
+}
+.rc-link:focus-visible {
+  outline: 2px solid var(--rc-focus, var(--color-focus-ring));
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class^="rc-"],
+  [class*=" rc-"] {
+    transition: none !important;
+    animation: none !important;
+  }
+}
