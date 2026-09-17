@@ -7,10 +7,11 @@ import { contarInscritosDoEvento } from "@/lib/inscritos/consultas";
 
 export type EventoLinha = Database["public"]["Tables"]["eventos"]["Row"];
 
-export interface EventoCompleto extends Omit<EventoLinha, "boas_vindas" | "agradecimento" | "recomendacoes"> {
+export interface EventoCompleto extends Omit<EventoLinha, "boas_vindas" | "agradecimento" | "recomendacoes" | "regras_gerais"> {
   boas_vindas: TextoRico | null;
   agradecimento: TextoRico;
   recomendacoes: TextoRico | null;
+  regras_gerais: TextoRico | null;
   limites: Record<TipoComida, number>;
   total_inscritos: number;
 }
@@ -36,6 +37,7 @@ export async function obterEvento(id: string): Promise<EventoCompleto | null> {
     boas_vindas: evento.boas_vindas as TextoRico | null,
     agradecimento: evento.agradecimento as TextoRico,
     recomendacoes: evento.recomendacoes as TextoRico | null,
+    regras_gerais: evento.regras_gerais as TextoRico | null,
     limites: mapa,
     total_inscritos: await contarInscritos(id),
   };

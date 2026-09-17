@@ -6,7 +6,7 @@ import { after } from "next/server";
 import { processarPendentes } from "@/lib/whatsapp/outbox";
 import { exigirPerfil } from "@/lib/auth/perfil";
 import { errosPorCampo } from "@/lib/eventos/schema";
-import { proximaOrdem } from "@/lib/supabase/ordem";
+import { gravarOrdem, proximaOrdem } from "@/lib/supabase/ordem";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";
 import { carregarMontagem } from "@/lib/times/consultas";
@@ -53,9 +53,7 @@ export async function salvarTime(eventoId: string, id: string | null, _: EstadoF
 export async function reordenarTimes(eventoId: string, ids: string[]): Promise<void> {
   await exigirPerfil("gerir_times");
   const supabase = await criarClienteServidor();
-  const resultados = await Promise.all(ids.map((id, i) => supabase.from("times").update({ ordem: i }).eq("id", id).eq("evento_id", eventoId)));
-  const falha = resultados.find((r) => r.error)?.error;
-  if (falha) throw new Error(`Não foi possível reordenar: ${falha.message}`);
+  await gravarOrdem(supabase, "times", eventoId, ids);
   revalidatePath(rota(eventoId));
 }
 

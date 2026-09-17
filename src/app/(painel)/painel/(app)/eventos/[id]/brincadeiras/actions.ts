@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { exigirPerfil } from "@/lib/auth/perfil";
 import { schemaBrincadeira } from "@/lib/brincadeiras/schema";
 import { errosPorCampo } from "@/lib/eventos/schema";
-import { proximaOrdem } from "@/lib/supabase/ordem";
+import { gravarOrdem, proximaOrdem } from "@/lib/supabase/ordem";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";
 
@@ -39,9 +39,7 @@ export async function salvarBrincadeira(eventoId: string, id: string | null, _: 
 export async function reordenarBrincadeiras(eventoId: string, ids: string[]): Promise<void> {
   await exigirPerfil("editar_brincadeira");
   const supabase = await criarClienteServidor();
-  const resultados = await Promise.all(ids.map((id, i) => supabase.from("brincadeiras").update({ ordem: i }).eq("id", id).eq("evento_id", eventoId)));
-  const falha = resultados.find((r) => r.error)?.error;
-  if (falha) throw new Error(`Não foi possível reordenar: ${falha.message}`);
+  await gravarOrdem(supabase, "brincadeiras", eventoId, ids);
   revalidatePath(`/painel/eventos/${eventoId}/brincadeiras`);
 }
 

@@ -5,6 +5,7 @@ export type Acao =
   | "ver"
   | "editar_evento"
   | "editar_brincadeira"
+  | "editar_pagina_inicial"
   | "mudar_status"
   | "editar_inscrito"
   | "reenviar_whatsapp"
@@ -18,6 +19,7 @@ const PERMISSOES: Record<Perfil, ReadonlySet<Acao>> = {
     "ver",
     "editar_evento",
     "editar_brincadeira",
+    "editar_pagina_inicial",
     "mudar_status",
     "editar_inscrito",
     "reenviar_whatsapp",

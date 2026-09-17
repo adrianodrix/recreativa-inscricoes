@@ -10,12 +10,14 @@ import { obterEvento } from "@/lib/eventos/consultas";
 import { proximoPasso } from "@/lib/eventos/proximo-passo";
 import { statusInscricoes } from "@/lib/eventos/status";
 import { resumirInscritos } from "@/lib/inscritos/consultas";
+import { idEventoEmDestaque, resumirPaginaInicial } from "@/lib/pagina-inicial/consultas";
 import { listarTimes } from "@/lib/times/consultas";
 import { PainelStatus } from "../PainelStatus";
 import { CartaoWhatsapp } from "../CartaoWhatsapp";
 import { CartaoBrincadeiras } from "./CartaoBrincadeiras";
 import { CartaoCategorias } from "./CartaoCategorias";
 import { CartaoComida } from "./CartaoComida";
+import { CartaoPaginaInicial } from "./CartaoPaginaInicial";
 import { CartaoTimes } from "./CartaoTimes";
 import styles from "../../painel.module.css";
 import { Trilha, trilhaEventos } from "@/components/painel/Trilha";
@@ -34,7 +36,14 @@ export async function generateMetadata({ params }: Pick<Props, "params">) {
 /* Painel do evento: situação das inscrições, próximo passo e números; cada cartão leva à sua tela. A edição fica em /editar. */
 export default async function PaginaEvento({ params, searchParams }: Props) {
   const [{ id }, query, usuario] = await Promise.all([params, searchParams, exigirLogin()]);
-  const [evento, resumo, brincadeiras, times] = await Promise.all([obterEvento(id), resumirInscritos(id), listarBrincadeiras(id), listarTimes(id)]);
+  const [evento, resumo, brincadeiras, times, pagina, destaque] = await Promise.all([
+    obterEvento(id),
+    resumirInscritos(id),
+    listarBrincadeiras(id),
+    listarTimes(id),
+    resumirPaginaInicial(id),
+    idEventoEmDestaque(),
+  ]);
   if (!evento) notFound();
   const elegiveis = resumo.porCategoria.crianca + resumo.porCategoria.jovem;
   const passo = proximoPasso({
@@ -78,6 +87,14 @@ export default async function PaginaEvento({ params, searchParams }: Props) {
         <CartaoBrincadeiras eventoId={id} perfil={usuario.perfil} brincadeiras={brincadeiras} />
         <CartaoTimes eventoId={id} perfil={usuario.perfil} times={times} elegiveis={elegiveis} montagem={evento.montagem_status} />
         <CartaoComida eventoId={id} perfil={usuario.perfil} limites={evento.limites} contagem={resumo.comida} />
+        <CartaoPaginaInicial
+          eventoId={id}
+          slug={evento.slug}
+          perfil={usuario.perfil}
+          publicado={evento.publicado}
+          emDestaque={destaque === id}
+          resumo={pagina}
+        />
         <CartaoWhatsapp eventoId={id} perfil={usuario.perfil} />
       </div>
     </>

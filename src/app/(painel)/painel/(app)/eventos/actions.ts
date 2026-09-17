@@ -30,6 +30,11 @@ function linhaEvento(d: DadosEvento) {
     boas_vindas: d.boas_vindas as Json,
     agradecimento: d.agradecimento as Json,
     recomendacoes: d.recomendacoes as Json,
+    edicao: d.edicao,
+    subtitulo: d.subtitulo,
+    descricao: d.descricao,
+    link_fotos: d.link_fotos,
+    regras_gerais: d.regras_gerais as Json,
   };
 }
 
@@ -57,6 +62,8 @@ export async function salvarEvento(id: string | null, _: EstadoFormEvento, form:
     const { data, error } = await supabase.from("eventos").insert(linhaEvento(dados.data)).select("id").single();
     if (error) return { erro: mensagemErroBanco(error.message) };
     eventoId = data.id;
+    // Contatos e dúvidas partem do evento anterior; o administrador ajusta depois (P11).
+    await supabase.rpc("copiar_contatos_e_duvidas", { p_evento_id: eventoId });
   }
 
   const { error: erroLimites } = await supabase.from("limites_comida").upsert(limitesComida(eventoId, dados.data));
@@ -64,6 +71,16 @@ export async function salvarEvento(id: string | null, _: EstadoFormEvento, form:
 
   revalidatePath("/painel/eventos");
   redirect(`/painel/eventos/${eventoId}?salvo=1`);
+}
+
+/* Chave da página inicial (P6): evento em preparação não aparece em / nem em /[slug]. */
+export async function alternarPublicacao(id: string, publicado: boolean): Promise<void> {
+  await exigirPerfil("editar_pagina_inicial");
+  const supabase = await criarClienteServidor();
+  const { error } = await supabase.from("eventos").update({ publicado }).eq("id", id);
+  if (error) throw new Error(mensagemErroBanco(error.message));
+  revalidatePath("/", "layout");
+  revalidatePath(`/painel/eventos/${id}`);
 }
 
 /* Chave manual das inscrições (V7). */

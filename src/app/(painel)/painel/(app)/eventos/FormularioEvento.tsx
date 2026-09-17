@@ -80,7 +80,19 @@ export function FormularioEvento({ evento }: Props) {
 
       <section className={styles.secao}>
         <h2>Capa</h2>
-        <UploadImagem name="capa_path" rotulo="Imagem de capa" prefixo={`capas/${evento?.id ?? "novo"}`} valorInicial={evento?.capa_path} ajuda="Opcional. Aparece no topo do formulário." />
+        <UploadImagem name="capa_path" rotulo="Imagem de capa" prefixo={`capas/${evento?.id ?? "novo"}`} valorInicial={evento?.capa_path} ajuda="Opcional. Abre as boas-vindas do formulário e ilustra o link quando alguém compartilha." />
+      </section>
+
+      <section className={styles.secao}>
+        <h2>Página inicial</h2>
+        <p className="rc-hint">Usado na página do evento em destaque e na prévia do link. Programação, dúvidas e contatos ficam em telas próprias.</p>
+        <div className={`${styles.grade} ${styles.grade2}`}>
+          <CampoTexto id="edicao" name="edicao" type="number" inputMode="numeric" min={1} rotulo="Edição" ajuda="Só o número. Ex.: 4 vira “4ª edição”." defaultValue={evento?.edicao ?? undefined} erro={e.edicao} opcional />
+          <CampoTexto id="subtitulo" name="subtitulo" rotulo="Subtítulo" ajuda="Ex.: 4ª Recreação de Iguatemi - PR" defaultValue={evento?.subtitulo ?? undefined} erro={e.subtitulo} opcional />
+        </div>
+        <CampoTexto id="descricao" name="descricao" rotulo="Descrição curta" ajuda="Uma ou duas frases: aparecem no destaque e na prévia do link no WhatsApp." maxLength={300} defaultValue={evento?.descricao ?? undefined} erro={e.descricao} opcional />
+        <CampoTexto id="link_fotos" name="link_fotos" type="url" inputMode="url" rotulo="Link do álbum de fotos" ajuda="Opcional. Aparece depois que o evento acontece." defaultValue={evento?.link_fotos ?? undefined} erro={e.link_fotos} opcional />
+        <EditorRico id="regras_gerais" name="regras_gerais" rotulo="Regras gerais" ajuda="Ex.: horários dos brinquedos infláveis. Aparece na página inicial." valorInicial={evento?.regras_gerais} erro={e.regras_gerais} opcional />
       </section>
 
       <section className={styles.secao}>
