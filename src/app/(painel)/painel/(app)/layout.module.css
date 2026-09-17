@@ -1,0 +1,57 @@
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100dvh;
+  background: var(--color-surface);
+}
+
+.cabecalho {
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-3) var(--spacing-6);
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.logo {
+  width: 7.5rem;
+  height: auto;
+}
+
+.nav {
+  display: flex;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-left: auto;
+  font-size: var(--text-sm);
+}
+
+.usuarioNome {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .usuarioNome {
+    display: inline;
+  }
+}
+
+.conteudo {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--spacing-6) var(--spacing-4) var(--spacing-12);
+}

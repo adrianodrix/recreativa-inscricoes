@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { envPublico } from "@/lib/env-publico";
 
 /* Rotas do painel acessíveis sem sessão. Não existe cadastro público. */
-const ROTAS_ABERTAS = ["/painel/login", "/painel/redefinir-senha", "/painel/auth"];
+const ROTAS_ABERTAS = ["/painel/login", "/painel/esqueci-senha", "/painel/redefinir-senha", "/painel/auth"];
 
 /*
  * Renova a sessão do Supabase a cada requisição do painel e redireciona

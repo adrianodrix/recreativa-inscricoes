@@ -1,0 +1,35 @@
+.pagina {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--spacing-6) var(--spacing-4);
+  background: var(--color-surface);
+}
+
+.cartao {
+  width: min(100%, 26rem);
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.logo {
+  width: 12rem;
+  height: auto;
+  justify-self: center;
+}
+
+.formulario {
+  display: grid;
+  gap: var(--spacing-5);
+}
+
+.titulo {
+  font-size: var(--text-2xl);
+}
+
+.rodape {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-4);
+  font-size: var(--text-sm);
+}
