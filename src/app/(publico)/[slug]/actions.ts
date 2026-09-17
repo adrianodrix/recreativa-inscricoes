@@ -1,14 +1,12 @@
 "use server";
 
-import type { ErroInscricao } from "@/features/inscricao/modelo/erros";
-import { schemaPayload } from "@/features/inscricao/modelo/payload";
+import type { ResultadoEnvio } from "@/features/inscricao/modelo/erros";
+import { schemaPayload, type PayloadInscricao } from "@/features/inscricao/modelo/payload";
 import type { PessoaEncontrada } from "@/components/inscricao/PersonSearch";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";
 
-export type ResultadoEnvio = { ok: true } | { ok: false; erro: ErroInscricao };
-
-function detalheDe(texto: string | null | undefined): Record<string, unknown> {
+export async function detalheDe(texto: string | null | undefined): Promise<Record<string, unknown>> {
   if (!texto) return {};
   try {
     const v = JSON.parse(texto);
@@ -19,13 +17,13 @@ function detalheDe(texto: string | null | undefined): Record<string, unknown> {
 }
 
 /* Grava a inscrição inteira de uma vez pela RPC atômica. */
-export async function enviarInscricao(payload: unknown): Promise<ResultadoEnvio> {
+export async function enviarInscricao(payload: PayloadInscricao): Promise<ResultadoEnvio> {
   const dados = schemaPayload.safeParse(payload);
   if (!dados.success) return { ok: false, erro: { codigo: "payload_invalido", detalhe: {} } };
 
   const supabase = await criarClienteServidor();
   const { error } = await supabase.rpc("criar_inscricao", { p: dados.data as unknown as Json });
-  if (error) return { ok: false, erro: { codigo: error.message, detalhe: detalheDe(error.details) } };
+  if (error) return { ok: false, erro: { codigo: error.message, detalhe: await detalheDe(error.details) } };
   return { ok: true };
 }
 

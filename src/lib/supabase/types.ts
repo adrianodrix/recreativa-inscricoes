@@ -442,6 +442,11 @@ export type Database = {
       }
       comida_disponivel: { Args: { p_evento_id: string }; Returns: Json }
       criar_inscricao: { Args: { p: Json }; Returns: Json }
+      criar_inscricao_interno: {
+        Args: { p: Json; p_ignorar_status: boolean }
+        Returns: Json
+      }
+      criar_inscricao_painel: { Args: { p: Json }; Returns: Json }
       erro_inscricao: {
         Args: { p_codigo: string; p_detalhe?: Json }
         Returns: undefined
@@ -450,6 +455,7 @@ export type Database = {
         Args: { e: Database["public"]["Tables"]["eventos"]["Row"] }
         Returns: string
       }
+      exigir_operador: { Args: never; Returns: undefined }
       inserir_pessoa: {
         Args: {
           p_evento: Database["public"]["Tables"]["eventos"]["Row"]
@@ -484,6 +490,10 @@ export type Database = {
       }
       normalizar_nome: { Args: { nome: string }; Returns: string }
       obter_evento_publico: { Args: { p_slug: string }; Returns: Json }
+      painel_definir_comida: {
+        Args: { p_inscrito_id: string; p_tipo: string }
+        Returns: undefined
+      }
       perfil_atual: {
         Args: never
         Returns: Database["public"]["Enums"]["perfil_usuario"]

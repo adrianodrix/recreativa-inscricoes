@@ -3,6 +3,8 @@
 import { Logo } from "@/components/marca/Logo";
 import { InscricaoProvider, useInscricao } from "../estado/InscricaoProvider";
 import type { Etapa } from "../modelo/etapas";
+import type { ResultadoEnvio } from "../modelo/erros";
+import type { PayloadInscricao } from "../modelo/payload";
 import type { EventoPublico } from "../modelo/tipos";
 import { BoasVindasStep } from "../steps/BoasVindasStep";
 import { BrincadeiraStep } from "../steps/BrincadeiraStep";
@@ -63,9 +65,15 @@ function Tela() {
   );
 }
 
-export function Formulario({ evento }: { evento: EventoPublico }) {
+interface Props {
+  evento: EventoPublico;
+  enviar: (payload: PayloadInscricao) => Promise<ResultadoEnvio>;
+  destino: string;
+}
+
+export function Formulario({ evento, enviar, destino }: Props) {
   return (
-    <InscricaoProvider evento={evento}>
+    <InscricaoProvider evento={evento} enviar={enviar} destino={destino}>
       <Tela />
     </InscricaoProvider>
   );

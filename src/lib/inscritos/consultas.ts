@@ -6,6 +6,7 @@ export type InscritoLinha = Database["public"]["Tables"]["inscritos"]["Row"];
 export type PapelParticipante = Database["public"]["Enums"]["papel_participante"];
 
 export interface ParticipacaoResumo {
+  participacao_id: string;
   brincadeira_id: string;
   brincadeira: string;
   papel: PapelParticipante;
@@ -23,7 +24,7 @@ export async function listarInscritos(eventoId: string, busca = ""): Promise<Ins
   const [inscritos, colaboracoes, participantes, brincadeiras] = await Promise.all([
     supabase.from("inscritos").select("*").eq("evento_id", eventoId).order("nome_completo"),
     supabase.from("colaboracoes").select("inscrito_id, tipo").eq("evento_id", eventoId),
-    supabase.from("participantes").select("inscrito_id, brincadeira_id, papel").eq("evento_id", eventoId),
+    supabase.from("participantes").select("inscrito_id, participacao_id, brincadeira_id, papel").eq("evento_id", eventoId),
     supabase.from("brincadeiras").select("id, nome").eq("evento_id", eventoId),
   ]);
   if (inscritos.error) throw new Error(`Falha ao listar inscritos: ${inscritos.error.message}`);
@@ -34,7 +35,7 @@ export async function listarInscritos(eventoId: string, busca = ""): Promise<Ins
   const porInscrito = new Map<string, ParticipacaoResumo[]>();
   for (const p of participantes.data ?? []) {
     const lista = porInscrito.get(p.inscrito_id) ?? [];
-    lista.push({ brincadeira_id: p.brincadeira_id, brincadeira: nomeBrincadeira.get(p.brincadeira_id) ?? "?", papel: p.papel });
+    lista.push({ participacao_id: p.participacao_id, brincadeira_id: p.brincadeira_id, brincadeira: nomeBrincadeira.get(p.brincadeira_id) ?? "?", papel: p.papel });
     porInscrito.set(p.inscrito_id, lista);
   }
 

@@ -1,7 +1,9 @@
-import { Download, Search } from "lucide-react";
+import { Download, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigirLogin } from "@/lib/auth/perfil";
+import { pode } from "@/lib/auth/permissoes";
+import { Alerta } from "@/components/formulario/Alerta";
 import { formatarWhatsapp } from "@/features/inscricao/modelo/schemas";
 import { ROTULO_COMIDA } from "@/lib/eventos/schema";
 import { obterEvento } from "@/lib/eventos/consultas";
@@ -18,7 +20,7 @@ export const metadata = { title: "Inscritos" };
 const VINCULO = { principal: "Principal", conjuge: "Cônjuge", filho: "Filho(a)" } as const;
 
 export default async function PaginaInscritos({ params, searchParams }: Props) {
-  const [{ id }, query] = await Promise.all([params, searchParams, exigirLogin()]);
+  const [{ id }, query, usuario] = await Promise.all([params, searchParams, exigirLogin()]);
   const evento = await obterEvento(id);
   if (!evento) notFound();
   const busca = typeof query.busca === "string" ? query.busca : "";
@@ -34,6 +36,11 @@ export default async function PaginaInscritos({ params, searchParams }: Props) {
           <h1>Inscritos</h1>
         </div>
         <div className={styles.acoes}>
+          {pode(usuario.perfil, "editar_inscrito") && (
+            <Link href={`/painel/eventos/${id}/inscritos/novo`} className="rc-btn rc-btn--primary rc-btn--sm">
+              <Plus className="rc-icon" aria-hidden="true" /> Incluir inscrito
+            </Link>
+          )}
           <a href={`/api/eventos/${id}/exportar?formato=xlsx`} className="rc-btn rc-btn--secondary rc-btn--sm">
             <Download className="rc-icon" aria-hidden="true" /> Planilha (XLSX)
           </a>
@@ -42,6 +49,7 @@ export default async function PaginaInscritos({ params, searchParams }: Props) {
           </a>
         </div>
       </div>
+      {query.salvo && <Alerta tipo="success">Inscrição registrada.</Alerta>}
       <form className={styles.acoes} role="search">
         <div className="rc-field" style={{ flex: 1 }}>
           <label className="rc-label" htmlFor="busca">Buscar por nome ou apelido</label>

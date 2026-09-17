@@ -3,7 +3,6 @@
 import { LoaderCircle, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { enviarInscricao } from "@/app/(publico)/[slug]/actions";
 import { Alerta } from "@/components/formulario/Alerta";
 import { ROTULO_COMIDA } from "@/lib/eventos/schema";
 import { formatarData, formatarValor } from "@/lib/datas";
@@ -17,7 +16,7 @@ import { StepShell } from "../ui/StepShell";
 import styles from "../ui/formulario.module.css";
 
 export function ResumoStep() {
-  const { estado, evento, etapas, irPara, dispatch } = useInscricao();
+  const { estado, evento, etapas, irPara, dispatch, enviar: enviarPayload, destino } = useInscricao();
   const d = estado.draft;
   const router = useRouter();
   const [enviando, iniciar] = useTransition();
@@ -29,10 +28,10 @@ export function ResumoStep() {
   function enviar() {
     setErroGeral(undefined);
     iniciar(async () => {
-      const resultado = await enviarInscricao(montarPayload(d, evento));
+      const resultado = await enviarPayload(montarPayload(d, evento));
       if (resultado.ok) {
         limparRascunho(evento.id);
-        router.push(`/${evento.slug}/obrigado`);
+        router.push(destino);
         return;
       }
       const etapaId = etapaDoErro(resultado.erro, etapas);

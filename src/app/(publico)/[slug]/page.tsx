@@ -5,6 +5,7 @@ import { Formulario } from "@/features/inscricao/ui/Formulario";
 import { formatarDataExtenso, formatarHora } from "@/lib/datas";
 import { ROTULO_MOTIVO, type MotivoFechado } from "@/lib/eventos/status";
 import { obterEventoPublico } from "@/lib/inscricao/publico";
+import { enviarInscricao } from "./actions";
 import styles from "./publico.module.css";
 
 export const dynamic = "force-dynamic";
@@ -44,5 +45,5 @@ export default async function PaginaInscricao({ params }: Props) {
     );
   }
 
-  return <Formulario evento={evento} />;
+  return <Formulario evento={evento} enviar={enviarInscricao} destino={`/${evento.slug}/obrigado`} />;
 }

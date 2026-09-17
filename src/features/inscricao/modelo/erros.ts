@@ -7,6 +7,8 @@ export interface ErroInscricao {
   detalhe: Record<string, unknown>;
 }
 
+export type ResultadoEnvio = { ok: true } | { ok: false; erro: ErroInscricao };
+
 const MENSAGENS: Record<string, string> = {
   inscricoes_fechadas: "As inscrições foram encerradas antes de você concluir.",
   limite_evento: "O limite de inscritos do evento foi atingido.",

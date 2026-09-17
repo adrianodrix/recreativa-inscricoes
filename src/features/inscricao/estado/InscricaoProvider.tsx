@@ -3,11 +3,15 @@
 import { addTransitionType, createContext, startTransition, useCallback, useContext, useMemo, useReducer, type ReactNode } from "react";
 import { indiceDaEtapa, montarEtapas, type Etapa } from "../modelo/etapas";
 import { estadoInicial, reducer, type AcaoFormulario, type Direcao, type EstadoFormulario } from "../modelo/reducer";
+import type { ResultadoEnvio } from "../modelo/erros";
+import type { PayloadInscricao } from "../modelo/payload";
 import type { EventoPublico, InscricaoDraft } from "../modelo/tipos";
 import { useRascunho } from "./useRascunho";
 
 export interface ContextoInscricao {
   evento: EventoPublico;
+  enviar: (payload: PayloadInscricao) => Promise<ResultadoEnvio>;
+  destino: string;
   estado: EstadoFormulario;
   etapas: Etapa[];
   etapaAtual: Etapa;
@@ -23,7 +27,14 @@ export interface ContextoInscricao {
 
 const Contexto = createContext<ContextoInscricao | null>(null);
 
-export function InscricaoProvider({ evento, children }: { evento: EventoPublico; children: ReactNode }) {
+interface ProviderProps {
+  evento: EventoPublico;
+  enviar: (payload: PayloadInscricao) => Promise<ResultadoEnvio>;
+  destino: string;
+  children: ReactNode;
+}
+
+export function InscricaoProvider({ evento, enviar, destino, children }: ProviderProps) {
   const primeira = useMemo(() => montarEtapas({ principal: { nome: "", nascimento: "" }, filhos: [], comida: {}, recusadas: [], participacoes: [] }, evento)[0].id, [evento]);
   const [estado, dispatch] = useReducer(reducer, primeira, estadoInicial);
   const { pronto } = useRascunho(evento, estado, dispatch);
@@ -62,8 +73,8 @@ export function InscricaoProvider({ evento, children }: { evento: EventoPublico;
   const irPara = useCallback((etapaId: string) => navegar(etapaId, "voltar"), [navegar]);
 
   const valor = useMemo<ContextoInscricao>(
-    () => ({ evento, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara, dispatch }),
-    [evento, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara],
+    () => ({ evento, enviar, destino, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara, dispatch }),
+    [evento, enviar, destino, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara],
   );
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
