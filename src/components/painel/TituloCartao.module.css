@@ -18,3 +18,13 @@
   width: var(--icon-md);
   height: var(--icon-md);
 }
+
+/* Título à esquerda e link "Ver…" à direita, ocupando a largura do cabeçalho. */
+.linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2) var(--spacing-4);
+  width: 100%;
+}

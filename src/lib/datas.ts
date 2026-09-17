@@ -56,3 +56,14 @@ export function formatarValor(valor: number): string {
   if (valor === 0) return "Gratuito";
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(valor).replace(/\u00a0/g, " ");
 }
+
+/* Dias inteiros de hoje (em Brasília) até a data; negativo se já passou. Aceita "2026-11-21" ou ISO com hora. */
+export function diasAte(data: string, agora: Date = new Date()): number {
+  const hoje = isoParaLocal(agora.toISOString()).slice(0, 10);
+  const alvo = data.length === 10 ? data : isoParaLocal(data).slice(0, 10);
+  const utc = (d: string) => {
+    const [ano, mes, dia] = d.split("-").map(Number);
+    return Date.UTC(ano, mes - 1, dia);
+  };
+  return Math.round((utc(alvo) - utc(hoje)) / 86_400_000);
+}

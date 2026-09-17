@@ -1,4 +1,4 @@
-import { CalendarClock, ClipboardList } from "lucide-react";
+import { CalendarClock, ClipboardList, Compass } from "lucide-react";
 import { formatarDataHora } from "@/lib/datas";
 import type { EventoCompleto } from "@/lib/eventos/consultas";
 import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
@@ -12,10 +12,12 @@ import painel from "../painel.module.css";
 interface Props {
   evento: EventoCompleto;
   perfil: Perfil;
+  /* O que fazer agora, calculado por proximoPasso(). */
+  passo: string;
 }
 
 /* Situação efetiva das inscrições (V7) com a chave manual. */
-export function PainelStatus({ evento, perfil }: Props) {
+export function PainelStatus({ evento, perfil, passo }: Props) {
   const status = statusInscricoes(evento, evento.total_inscritos);
   const alternar = alternarInscricoes.bind(null, evento.id, !evento.aberto_manual);
   return (
@@ -39,6 +41,9 @@ export function PainelStatus({ evento, perfil }: Props) {
         </div>
         <Ocupacao total={evento.total_inscritos} limite={evento.limite_inscritos} />
       </div>
+      <p className={painel.passo}>
+        <Compass className="rc-icon" aria-hidden="true" /> {passo}
+      </p>
       {pode(perfil, "mudar_status") && (
         <footer className="rc-card__footer">
           <span className={painel.statusLinha}>Chave do organizador: {evento.aberto_manual ? "liberada" : "encerrada"}</span>

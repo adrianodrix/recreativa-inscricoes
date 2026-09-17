@@ -91,10 +91,18 @@
   margin: var(--spacing-4) 0;
 }
 
-.atalhos {
-  display: grid;
-  gap: var(--spacing-3);
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+/* Próximo passo do organizador, no cartão de inscrições. */
+.passo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+.passo svg {
+  flex: none;
+  color: var(--color-primary);
 }
 
 .vazio {

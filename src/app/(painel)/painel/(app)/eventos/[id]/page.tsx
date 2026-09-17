@@ -6,6 +6,8 @@ import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { listarBrincadeiras } from "@/lib/brincadeiras/consultas";
 import { obterEvento } from "@/lib/eventos/consultas";
+import { proximoPasso } from "@/lib/eventos/proximo-passo";
+import { statusInscricoes } from "@/lib/eventos/status";
 import { resumirInscritos } from "@/lib/inscritos/consultas";
 import { listarTimes } from "@/lib/times/consultas";
 import { PainelStatus } from "../PainelStatus";
@@ -27,11 +29,22 @@ export async function generateMetadata({ params }: Pick<Props, "params">) {
   return { title: evento?.nome ?? "Evento" };
 }
 
-/* Painel do evento: situação das inscrições, atalhos e números. A edição fica em /editar. */
+/* Painel do evento: situação das inscrições, próximo passo e números; cada cartão leva à sua tela. A edição fica em /editar. */
 export default async function PaginaEvento({ params, searchParams }: Props) {
   const [{ id }, query, usuario] = await Promise.all([params, searchParams, exigirLogin()]);
   const [evento, resumo, brincadeiras, times] = await Promise.all([obterEvento(id), resumirInscritos(id), listarBrincadeiras(id), listarTimes(id)]);
   if (!evento) notFound();
+  const elegiveis = resumo.porCategoria.crianca + resumo.porCategoria.jovem;
+  const passo = proximoPasso({
+    status: statusInscricoes(evento, evento.total_inscritos),
+    inscricoes_inicio: evento.inscricoes_inicio,
+    inscricoes_fim: evento.inscricoes_fim,
+    data_evento: evento.data_evento,
+    times: times.length,
+    montados: times.some((t) => t.membros > 0),
+    montagem_status: evento.montagem_status,
+    elegiveis,
+  });
 
   return (
     <>
@@ -50,16 +63,11 @@ export default async function PaginaEvento({ params, searchParams }: Props) {
       </div>
       {query.salvo && <Alerta tipo="success">Evento salvo.</Alerta>}
       <div className={styles.painelEvento}>
-        <PainelStatus evento={evento} perfil={usuario.perfil} />
-        <nav className={styles.atalhos} aria-label="Seções do evento">
-          <Link href={`/painel/eventos/${id}/brincadeiras`} className="rc-btn rc-btn--secondary">Brincadeiras</Link>
-          <Link href={`/painel/eventos/${id}/inscritos`} className="rc-btn rc-btn--secondary">Inscritos</Link>
-          <Link href={`/painel/eventos/${id}/times`} className="rc-btn rc-btn--secondary">Times</Link>
-        </nav>
-        <CartaoCategorias contagem={resumo.porCategoria} />
-        <CartaoBrincadeiras brincadeiras={brincadeiras} />
-        <CartaoTimes times={times} elegiveis={resumo.porCategoria.crianca + resumo.porCategoria.jovem} montagem={evento.montagem_status} />
-        <CartaoComida limites={evento.limites} contagem={resumo.comida} />
+        <PainelStatus evento={evento} perfil={usuario.perfil} passo={passo} />
+        <CartaoCategorias eventoId={id} contagem={resumo.porCategoria} />
+        <CartaoBrincadeiras eventoId={id} perfil={usuario.perfil} brincadeiras={brincadeiras} />
+        <CartaoTimes eventoId={id} perfil={usuario.perfil} times={times} elegiveis={elegiveis} montagem={evento.montagem_status} />
+        <CartaoComida eventoId={id} perfil={usuario.perfil} limites={evento.limites} contagem={resumo.comida} />
         <CartaoWhatsapp eventoId={id} perfil={usuario.perfil} />
       </div>
     </>
