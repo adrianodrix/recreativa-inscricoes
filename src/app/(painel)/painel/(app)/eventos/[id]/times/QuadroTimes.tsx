@@ -1,13 +1,26 @@
 "use client";
 
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  rectIntersection,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type CollisionDetection,
+  type DragEndEvent,
+  type KeyboardCoordinateGetter,
+} from "@dnd-kit/core";
+import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { CircleCheck, RefreshCw, Save, Shuffle } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 import { Alerta } from "@/components/formulario/Alerta";
 import { avaliarAlocacao } from "@/lib/times/avaliar";
 import type { DadosMontagem, TimeComContagem } from "@/lib/times/consultas";
 import type { Alocacao } from "@/lib/times/tipos";
-import { confirmarMontagemAction, montarTimesAction, salvarAlocacaoAction } from "./actions";
+import { confirmarMontagemAction, montarTimesAction, reordenarTimes, salvarAlocacaoAction } from "./actions";
 import { ColunaTime } from "./ColunaTime";
 import styles from "./quadro.module.css";
 
@@ -20,8 +33,32 @@ interface Props {
   sementeInicial: number | null;
 }
 
+const ehColuna = (id: unknown) => String(id).startsWith("coluna:");
+
+/* Pessoas só caem em colunas; colunas só trocam de lugar com colunas. */
+const colisao: CollisionDetection = (args) => {
+  const coluna = args.active.data.current?.tipo === "coluna";
+  const droppableContainers = args.droppableContainers.filter((c) => ehColuna(c.id) === coluna);
+  return coluna ? closestCenter({ ...args, droppableContainers }) : rectIntersection({ ...args, droppableContainers });
+};
+
+/* Teclado: colunas seguem a lista ordenável; pessoas andam 25px por seta, como o padrão do dnd-kit. */
+const coordenadasTeclado: KeyboardCoordinateGetter = (event, args) => {
+  if (args.context.active?.data.current?.tipo === "coluna") return sortableKeyboardCoordinates(event, args);
+  const { x, y } = args.currentCoordinates;
+  const passo = 25;
+  switch (event.code) {
+    case "ArrowRight": return { x: x + passo, y };
+    case "ArrowLeft": return { x: x - passo, y };
+    case "ArrowDown": return { x, y: y + passo };
+    case "ArrowUp": return { x, y: y - passo };
+    default: return undefined;
+  }
+};
+
 export function QuadroTimes({ eventoId, dados, times, status, inscricoesEncerradas, sementeInicial }: Props) {
   const [alocacao, setAlocacao] = useState<Alocacao>(dados.alocacao);
+  const [ordemTimes, setOrdemTimes] = useState(() => times.map((t) => t.id));
   const [semente, setSemente] = useState<number>(sementeInicial ?? 0);
   const [sujo, setSujo] = useState(false);
   const [mensagem, setMensagem] = useState<{ tipo: "success" | "danger"; texto: string }>();
@@ -30,13 +67,15 @@ export function QuadroTimes({ eventoId, dados, times, status, inscricoesEncerrad
   const sensores = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
-    useSensor(KeyboardSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: coordenadasTeclado }),
   );
 
   const { entrada } = dados;
   const avisos = useMemo(() => avaliarAlocacao(entrada, alocacao), [entrada, alocacao]);
   const vinculadas = useMemo(() => new Set(entrada.vinculos.flatMap((v) => [v.criancaId, v.responsavelId])), [entrada.vinculos]);
   const semTime = entrada.pessoas.filter((p) => !alocacao[p.id]);
+  // Ordem local primeiro; times que chegaram depois (cadastrados na mesma página) entram no fim.
+  const timesOrdenados = [...ordemTimes.map((id) => times.find((t) => t.id === id)).filter((t): t is TimeComContagem => Boolean(t)), ...times.filter((t) => !ordemTimes.includes(t.id))];
   const temAlocacao = Object.keys(alocacao).length > 0;
   const podeConfirmar = inscricoesEncerradas && times.length >= 2 && temAlocacao;
 
@@ -52,8 +91,25 @@ export function QuadroTimes({ eventoId, dados, times, status, inscricoesEncerrad
 
   function aoSoltar(e: DragEndEvent) {
     if (!e.over) return;
+    if (ehColuna(e.active.id)) return reordenarColunas(String(e.active.id).slice(7), String(e.over.id).slice(7));
     const destino = String(e.over.id);
     mover(String(e.active.id), destino === "sem-time" ? null : destino);
+  }
+
+  function reordenarColunas(de: string, para: string) {
+    if (de === para) return;
+    const atual = timesOrdenados.map((t) => t.id);
+    const anterior = ordemTimes;
+    const nova = arrayMove(atual, atual.indexOf(de), atual.indexOf(para));
+    setOrdemTimes(nova);
+    iniciar(async () => {
+      try {
+        await reordenarTimes(eventoId, nova);
+      } catch {
+        setOrdemTimes(anterior);
+        setMensagem({ tipo: "danger", texto: "Não foi possível gravar a ordem dos times." });
+      }
+    });
   }
 
   function montar(remontar: boolean) {
@@ -112,13 +168,15 @@ export function QuadroTimes({ eventoId, dados, times, status, inscricoesEncerrad
         </div>
       )}
       {/* id fixo: os ids de acessibilidade do dnd-kit precisam bater entre servidor e cliente. */}
-      <DndContext id="montagem-times" sensors={sensores} onDragEnd={aoSoltar}>
-        <div className={styles.quadro}>
-          {times.map((t) => (
-            <ColunaTime key={t.id} id={t.id} titulo={t.nome} time={t} pessoas={entrada.pessoas.filter((p) => alocacao[p.id] === t.id)} vinculadas={vinculadas} />
-          ))}
-          <ColunaTime id="sem-time" titulo="Sem time" pessoas={semTime} vinculadas={vinculadas} />
-        </div>
+      <DndContext id="montagem-times" sensors={sensores} collisionDetection={colisao} onDragEnd={aoSoltar}>
+        <SortableContext items={timesOrdenados.map((t) => `coluna:${t.id}`)} strategy={rectSortingStrategy}>
+          <div className={styles.quadro}>
+            {timesOrdenados.map((t) => (
+              <ColunaTime key={t.id} id={t.id} titulo={t.nome} time={t} pessoas={entrada.pessoas.filter((p) => alocacao[p.id] === t.id)} vinculadas={vinculadas} />
+            ))}
+            <ColunaTime id="sem-time" titulo="Sem time" pessoas={semTime} vinculadas={vinculadas} />
+          </div>
+        </SortableContext>
       </DndContext>
     </div>
   );

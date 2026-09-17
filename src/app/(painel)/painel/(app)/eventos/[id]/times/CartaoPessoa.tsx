@@ -16,7 +16,7 @@ interface Props {
  * no teclado, Espaço pega, setas movem, Espaço solta.
  */
 export function CartaoPessoa({ pessoa, vinculada }: Props) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: pessoa.id });
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: pessoa.id, data: { tipo: "pessoa" } });
   return (
     <div ref={setNodeRef} className={`${styles.cartao} ${isDragging ? styles.cartaoArrastando : ""}`} style={{ transform: CSS.Translate.toString(transform) }}>
       <span className={styles.alca} {...listeners} {...attributes} aria-label={`Arrastar ${pessoa.nome}`}>

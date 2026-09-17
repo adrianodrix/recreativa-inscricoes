@@ -25,6 +25,38 @@
   align-items: center;
   gap: var(--spacing-3);
 }
+/* Cabeçalho de time: alça para reordenar as colunas (mouse, toque e teclado). */
+.colunaAlca {
+  margin: calc(var(--spacing-2) * -1);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.colunaAlca > svg:first-child {
+  flex: none;
+  color: var(--color-text-muted);
+}
+.colunaAlca:hover {
+  background: var(--color-neutral-soft);
+}
+.colunaAlca:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+.colunaArrastando {
+  position: relative;
+  z-index: 1;
+  opacity: 0.92;
+  box-shadow: var(--shadow-lg);
+}
+.colunaArrastando .colunaAlca {
+  cursor: grabbing;
+}
 
 .colunaTitulo {
   font-size: var(--text-lg);
