@@ -1,18 +1,23 @@
 import styles from "./Ocupacao.module.css";
 
+export type NivelOcupacao = "normal" | "ok" | "atencao" | "critico";
+
 interface Props {
   total: number;
   limite: number;
   /* O que está sendo contado: "inscritos", "pessoas", "casais", "duplas"… */
   rotulo?: string;
+  /* Quando quem chama sabe melhor o que a proporção significa (ex.: equilíbrio entre times). */
+  nivel?: NivelOcupacao;
+  legenda?: string;
 }
 
 /* Inscritos contra o limite do evento: número grande, barra proporcional e vagas livres. */
-export function Ocupacao({ total, limite, rotulo = "inscritos" }: Props) {
-  const fracao = limite > 0 ? Math.min(total / limite, 1) : 1;
+export function Ocupacao({ total, limite, rotulo = "inscritos", nivel: nivelDado, legenda: legendaDada }: Props) {
+  const fracao = limite > 0 ? Math.min(total / limite, 1) : total > 0 ? 1 : 0;
   const livres = limite - total;
-  const nivel = livres <= 0 ? "lotado" : fracao >= 0.9 ? "quase" : "normal";
-  const legenda = livres > 0 ? `${livres} ${livres === 1 ? "vaga livre" : "vagas livres"}` : livres === 0 ? "Lotado" : `${-livres} acima do limite`;
+  const nivel = nivelDado ?? (livres <= 0 ? "critico" : fracao >= 0.9 ? "atencao" : "normal");
+  const legenda = legendaDada ?? (livres > 0 ? `${livres} ${livres === 1 ? "vaga livre" : "vagas livres"}` : livres === 0 ? "Lotado" : `${-livres} acima do limite`);
   return (
     <div className={styles.ocupacao} data-nivel={nivel}>
       <span className={styles.ocupacaoRotulo}>{rotulo}</span>

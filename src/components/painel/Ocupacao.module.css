@@ -17,10 +17,13 @@
   display: grid;
   gap: var(--spacing-2);
 }
-.ocupacao[data-nivel="quase"] {
+.ocupacao[data-nivel="ok"] {
+  --ocupacao-cor: var(--color-success);
+}
+.ocupacao[data-nivel="atencao"] {
   --ocupacao-cor: var(--color-warning);
 }
-.ocupacao[data-nivel="lotado"] {
+.ocupacao[data-nivel="critico"] {
   --ocupacao-cor: var(--color-danger);
 }
 @media (min-width: 40rem) {
@@ -77,8 +80,9 @@
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
-.ocupacao[data-nivel="quase"] .ocupacaoLegenda,
-.ocupacao[data-nivel="lotado"] .ocupacaoLegenda {
+.ocupacao[data-nivel="ok"] .ocupacaoLegenda,
+.ocupacao[data-nivel="atencao"] .ocupacaoLegenda,
+.ocupacao[data-nivel="critico"] .ocupacaoLegenda {
   font-weight: var(--font-weight-medium);
   color: var(--ocupacao-cor);
 }

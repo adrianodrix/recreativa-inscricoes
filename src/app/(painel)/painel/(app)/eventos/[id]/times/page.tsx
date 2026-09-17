@@ -2,11 +2,14 @@ import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Alerta } from "@/components/formulario/Alerta";
+import { Ocupacao } from "@/components/painel/Ocupacao";
+import ocupacao from "@/components/painel/Ocupacao.module.css";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { statusInscricoes } from "@/lib/eventos/status";
 import { carregarMontagem, listarTimes } from "@/lib/times/consultas";
+import { equilibrioDoTime } from "@/lib/times/equilibrio";
 import { FormularioTime } from "./FormularioTime";
 import { IconeTime } from "./IconeTime";
 import { QuadroTimes } from "./QuadroTimes";
@@ -26,6 +29,8 @@ export default async function PaginaTimes({ params, searchParams }: Props) {
   const [times, montagem] = await Promise.all([listarTimes(id), carregarMontagem(id, evento.montagem_semente)]);
   const podeGerir = pode(usuario.perfil, "gerir_times");
   const status = statusInscricoes(evento, evento.total_inscritos);
+  const contagens = times.map((t) => t.membros);
+  const elegiveis = montagem.entrada.pessoas.length;
 
   return (
     <>
@@ -45,20 +50,25 @@ export default async function PaginaTimes({ params, searchParams }: Props) {
             <p className="rc-hint">Nenhum time ainda. A quantidade de times é o número de times cadastrados.</p>
           ) : (
             <ul className={styles.lista}>
-              {times.map((t) => (
-                <li key={t.id} className={`rc-card ${styles.statusLinha}`}>
-                  <span style={{ display: "flex", alignItems: "center", gap: "var(--spacing-3)" }}>
-                    <IconeTime imagemPath={t.imagem_path} cor={t.cor_padrao} icone={t.icone_padrao} />
-                    <strong>{t.nome}</strong>
-                    <span className="rc-hint">{t.membros} inscritos</span>
-                  </span>
-                  {podeGerir && (
-                    <Link href={`/painel/eventos/${id}/times/${t.id}`} className="rc-btn rc-btn--sm">
-                      <Pencil className="rc-icon" aria-hidden="true" /> Editar
-                    </Link>
-                  )}
-                </li>
-              ))}
+              {times.map((t) => {
+                const eq = equilibrioDoTime(t.membros, contagens, elegiveis);
+                return (
+                  <li key={t.id} className="rc-card">
+                    <div className={ocupacao.comOcupacao}>
+                      <div className={styles.acoes}>
+                        <IconeTime imagemPath={t.imagem_path} cor={t.cor_padrao} icone={t.icone_padrao} />
+                        <strong>{t.nome}</strong>
+                        {podeGerir && (
+                          <Link href={`/painel/eventos/${id}/times/${t.id}`} className="rc-btn rc-btn--sm">
+                            <Pencil className="rc-icon" aria-hidden="true" /> Editar
+                          </Link>
+                        )}
+                      </div>
+                      <Ocupacao total={t.membros} limite={eq.cota} rotulo="membros" nivel={eq.nivel} legenda={eq.legenda} />
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
           {podeGerir && <FormularioTime eventoId={id} time={null} />}
