@@ -10,13 +10,12 @@
   text-decoration: none;
 }
 
+/* A alça fica dentro do cartão, sobreposta à borda esquerda, para a lista alinhar com as demais. */
 .item {
-  display: flex;
-  align-items: stretch;
-  gap: var(--spacing-2);
+  position: relative;
+  display: grid;
 }
 .arrastando {
-  position: relative;
   z-index: 1;
   opacity: 0.92;
 }
@@ -27,21 +26,28 @@
 
 .conteudo {
   display: grid; /* o cartão filho ocupa a altura toda */
-  flex: 1;
   min-width: 0;
+}
+.conteudo > :global(.rc-card) {
+  padding-left: calc(var(--card-pad) + 2rem);
 }
 
 /* Alça: só aqui o toque não rola a página nem seleciona texto. */
 .alca {
+  position: absolute;
+  top: 50%;
+  left: var(--spacing-2);
+  z-index: 1;
   display: grid;
-  flex: none;
   place-items: center;
-  width: 2.75rem;
+  width: 2.25rem;
+  height: 2.75rem;
   border: 0;
   border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-muted);
   cursor: grab;
+  translate: 0 -50%;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
