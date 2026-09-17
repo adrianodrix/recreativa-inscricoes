@@ -1,0 +1,60 @@
+.lista {
+  display: grid;
+  gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Cartões inteiros como link: sem o sublinhado do navegador. */
+.lista a {
+  text-decoration: none;
+}
+
+.item {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-2);
+}
+.arrastando {
+  position: relative;
+  z-index: 1;
+  opacity: 0.92;
+}
+.arrastando .conteudo {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.conteudo {
+  display: grid; /* o cartão filho ocupa a altura toda */
+  flex: 1;
+  min-width: 0;
+}
+
+/* Alça: só aqui o toque não rola a página nem seleciona texto. */
+.alca {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.alca:hover {
+  background: var(--color-neutral-soft);
+  color: var(--color-text);
+}
+.alca:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+.arrastando .alca {
+  cursor: grabbing;
+}

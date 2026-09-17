@@ -68,7 +68,6 @@ export function FormularioBrincadeira({ eventoId, brincadeira }: Props) {
             Ativa <span className="rc-choice__hint">Desative para esconder do formulário sem excluir.</span>
           </span>
         </label>
-        <CampoTexto id="ordem" name="ordem" type="number" inputMode="numeric" rotulo="Ordem de exibição" defaultValue={brincadeira?.ordem ?? 0} opcional />
       </section>
 
       <section className={styles.secao}>

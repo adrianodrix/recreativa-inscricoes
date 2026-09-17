@@ -6,6 +6,7 @@ import { after } from "next/server";
 import { processarPendentes } from "@/lib/whatsapp/outbox";
 import { exigirPerfil } from "@/lib/auth/perfil";
 import { errosPorCampo } from "@/lib/eventos/schema";
+import { proximaOrdem } from "@/lib/supabase/ordem";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";
 import { carregarMontagem } from "@/lib/times/consultas";
@@ -27,17 +28,32 @@ export async function salvarTime(eventoId: string, id: string | null, _: EstadoF
   const dados = schemaTime.safeParse(Object.fromEntries(form));
   if (!dados.success) return { erros: errosPorCampo(dados.error), erro: "Confira os campos." };
   const supabase = await criarClienteServidor();
-  const paleta = paletaPorOrdem(dados.data.ordem);
-  const linha = { ...dados.data, evento_id: eventoId, cor_padrao: paleta.cor, icone_padrao: paleta.icone };
-  const { error } = id
-    ? await supabase.from("times").update(linha).eq("id", id).eq("evento_id", eventoId)
-    : await supabase.from("times").insert(linha);
+  const linha = { ...dados.data, evento_id: eventoId };
+  let error;
+  if (id) {
+    ({ error } = await supabase.from("times").update(linha).eq("id", id).eq("evento_id", eventoId));
+  } else {
+    // Entra no fim da lista; a cor e o ícone padrão vêm da posição e ficam fixos depois.
+    const ordem = await proximaOrdem(supabase, "times", eventoId);
+    const paleta = paletaPorOrdem(ordem);
+    ({ error } = await supabase.from("times").insert({ ...linha, ordem, cor_padrao: paleta.cor, icone_padrao: paleta.icone }));
+  }
   if (error) {
     if (error.message.includes("times_evento_id_nome_key")) return { erros: { nome: "Já existe um time com esse nome." }, erro: "Confira os campos." };
     return { erro: `Não foi possível salvar: ${error.message}` };
   }
   revalidatePath(rota(eventoId));
   redirect(`${rota(eventoId)}?salvo=1`);
+}
+
+/* Grava a ordem de exibição na sequência em que os ids chegam. */
+export async function reordenarTimes(eventoId: string, ids: string[]): Promise<void> {
+  await exigirPerfil("gerir_times");
+  const supabase = await criarClienteServidor();
+  const resultados = await Promise.all(ids.map((id, i) => supabase.from("times").update({ ordem: i }).eq("id", id).eq("evento_id", eventoId)));
+  const falha = resultados.find((r) => r.error)?.error;
+  if (falha) throw new Error(`Não foi possível reordenar: ${falha.message}`);
+  revalidatePath(rota(eventoId));
 }
 
 export async function excluirTime(eventoId: string, id: string): Promise<void> {

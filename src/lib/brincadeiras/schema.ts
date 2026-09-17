@@ -39,7 +39,6 @@ export const schemaBrincadeira = z
     foto_path: z.string().transform((v) => v || null),
     regras,
     ativo: z.preprocess((v) => v === "on" || v === "true", z.boolean()),
-    ordem: z.coerce.number().int().default(0),
   })
   .transform((d) => ({ ...d, formato: d.categoria === "casais" ? null : d.formato || "em_grupo" }));
 

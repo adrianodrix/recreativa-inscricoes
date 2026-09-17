@@ -16,10 +16,7 @@ export function FormularioTime({ eventoId, time }: { eventoId: string; time: Tim
   return (
     <form action={enviar} className={`rc-card ${styles.secao}`} noValidate>
       <h2>{time ? "Editar time" : "Novo time"}</h2>
-      <div className={`${styles.grade} ${styles.grade2}`}>
-        <CampoTexto id="nome" name="nome" rotulo="Nome" defaultValue={time?.nome} erro={e.nome} required />
-        <CampoTexto id="ordem" name="ordem" type="number" inputMode="numeric" rotulo="Ordem" ajuda="Define também a cor padrão." defaultValue={time?.ordem ?? 0} opcional />
-      </div>
+      <CampoTexto id="nome" name="nome" rotulo="Nome" defaultValue={time?.nome} erro={e.nome} required />
       <UploadImagem name="imagem_path" rotulo="Imagem" prefixo={`times/${eventoId}`} valorInicial={time?.imagem_path} ajuda="Opcional. Sem imagem, usa cor e ícone padrão." />
       {estado.erro && <Alerta tipo="danger">{estado.erro}</Alerta>}
       <div className={styles.acoes}>

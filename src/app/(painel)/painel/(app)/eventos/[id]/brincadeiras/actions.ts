@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { exigirPerfil } from "@/lib/auth/perfil";
 import { schemaBrincadeira } from "@/lib/brincadeiras/schema";
 import { errosPorCampo } from "@/lib/eventos/schema";
+import { proximaOrdem } from "@/lib/supabase/ordem";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";
 
@@ -24,11 +25,22 @@ export async function salvarBrincadeira(eventoId: string, id: string | null, _: 
     const { error } = await supabase.from("brincadeiras").update(linha).eq("id", id).eq("evento_id", eventoId);
     if (error) return { erro: traduzir(error.message) };
   } else {
-    const { error } = await supabase.from("brincadeiras").insert(linha);
+    const ordem = await proximaOrdem(supabase, "brincadeiras", eventoId); // entra no fim da lista
+    const { error } = await supabase.from("brincadeiras").insert({ ...linha, ordem });
     if (error) return { erro: traduzir(error.message) };
   }
   revalidatePath(`/painel/eventos/${eventoId}/brincadeiras`);
   redirect(`/painel/eventos/${eventoId}/brincadeiras?salvo=1`);
+}
+
+/* Grava a ordem de exibição (a mesma do formulário público) na sequência em que os ids chegam. */
+export async function reordenarBrincadeiras(eventoId: string, ids: string[]): Promise<void> {
+  await exigirPerfil("editar_brincadeira");
+  const supabase = await criarClienteServidor();
+  const resultados = await Promise.all(ids.map((id, i) => supabase.from("brincadeiras").update({ ordem: i }).eq("id", id).eq("evento_id", eventoId)));
+  const falha = resultados.find((r) => r.error)?.error;
+  if (falha) throw new Error(`Não foi possível reordenar: ${falha.message}`);
+  revalidatePath(`/painel/eventos/${eventoId}/brincadeiras`);
 }
 
 export async function excluirBrincadeira(eventoId: string, id: string): Promise<void> {

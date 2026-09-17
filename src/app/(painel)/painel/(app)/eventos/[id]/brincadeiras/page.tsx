@@ -2,6 +2,7 @@ import { Plus, User, Users } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Alerta } from "@/components/formulario/Alerta";
+import { ListaOrdenavel } from "@/components/painel/ListaOrdenavel";
 import { Ocupacao } from "@/components/painel/Ocupacao";
 import indicadores from "@/components/painel/indicadores.module.css";
 import { exigirLogin } from "@/lib/auth/perfil";
@@ -9,6 +10,7 @@ import { pode } from "@/lib/auth/permissoes";
 import { listarBrincadeiras } from "@/lib/brincadeiras/consultas";
 import { ROTULO_CATEGORIA, UNIDADE_VAGA } from "@/lib/brincadeiras/schema";
 import { obterEvento } from "@/lib/eventos/consultas";
+import { reordenarBrincadeiras } from "./actions";
 import styles from "../../../painel.module.css";
 
 interface Props {
@@ -23,6 +25,7 @@ export default async function PaginaBrincadeiras({ params, searchParams }: Props
   const evento = await obterEvento(id);
   if (!evento) notFound();
   const brincadeiras = await listarBrincadeiras(id);
+  const podeEditar = pode(usuario.perfil, "editar_brincadeira");
 
   return (
     <>
@@ -33,7 +36,7 @@ export default async function PaginaBrincadeiras({ params, searchParams }: Props
           </p>
           <h1>Brincadeiras</h1>
         </div>
-        {pode(usuario.perfil, "editar_brincadeira") && (
+        {podeEditar && (
           <Link href={`/painel/eventos/${id}/brincadeiras/nova`} className="rc-btn rc-btn--primary">
             <Plus className="rc-icon" aria-hidden="true" /> Nova brincadeira
           </Link>
@@ -43,9 +46,17 @@ export default async function PaginaBrincadeiras({ params, searchParams }: Props
       {brincadeiras.length === 0 ? (
         <p className={styles.vazio}>Nenhuma brincadeira cadastrada. Elas aparecem no formulário uma por vez, conforme a idade de cada inscrito.</p>
       ) : (
-        <ul className={styles.lista}>
-          {brincadeiras.map((b) => (
-            <li key={b.id}>
+        <>
+          {podeEditar && brincadeiras.length > 1 && <p className="rc-hint">Esta é a ordem em que aparecem no formulário. Arraste pela alça para mudar.</p>}
+          <ListaOrdenavel
+            key={brincadeiras.map((b) => b.id).join("|")}
+            id="lista-brincadeiras"
+            podeReordenar={podeEditar}
+            aoReordenar={reordenarBrincadeiras.bind(null, id)}
+            itens={brincadeiras.map((b) => ({
+              id: b.id,
+              rotulo: b.nome,
+              conteudo: (
               <Link href={`/painel/eventos/${id}/brincadeiras/${b.id}`} className="rc-card rc-card--interactive">
                 <div className={indicadores.comOcupacao}>
                   <div>
@@ -68,9 +79,10 @@ export default async function PaginaBrincadeiras({ params, searchParams }: Props
                   <Ocupacao total={b.vagas_ocupadas} limite={b.limite_participantes} rotulo={UNIDADE_VAGA[b.categoria]} />
                 </div>
               </Link>
-            </li>
-          ))}
-        </ul>
+              ),
+            }))}
+          />
+        </>
       )}
     </>
   );
