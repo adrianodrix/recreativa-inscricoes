@@ -24,12 +24,12 @@ export function CartaoPessoa({ pessoa, vinculada }: Props) {
         {pessoa.nome}
       </span>
       <span className={styles.cartaoInfo}>
+        <span className={`rc-badge ${pessoa.categoria === "crianca" ? "rc-badge--brand" : "rc-badge--roxo"}`}>{pessoa.idade} anos</span>
         {vinculada && (
           <span className="rc-hint" title="Faz parte de uma dupla com responsável: fica no mesmo time">
             <Link2 className="rc-icon rc-icon--sm" aria-hidden="true" />
           </span>
         )}
-        <span className={`rc-badge ${pessoa.categoria === "crianca" ? "rc-badge--brand" : "rc-badge--roxo"}`}>{pessoa.idade} anos</span>
       </span>
     </div>
   );

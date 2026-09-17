@@ -111,7 +111,8 @@ export function QuadroTimes({ eventoId, dados, times, status, inscricoesEncerrad
           ))}
         </div>
       )}
-      <DndContext sensors={sensores} onDragEnd={aoSoltar}>
+      {/* id fixo: os ids de acessibilidade do dnd-kit precisam bater entre servidor e cliente. */}
+      <DndContext id="montagem-times" sensors={sensores} onDragEnd={aoSoltar}>
         <div className={styles.quadro}>
           {times.map((t) => (
             <ColunaTime key={t.id} id={t.id} titulo={t.nome} time={t} pessoas={entrada.pessoas.filter((p) => alocacao[p.id] === t.id)} vinculadas={vinculadas} />
