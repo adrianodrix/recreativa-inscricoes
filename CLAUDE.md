@@ -6,7 +6,7 @@ Webapp de inscrições da Recreativa (evento anual de famílias, jovens e crian�
 
 ## Convenções
 - Next.js 16 (App Router, `src/`), React 19.3, TypeScript strict, pnpm. Sem Tailwind.
-- Visual vem do kit em `branding/` (tokens, tema escuro, classes `rc-*`). Não alterar o kit; complementar com CSS Modules.
+- Visual vem do kit em `branding/` (tokens, tema escuro, classes `rc-*`, logos, diretrizes). O kit espelha o design system do designer e só muda quando ele entrega algo novo; no dia a dia, complementar com CSS Modules.
 - Backend: Supabase (Postgres, Auth, Storage). Migrations em `supabase/migrations`, versionadas. Tipos gerados com `pnpm db:types`.
 - Arquivos com no máximo ~250 linhas; funções curtas. Módulos puros (sem React/banco) em `src/lib`.
 - Nunca dados fictícios em dev/prod; fixtures só em testes.
