@@ -4,8 +4,8 @@ import type { EventoCompleto } from "@/lib/eventos/consultas";
 import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
 import { pode, type Perfil } from "@/lib/auth/permissoes";
 import { alternarInscricoes } from "./actions";
-import { Ocupacao } from "./Ocupacao";
-import ocupacao from "./Ocupacao.module.css";
+import { Ocupacao } from "@/components/painel/Ocupacao";
+import ocupacao from "@/components/painel/Ocupacao.module.css";
 import painel from "../painel.module.css";
 
 interface Props {

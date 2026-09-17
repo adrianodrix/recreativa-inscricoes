@@ -5,8 +5,8 @@ import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { contarInscritos, listarEventos } from "@/lib/eventos/consultas";
 import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
-import { Ocupacao } from "./Ocupacao";
-import ocupacao from "./Ocupacao.module.css";
+import { Ocupacao } from "@/components/painel/Ocupacao";
+import ocupacao from "@/components/painel/Ocupacao.module.css";
 import styles from "../painel.module.css";
 
 export const metadata = { title: "Eventos" };

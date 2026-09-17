@@ -1,7 +1,9 @@
-import { Plus, Users } from "lucide-react";
+import { Plus, User, Users } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Alerta } from "@/components/formulario/Alerta";
+import { Ocupacao } from "@/components/painel/Ocupacao";
+import ocupacao from "@/components/painel/Ocupacao.module.css";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { listarBrincadeiras } from "@/lib/brincadeiras/consultas";
@@ -45,20 +47,26 @@ export default async function PaginaBrincadeiras({ params, searchParams }: Props
           {brincadeiras.map((b) => (
             <li key={b.id}>
               <Link href={`/painel/eventos/${id}/brincadeiras/${b.id}`} className="rc-card rc-card--interactive">
-                <header className="rc-card__header">
-                  <h3 className="rc-card__title">{b.nome}</h3>
-                  <span>
-                    <span className="rc-badge rc-badge--roxo">{ROTULO_CATEGORIA[b.categoria]}</span>{" "}
-                    {!b.ativo && <span className="rc-badge rc-badge--warning">Inativa</span>}
-                  </span>
-                </header>
-                <ul className="rc-card__meta">
-                  <li>
-                    <Users className="rc-icon" aria-hidden="true" />
-                    {b.vagas_ocupadas} de {b.limite_participantes} {UNIDADE_VAGA[b.categoria]}
-                    {b.formato ? ` · ${b.formato === "em_grupo" ? "em times" : "individual"}` : ""}
-                  </li>
-                </ul>
+                <div className={ocupacao.comOcupacao}>
+                  <div>
+                    <header className="rc-card__header">
+                      <h3 className="rc-card__title">{b.nome}</h3>
+                      <span>
+                        <span className="rc-badge rc-badge--roxo">{ROTULO_CATEGORIA[b.categoria]}</span>{" "}
+                        {!b.ativo && <span className="rc-badge rc-badge--warning">Inativa</span>}
+                      </span>
+                    </header>
+                    {b.formato && (
+                      <ul className="rc-card__meta">
+                        <li>
+                          {b.formato === "em_grupo" ? <Users className="rc-icon" aria-hidden="true" /> : <User className="rc-icon" aria-hidden="true" />}
+                          {b.formato === "em_grupo" ? "Em times" : "Individual"}
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                  <Ocupacao total={b.vagas_ocupadas} limite={b.limite_participantes} rotulo={UNIDADE_VAGA[b.categoria]} />
+                </div>
               </Link>
             </li>
           ))}
