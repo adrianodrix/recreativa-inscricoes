@@ -9,7 +9,8 @@ import styles from "../publico.module.css";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Inscrição confirmada" };
+/* Página pessoal de quem acabou de se inscrever: não vai para buscadores. */
+export const metadata = { title: "Inscrição confirmada", robots: { index: false, follow: false } };
 
 export default async function PaginaObrigado({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

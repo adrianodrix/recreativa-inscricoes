@@ -820,6 +820,13 @@ export type Database = {
           video_url: string
         }[]
       }
+      listar_eventos_publicados: {
+        Args: never
+        Returns: {
+          atualizado_em: string
+          slug: string
+        }[]
+      }
       motivo_fechado: {
         Args: {
           e: Database["public"]["Tables"]["eventos"]["Row"]

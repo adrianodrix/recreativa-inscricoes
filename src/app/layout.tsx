@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Baloo_2, Caveat, Inter } from "next/font/google";
 import "./globals.css";
 import { Tema } from "@/components/marca/Tema";
+import { urlDoSite } from "@/lib/seo/metadados";
 
 const baloo = Baloo_2({
   subsets: ["latin"],
@@ -24,11 +25,16 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: urlDoSite(),
   title: {
     default: "Recreativa · Inscrições",
     template: "%s · Recreativa",
   },
   description: "Inscrições para a Recreativa: um dia de brincadeiras e conexão para famílias, jovens e crianças.",
+  applicationName: "Recreativa",
+  openGraph: { siteName: "Recreativa", locale: "pt_BR", type: "website" },
+  twitter: { card: "summary_large_image" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
