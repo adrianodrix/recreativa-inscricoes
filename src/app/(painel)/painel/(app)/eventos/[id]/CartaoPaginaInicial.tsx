@@ -40,10 +40,13 @@ export function CartaoPaginaInicial({ eventoId, slug, perfil, publicado, emDesta
         {LISTAS.map(({ chave, rota, rotulo, icone: Icone }) => (
           <li key={chave}>
             <Icone className="rc-icon" aria-hidden="true" />
-            <Link href={`/painel/eventos/${eventoId}/${rota}`} className="rc-link">
-              {rotulo}
-            </Link>
-            : {resumo[chave]} {resumo[chave] === 1 ? "item" : "itens"}
+            {/* Um só item do flex: com Link e texto soltos, o gap abriria espaço antes dos dois-pontos. */}
+            <span>
+              <Link href={`/painel/eventos/${eventoId}/${rota}`} className="rc-link">
+                {rotulo}
+              </Link>
+              {`: ${resumo[chave]} ${resumo[chave] === 1 ? "item" : "itens"}`}
+            </span>
           </li>
         ))}
       </ul>
