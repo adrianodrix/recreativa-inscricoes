@@ -343,6 +343,21 @@
   display: grid;
   justify-items: start;
   gap: var(--spacing-2);
+  min-width: 0;
+}
+
+/*
+ * O rótulo da categoria traz a faixa de idade e é longo. No cartão estreito
+ * ele entra em corpo menor e sem o espaçamento extra do kit; a quebra de linha
+ * é a rede de segurança para nomes ainda maiores.
+ */
+.cartaoBrincadeira :global(.rc-badge) {
+  max-width: 100%;
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-normal);
+  line-height: 1.35;
+  padding-inline: var(--spacing-2);
+  white-space: normal;
 }
 
 .fotoBrincadeira {
