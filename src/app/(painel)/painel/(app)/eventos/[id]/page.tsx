@@ -14,6 +14,12 @@ interface Props {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
+export async function generateMetadata({ params }: Pick<Props, "params">) {
+  const { id } = await params;
+  const evento = await obterEvento(id);
+  return { title: evento?.nome ?? "Evento" };
+}
+
 export default async function PaginaEvento({ params, searchParams }: Props) {
   const [{ id }, query, usuario] = await Promise.all([params, searchParams, exigirLogin()]);
   const evento = await obterEvento(id);
