@@ -34,6 +34,88 @@ export type Database = {
   }
   public: {
     Tables: {
+      brincadeiras: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          categoria: Database["public"]["Enums"]["categoria_brincadeira"]
+          criado_em: string
+          evento_id: string
+          formato: Database["public"]["Enums"]["formato_brincadeira"] | null
+          foto_path: string | null
+          id: string
+          limite_participantes: number
+          nome: string
+          ordem: number
+          regras: Json
+          video_url: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          categoria: Database["public"]["Enums"]["categoria_brincadeira"]
+          criado_em?: string
+          evento_id: string
+          formato?: Database["public"]["Enums"]["formato_brincadeira"] | null
+          foto_path?: string | null
+          id?: string
+          limite_participantes: number
+          nome: string
+          ordem?: number
+          regras: Json
+          video_url?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          categoria?: Database["public"]["Enums"]["categoria_brincadeira"]
+          criado_em?: string
+          evento_id?: string
+          formato?: Database["public"]["Enums"]["formato_brincadeira"] | null
+          foto_path?: string | null
+          id?: string
+          limite_participantes?: number
+          nome?: string
+          ordem?: number
+          regras?: Json
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brincadeiras_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      colaboracoes: {
+        Row: {
+          evento_id: string
+          inscrito_id: string
+          tipo: Database["public"]["Enums"]["tipo_comida"]
+        }
+        Insert: {
+          evento_id: string
+          inscrito_id: string
+          tipo: Database["public"]["Enums"]["tipo_comida"]
+        }
+        Update: {
+          evento_id?: string
+          inscrito_id?: string
+          tipo?: Database["public"]["Enums"]["tipo_comida"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "colaboracoes_inscrito_id_evento_id_fkey"
+            columns: ["inscrito_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "inscritos"
+            referencedColumns: ["id", "evento_id"]
+          },
+        ]
+      }
       eventos: {
         Row: {
           aberto_manual: boolean
@@ -112,6 +194,93 @@ export type Database = {
         }
         Relationships: []
       }
+      inscritos: {
+        Row: {
+          apelido: string | null
+          atualizado_em: string
+          casado: boolean
+          conjuge_situacao:
+            | Database["public"]["Enums"]["situacao_dependente"]
+            | null
+          criado_por: string | null
+          data_nascimento: string
+          evento_id: string
+          filhos_situacao:
+            | Database["public"]["Enums"]["situacao_dependente"]
+            | null
+          id: string
+          idade: number
+          inscrito_em: string
+          inscrito_principal_id: string | null
+          nome_completo: string
+          nome_normalizado: string | null
+          tem_filhos_menores: boolean
+          vinculo: Database["public"]["Enums"]["tipo_vinculo"]
+          whatsapp: string | null
+        }
+        Insert: {
+          apelido?: string | null
+          atualizado_em?: string
+          casado?: boolean
+          conjuge_situacao?:
+            | Database["public"]["Enums"]["situacao_dependente"]
+            | null
+          criado_por?: string | null
+          data_nascimento: string
+          evento_id: string
+          filhos_situacao?:
+            | Database["public"]["Enums"]["situacao_dependente"]
+            | null
+          id?: string
+          idade: number
+          inscrito_em?: string
+          inscrito_principal_id?: string | null
+          nome_completo: string
+          nome_normalizado?: string | null
+          tem_filhos_menores?: boolean
+          vinculo: Database["public"]["Enums"]["tipo_vinculo"]
+          whatsapp?: string | null
+        }
+        Update: {
+          apelido?: string | null
+          atualizado_em?: string
+          casado?: boolean
+          conjuge_situacao?:
+            | Database["public"]["Enums"]["situacao_dependente"]
+            | null
+          criado_por?: string | null
+          data_nascimento?: string
+          evento_id?: string
+          filhos_situacao?:
+            | Database["public"]["Enums"]["situacao_dependente"]
+            | null
+          id?: string
+          idade?: number
+          inscrito_em?: string
+          inscrito_principal_id?: string | null
+          nome_completo?: string
+          nome_normalizado?: string | null
+          tem_filhos_menores?: boolean
+          vinculo?: Database["public"]["Enums"]["tipo_vinculo"]
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inscritos_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inscritos_inscrito_principal_id_evento_id_fkey"
+            columns: ["inscrito_principal_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "inscritos"
+            referencedColumns: ["id", "evento_id"]
+          },
+        ]
+      }
       limites_comida: {
         Row: {
           evento_id: string
@@ -135,6 +304,84 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "eventos"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      participacoes: {
+        Row: {
+          brincadeira_id: string
+          categoria: Database["public"]["Enums"]["categoria_brincadeira"]
+          criado_em: string
+          evento_id: string
+          id: string
+        }
+        Insert: {
+          brincadeira_id: string
+          categoria: Database["public"]["Enums"]["categoria_brincadeira"]
+          criado_em?: string
+          evento_id: string
+          id?: string
+        }
+        Update: {
+          brincadeira_id?: string
+          categoria?: Database["public"]["Enums"]["categoria_brincadeira"]
+          criado_em?: string
+          evento_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participacoes_brincadeira_id_categoria_fkey"
+            columns: ["brincadeira_id", "categoria"]
+            isOneToOne: false
+            referencedRelation: "brincadeiras"
+            referencedColumns: ["id", "categoria"]
+          },
+          {
+            foreignKeyName: "participacoes_brincadeira_id_evento_id_fkey"
+            columns: ["brincadeira_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "brincadeiras"
+            referencedColumns: ["id", "evento_id"]
+          },
+        ]
+      }
+      participantes: {
+        Row: {
+          brincadeira_id: string
+          evento_id: string
+          inscrito_id: string
+          papel: Database["public"]["Enums"]["papel_participante"]
+          participacao_id: string
+        }
+        Insert: {
+          brincadeira_id: string
+          evento_id: string
+          inscrito_id: string
+          papel: Database["public"]["Enums"]["papel_participante"]
+          participacao_id: string
+        }
+        Update: {
+          brincadeira_id?: string
+          evento_id?: string
+          inscrito_id?: string
+          papel?: Database["public"]["Enums"]["papel_participante"]
+          participacao_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participantes_inscrito_id_evento_id_fkey"
+            columns: ["inscrito_id", "evento_id"]
+            isOneToOne: false
+            referencedRelation: "inscritos"
+            referencedColumns: ["id", "evento_id"]
+          },
+          {
+            foreignKeyName: "participantes_participacao_id_brincadeira_id_fkey"
+            columns: ["participacao_id", "brincadeira_id"]
+            isOneToOne: false
+            referencedRelation: "participacoes"
+            referencedColumns: ["id", "brincadeira_id"]
           },
         ]
       }
@@ -173,18 +420,92 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      buscar_jovens_livres: {
+        Args: { p_brincadeira_id: string; p_evento_id: string; p_termo: string }
+        Returns: {
+          apelido: string
+          id: string
+          nome_completo: string
+        }[]
+      }
       calcular_idade: {
         Args: { nascimento: string; referencia: string }
         Returns: number
+      }
+      categoria_elegivel: {
+        Args: {
+          p_casado: boolean
+          p_categoria: Database["public"]["Enums"]["categoria_brincadeira"]
+          p_idade: number
+        }
+        Returns: boolean
+      }
+      comida_disponivel: { Args: { p_evento_id: string }; Returns: Json }
+      criar_inscricao: { Args: { p: Json }; Returns: Json }
+      erro_inscricao: {
+        Args: { p_codigo: string; p_detalhe?: Json }
+        Returns: undefined
       }
       evento_inicio_em: {
         Args: { e: Database["public"]["Tables"]["eventos"]["Row"] }
         Returns: string
       }
+      inserir_pessoa: {
+        Args: {
+          p_evento: Database["public"]["Tables"]["eventos"]["Row"]
+          p_pessoa: Json
+          p_principal_id: string
+          p_ref: string
+          p_vinculo: Database["public"]["Enums"]["tipo_vinculo"]
+        }
+        Returns: string
+      }
+      listar_brincadeiras_disponiveis: {
+        Args: { p_evento_id: string }
+        Returns: {
+          categoria: Database["public"]["Enums"]["categoria_brincadeira"]
+          formato: Database["public"]["Enums"]["formato_brincadeira"]
+          foto_path: string
+          id: string
+          limite_participantes: number
+          nome: string
+          ordem: number
+          regras: Json
+          vagas_restantes: number
+          video_url: string
+        }[]
+      }
+      motivo_fechado: {
+        Args: {
+          e: Database["public"]["Tables"]["eventos"]["Row"]
+          p_total: number
+        }
+        Returns: string
+      }
       normalizar_nome: { Args: { nome: string }; Returns: string }
+      obter_evento_publico: { Args: { p_slug: string }; Returns: Json }
       perfil_atual: {
         Args: never
         Returns: Database["public"]["Enums"]["perfil_usuario"]
+      }
+      registrar_colaboracao: {
+        Args: {
+          p_evento_id: string
+          p_inscrito_id: string
+          p_ref: string
+          p_tipo: string
+        }
+        Returns: undefined
+      }
+      registrar_participacao: {
+        Args: { p_evento_id: string; p_ids: Json; p_part: Json }
+        Returns: undefined
+      }
+      total_inscritos: { Args: { p_evento_id: string }; Returns: number }
+      validar_nome_completo: { Args: { p_nome: string }; Returns: boolean }
+      verificar_nome_disponivel: {
+        Args: { p_evento_id: string; p_nome: string }
+        Returns: boolean
       }
     }
     Enums: {
