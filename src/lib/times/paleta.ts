@@ -1,13 +1,15 @@
-/* Cor e ícone padrão de um time sem imagem (T16), escolhidos pela ordem. */
+/* Cor e ícone padrão de um time sem imagem (T16), escolhidos pela ordem.
+   Os 4 primeiros seguem as equipes das artes (laranja, roxo, azul, verde);
+   todas em tons dos tokens com ícone branco legível (≥ 3:1). */
 export const PALETA_TIMES: ReadonlyArray<{ cor: string; icone: string; nome: string }> = [
-  { cor: "#ff8a4a", icone: "sun", nome: "Laranja" },
-  { cor: "#6d5ba2", icone: "moon", nome: "Roxo" },
-  { cor: "#137738", icone: "leaf", nome: "Verde" },
+  { cor: "#c5652d", icone: "sun", nome: "Laranja" },
+  { cor: "#7a4fd1", icone: "moon", nome: "Roxo" },
   { cor: "#2266a4", icone: "waves", nome: "Azul" },
+  { cor: "#2e8f3a", icone: "leaf", nome: "Verde" },
   { cor: "#b02b27", icone: "flame", nome: "Vermelho" },
   { cor: "#915b00", icone: "mountain", nome: "Âmbar" },
-  { cor: "#3e2076", icone: "star", nome: "Índigo" },
-  { cor: "#e6793c", icone: "zap", nome: "Coral" },
+  { cor: "#37157b", icone: "star", nome: "Índigo" },
+  { cor: "#a2447a", icone: "zap", nome: "Rosa" },
 ];
 
 export function paletaPorOrdem(ordem: number) {

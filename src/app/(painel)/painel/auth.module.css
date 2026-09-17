@@ -3,7 +3,7 @@
   place-items: center;
   min-height: 100dvh;
   padding: var(--spacing-6) var(--spacing-4);
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 .cartao {

@@ -57,7 +57,6 @@
 }
 .numero strong {
   font-family: var(--font-display);
-  font-variation-settings: var(--font-display-variation);
   font-size: var(--text-4xl);
   font-weight: var(--font-weight-display);
   font-variant-numeric: tabular-nums;

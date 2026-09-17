@@ -11,7 +11,7 @@ export function Cabecalho({ usuario }: { usuario: UsuarioPainel }) {
     <header className={`rc-surface-brand ${styles.cabecalho}`}>
       <div className={styles.barra}>
         <Link href="/painel/eventos" aria-label="Painel · início">
-          <Logo variante="branco" largura={120} prioridade className={styles.logo} />
+          <Logo variante="laranja" formato="horizontal" largura={168} prioridade className={styles.logo} />
         </Link>
         <nav aria-label="Principal">
           <ul className={styles.nav}>

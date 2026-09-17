@@ -2,26 +2,29 @@ import Image from "next/image";
 import styles from "./Logo.module.css";
 
 type Variante = "auto" | "branco" | "roxo" | "laranja";
+type Formato = "empilhada" | "horizontal";
 
-const ARQUIVO: Record<Exclude<Variante, "auto">, string> = {
-  branco: "/marca/logo-recreativa-branco.svg",
-  roxo: "/marca/logo-recreativa-roxo.svg",
-  laranja: "/marca/logo-recreativa.svg",
-};
+/* Proporção altura/largura dos SVGs do kit (172×90 e 324×43). */
+const PROPORCAO: Record<Formato, number> = { empilhada: 90 / 172, horizontal: 43 / 324 };
+
+const arquivo = (formato: Formato, cor: Exclude<Variante, "auto">) => `/marca/logo-recreativa-${formato}-${cor}.svg`;
 
 interface Props {
   variante?: Variante;
+  formato?: Formato;
   largura?: number;
   prioridade?: boolean;
   className?: string;
 }
 
-/* Logo da Recreativa (SVG do kit). "auto" usa roxo no claro e branco no escuro. */
-export function Logo({ variante = "auto", largura = 192, prioridade, className }: Props) {
-  const altura = Math.round(largura * 0.594);
-  const imagem = (arquivo: string, extra?: string) => (
+/* Logo da Recreativa (SVG do kit). Pelas diretrizes do designer: roxo sobre fundo
+   claro, laranja sobre roxo ou escuro, branco sobre fotos e fundos coloridos.
+   "auto" usa roxo no tema claro e laranja no escuro. */
+export function Logo({ variante = "auto", formato = "empilhada", largura = 192, prioridade, className }: Props) {
+  const altura = Math.round(largura * PROPORCAO[formato]);
+  const imagem = (cor: Exclude<Variante, "auto">, extra?: string) => (
     <Image
-      src={arquivo}
+      src={arquivo(formato, cor)}
       alt="Recreativa"
       width={largura}
       height={altura}
@@ -31,11 +34,11 @@ export function Logo({ variante = "auto", largura = 192, prioridade, className }
     />
   );
   const estilo = { display: "block", width: `${largura}px`, maxWidth: "100%" } as const;
-  if (variante !== "auto") return <span className={className} style={estilo}>{imagem(ARQUIVO[variante])}</span>;
+  if (variante !== "auto") return <span className={className} style={estilo}>{imagem(variante)}</span>;
   return (
     <span className={className} style={estilo}>
-      {imagem(ARQUIVO.roxo, styles.claro)}
-      {imagem(ARQUIVO.branco, styles.escuro)}
+      {imagem("roxo", styles.claro)}
+      {imagem("laranja", styles.escuro)}
     </span>
   );
 }

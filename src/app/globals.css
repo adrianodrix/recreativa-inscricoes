@@ -7,8 +7,9 @@
 
 /* Fontes carregadas por next/font (ver app/layout.tsx) substituem o <link> do kit. */
 :root {
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-body: var(--font-dm-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-baloo), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-detail: var(--font-caveat), cursive;
 }
 
 *,
@@ -39,7 +40,6 @@ h2,
 h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-variation-settings: var(--font-display-variation);
   font-weight: var(--font-weight-display);
   line-height: var(--leading-tight);
   color: var(--color-text-heading);

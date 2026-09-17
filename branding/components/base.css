@@ -22,10 +22,30 @@
 /* Faixa da marca: troca texto e anel de foco para o fundo roxo */
 .rc-surface-brand {
   --rc-focus: var(--color-focus-ring-on-brand);
-  --rc-quiet-fg: var(--color-text-on-brand); /* botão discreto: 12.6:1 */
-  --rc-quiet-hover: var(--color-roxo-800); /* 8.3:1 */
+  --rc-quiet-fg: var(--color-text-on-brand); /* botão discreto: 13.5:1 */
+  --rc-quiet-hover: var(--color-roxo-800); /* 8.6:1 */
   background: var(--color-surface-brand);
   color: var(--color-text-on-brand);
+}
+
+/* Capa da marca: degradê roxo → laranja com grão, nunca chapado (imaginário
+   do designer). O grão fica atrás do conteúdo. Texto branco só sobre a
+   metade roxa/magenta (≥ 5.7:1); no canto laranja o contraste cai a 2.2:1. */
+.rc-surface-brand--degrade {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--gradient-brand);
+}
+.rc-surface-brand--degrade::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--texture-grain);
+  opacity: 0.32;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 /* Link dentro de texto: sublinhado, para não depender só da cor */

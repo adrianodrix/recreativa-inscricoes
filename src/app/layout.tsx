@@ -1,20 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans, Fraunces } from "next/font/google";
+import { Baloo_2, Caveat, Inter } from "next/font/google";
 import "./globals.css";
 import { Tema } from "@/components/marca/Tema";
 
-const fraunces = Fraunces({
+const baloo = Baloo_2({
   subsets: ["latin"],
-  axes: ["SOFT", "WONK", "opsz"],
-  variable: "--font-fraunces",
+  variable: "--font-baloo",
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  axes: ["opsz"],
-  variable: "--font-dm-sans",
+  variable: "--font-inter",
   display: "swap",
+});
+
+/* Manuscrita de detalhe, usada com moderação: sem preload, só baixa quando aparece. */
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -29,7 +35,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#3e2076",
+  themeColor: "#37157b",
 };
 
 /* Aplica o tema antes da primeira pintura, como recomenda branding/theme-dark.css. */
@@ -37,7 +43,7 @@ const scriptTema = `try{var t=localStorage.getItem("theme")||(matchMedia("(prefe
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${fraunces.variable} ${dmSans.variable}`} suppressHydrationWarning>
+    <html lang="pt-BR" className={`${baloo.variable} ${inter.variable} ${caveat.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: scriptTema }} />
       </head>

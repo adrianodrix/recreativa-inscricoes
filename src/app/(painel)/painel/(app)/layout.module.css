@@ -2,7 +2,7 @@
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100dvh;
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 .cabecalho {
@@ -20,7 +20,7 @@
 
 .logo {
   display: block;
-  width: 7.5rem;
+  width: 10.5rem;
 }
 
 .nav {
