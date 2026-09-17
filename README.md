@@ -43,6 +43,7 @@ E-mails locais (recuperação de senha) ficam no Mailpit: http://127.0.0.1:54324
   Sem isso, use o botão **Processar fila** na página do evento.
 - **Times**: encerre as inscrições (chave na página do evento), cadastre 2+ times e use Montar → Confirmar. Para testar o lembrete, ajuste temporariamente a data e a hora do evento para daqui a 1 hora.
 - **Recomeçar do zero**: `pnpm db:reset` apaga os dados locais, reaplica as migrations e recria o administrador inicial (repita o fluxo de senha).
+- **Celular na mesma Wi-Fi**: abra o endereço `Network` que o `pnpm dev` imprime (ex.: `http://192.168.0.112:3000/<slug>`). O `next.config.ts` libera os IPs da máquina em `allowedDevOrigins`; sem isso o Next bloqueia o JavaScript e só o cabeçalho aparece.
 
 ## Primeiro acesso ao painel
 
