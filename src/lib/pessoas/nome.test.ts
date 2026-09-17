@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizarNome, validarNomeCompleto } from "./nome";
+import { normalizarNome, primeiroNome, validarNomeCompleto } from "./nome";
 
 describe("normalizarNome", () => {
   it("ignora acentos, maiúsculas e espaços extras", () => {
@@ -17,5 +17,12 @@ describe("validarNomeCompleto", () => {
     expect(validarNomeCompleto("Ana Li")).toBe("curto");
     expect(validarNomeCompleto("Maria Souza 2")).toBe("numeros");
     expect(validarNomeCompleto("Maximiliano")).toBe("incompleto");
+  });
+});
+
+describe("primeiroNome", () => {
+  it("devolve a primeira palavra, ignorando espaços extras", () => {
+    expect(primeiroNome("  Adriano   Silva ")).toBe("Adriano");
+    expect(primeiroNome("")).toBe("");
   });
 });

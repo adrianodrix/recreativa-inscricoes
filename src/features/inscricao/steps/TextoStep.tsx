@@ -2,6 +2,7 @@
 
 import { useState, type InputHTMLAttributes } from "react";
 import { CampoTexto } from "@/components/formulario/CampoTexto";
+import { primeiroNome } from "@/lib/pessoas/nome";
 import { verificarNome } from "@/app/(publico)/[slug]/actions";
 import { useInscricao } from "../estado/InscricaoProvider";
 import { formatarWhatsapp, validarApelido, validarNome, validarWhatsapp, type Validado } from "../modelo/validacoes";
@@ -26,16 +27,21 @@ const CONFIG = {
     descricao: "Como está no seu documento.",
     validar: validarNome,
     ler: (d) => d.principal.nome,
-    escrever: (d, v) => ({ ...d, principal: { ...d.principal, nome: v } }),
+    escrever: (d, v) => {
+      // Se o apelido ainda era só a sugestão (primeiro nome), acompanha o nome novo.
+      const sugerido = d.principal.apelido === primeiroNome(d.principal.nome);
+      const apelido = sugerido ? primeiroNome(v) : d.principal.apelido;
+      return { ...d, principal: { ...d.principal, nome: v, apelido } };
+    },
     input: { autoComplete: "name", autoCapitalize: "words", placeholder: "Nome e sobrenome" },
   },
   apelido: {
     titulo: "Como você gosta de ser chamado(a)?",
     rotulo: "Apelido",
-    descricao: "Apelido ou como as pessoas te conhecem. Pode deixar em branco.",
+    descricao: "Sugerimos o seu primeiro nome. Troque pelo apelido, se preferir, ou deixe em branco.",
     opcional: true,
     validar: validarApelido,
-    ler: (d) => d.principal.apelido ?? "",
+    ler: (d) => d.principal.apelido ?? primeiroNome(d.principal.nome),
     escrever: (d, v) => ({ ...d, principal: { ...d.principal, apelido: v || undefined } }),
     input: { autoComplete: "nickname", autoCapitalize: "words" },
   },

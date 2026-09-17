@@ -21,3 +21,8 @@ export function validarNomeCompleto(nome: string): ProblemaNome | null {
   if (partes.length < 2) return "incompleto";
   return null;
 }
+
+/* Primeiro nome do nome completo, sugerido como apelido (E2). */
+export function primeiroNome(nome: string): string {
+  return nome.trim().split(/\s+/)[0] ?? "";
+}
