@@ -83,3 +83,22 @@ export async function carregarMontagem(eventoId: string, semente: number | null)
     alocacaoNotificada,
   };
 }
+
+export interface MembroDoTime {
+  id: string;
+  nome: string;
+  apelido: string | null;
+  idade: number;
+  categoria: "crianca" | "jovem";
+}
+
+/* Quem está no time hoje (crianças e jovens), em ordem alfabética. */
+export async function listarMembrosDoTime(eventoId: string, timeId: string): Promise<MembroDoTime[]> {
+  const supabase = await criarClienteServidor();
+  const { data: membros, error } = await supabase.from("membros_time").select("inscrito_id").eq("evento_id", eventoId).eq("time_id", timeId);
+  if (error) throw new Error(`Falha ao listar membros: ${error.message}`);
+  const ids = membros.map((m) => m.inscrito_id);
+  if (ids.length === 0) return [];
+  const { data: inscritos } = await supabase.from("inscritos").select("id, nome_completo, apelido, idade").eq("evento_id", eventoId).in("id", ids).order("nome_completo");
+  return (inscritos ?? []).map((i) => ({ id: i.id, nome: i.nome_completo, apelido: i.apelido, idade: i.idade, categoria: i.idade <= 8 ? "crianca" : "jovem" }));
+}

@@ -1,7 +1,6 @@
-import { Pencil } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Alerta } from "@/components/formulario/Alerta";
 import { ListaOrdenavel } from "@/components/painel/ListaOrdenavel";
 import { Ocupacao } from "@/components/painel/Ocupacao";
 import indicadores from "@/components/painel/indicadores.module.css";
@@ -12,7 +11,6 @@ import { statusInscricoes } from "@/lib/eventos/status";
 import { carregarMontagem, listarTimes } from "@/lib/times/consultas";
 import { equilibrioDoTime } from "@/lib/times/equilibrio";
 import { reordenarTimes } from "./actions";
-import { FormularioTime } from "./FormularioTime";
 import { IconeTime } from "./IconeTime";
 import { QuadroTimes } from "./QuadroTimes";
 import styles from "../../../painel.module.css";
@@ -20,13 +18,12 @@ import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
 
 interface Props {
   params: Promise<{ id: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export const metadata = { title: "Times" };
 
-export default async function PaginaTimes({ params, searchParams }: Props) {
-  const [{ id }, query, usuario] = await Promise.all([params, searchParams, exigirLogin()]);
+export default async function PaginaTimes({ params }: Props) {
+  const [{ id }, usuario] = await Promise.all([params, exigirLogin()]);
   const evento = await obterEvento(id);
   if (!evento) notFound();
   const [times, montagem] = await Promise.all([listarTimes(id), carregarMontagem(id, evento.montagem_semente)]);
@@ -42,8 +39,12 @@ export default async function PaginaTimes({ params, searchParams }: Props) {
           <Trilha passos={trilhaEvento(id, evento.nome)} />
           <h1>Times</h1>
         </div>
+        {podeGerir && (
+          <Link href={`/painel/eventos/${id}/times/novo`} className="rc-btn rc-btn--primary">
+            <Plus className="rc-icon" aria-hidden="true" /> Novo time
+          </Link>
+        )}
       </div>
-      {query.salvo && <Alerta tipo="success">Time salvo.</Alerta>}
       <div className={styles.formulario}>
         <section className={styles.secao}>
           <h2>Times cadastrados</h2>
@@ -83,7 +84,6 @@ export default async function PaginaTimes({ params, searchParams }: Props) {
               />
             </>
           )}
-          {podeGerir && <FormularioTime eventoId={id} time={null} />}
         </section>
         <section className={styles.secao}>
           <h2>Montagem</h2>

@@ -30,20 +30,23 @@ export async function salvarTime(eventoId: string, id: string | null, _: EstadoF
   const supabase = await criarClienteServidor();
   const linha = { ...dados.data, evento_id: eventoId };
   let error;
+  let timeId = id;
   if (id) {
     ({ error } = await supabase.from("times").update(linha).eq("id", id).eq("evento_id", eventoId));
   } else {
     // Entra no fim da lista; a cor e o ícone padrão vêm da posição e ficam fixos depois.
     const ordem = await proximaOrdem(supabase, "times", eventoId);
     const paleta = paletaPorOrdem(ordem);
-    ({ error } = await supabase.from("times").insert({ ...linha, ordem, cor_padrao: paleta.cor, icone_padrao: paleta.icone }));
+    const criado = await supabase.from("times").insert({ ...linha, ordem, cor_padrao: paleta.cor, icone_padrao: paleta.icone }).select("id").single();
+    error = criado.error;
+    timeId = criado.data?.id ?? null;
   }
   if (error) {
     if (error.message.includes("times_evento_id_nome_key")) return { erros: { nome: "Já existe um time com esse nome." }, erro: "Confira os campos." };
     return { erro: `Não foi possível salvar: ${error.message}` };
   }
   revalidatePath(rota(eventoId));
-  redirect(`${rota(eventoId)}?salvo=1`);
+  redirect(`${rota(eventoId)}/${timeId}?salvo=1`);
 }
 
 /* Grava a ordem de exibição na sequência em que os ids chegam. */
