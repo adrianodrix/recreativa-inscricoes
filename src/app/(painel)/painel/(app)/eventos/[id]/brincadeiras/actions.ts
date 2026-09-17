@@ -21,16 +21,18 @@ export async function salvarBrincadeira(eventoId: string, id: string | null, _: 
 
   const linha = { ...dados.data, evento_id: eventoId, regras: dados.data.regras as Json };
   const supabase = await criarClienteServidor();
+  let brincadeiraId = id;
   if (id) {
     const { error } = await supabase.from("brincadeiras").update(linha).eq("id", id).eq("evento_id", eventoId);
     if (error) return { erro: traduzir(error.message) };
   } else {
     const ordem = await proximaOrdem(supabase, "brincadeiras", eventoId); // entra no fim da lista
-    const { error } = await supabase.from("brincadeiras").insert({ ...linha, ordem });
+    const { data, error } = await supabase.from("brincadeiras").insert({ ...linha, ordem }).select("id").single();
     if (error) return { erro: traduzir(error.message) };
+    brincadeiraId = data.id;
   }
   revalidatePath(`/painel/eventos/${eventoId}/brincadeiras`);
-  redirect(`/painel/eventos/${eventoId}/brincadeiras?salvo=1`);
+  redirect(`/painel/eventos/${eventoId}/brincadeiras/${brincadeiraId}?salvo=1`);
 }
 
 /* Grava a ordem de exibição (a mesma do formulário público) na sequência em que os ids chegam. */
