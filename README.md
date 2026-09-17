@@ -6,7 +6,7 @@ Especificação completa (requisitos e plano técnico): [`docs/plano.md`](docs/p
 
 ## Stack
 
-Next.js 16 (App Router) · React 19 · TypeScript · Supabase (Postgres, Auth, Storage, pg_cron) · Evolution API (WhatsApp) · Vercel. Visual pelo kit em `branding/`.
+Next.js 16 (App Router) · React 19 · TypeScript · Supabase (Postgres, Auth, Storage, pg_cron) · Evolution API (WhatsApp) · Vercel. Visual pelo kit em `branding/`, que segue o design system do designer (cores, Baloo 2 / Inter / Caveat, logos e diretrizes de marca).
 
 ## Rodando localmente
 
@@ -31,7 +31,8 @@ E-mails locais (recuperação de senha) ficam no Mailpit: http://127.0.0.1:54324
 ### Testando tudo localmente
 
 - **Painel**: `/painel/login` → "Esqueci minha senha" → abra o link no Mailpit → defina a senha. Studio do Supabase local em http://127.0.0.1:54323 para ver as tabelas.
-- **Formulário público**: crie um evento no painel com inscrições liberadas e abra `/<slug>` no celular ou no modo responsivo do navegador. Cadastre brincadeiras antes para ver as etapas de brincadeiras, duplas e WhatsApp.
+- **Formulário público**: crie um evento no painel, **publique** e abra `/<slug>` no celular ou no modo responsivo do navegador. Cadastre brincadeiras antes para ver as etapas de brincadeiras, duplas e WhatsApp.
+- **Página inicial**: `/` mostra o evento em destaque (o próximo publicado; sem nenhum à frente, o último realizado). Preencha programação, dúvidas e contatos na página do evento e use **Prévia** para ver antes de publicar. Evento em preparação não aparece em `/` nem em `/<slug>`.
 - **WhatsApp simulado**: com `WHATSAPP_ENVIO_ATIVO=false` o worker gera as mensagens e marca como enviadas sem chamar a Evolution API; o texto fica em cada aviso (página do inscrito no painel). Para envio real, aponte `EVOLUTION_*` para uma instância conectada e ligue a flag.
 - **Agendamento local** (retentativas e lembrete de 1 hora): o pg_cron roda dentro do Docker e precisa alcançar o app pelo host. Uma vez por banco local, no Studio ou via `psql`:
 
@@ -81,14 +82,17 @@ No plano gratuito o projeto pausa após 7 dias sem uso. Antes de abrir as inscri
 ```
 branding/            kit de marca (tokens, tema escuro, componentes rc-*, logos)
 supabase/migrations  esquema, RLS, RPCs (criar_inscricao, montagem de times, fila de WhatsApp)
+src/app/page.tsx     página inicial do evento em destaque (/)
 src/app/(publico)    formulário público /[slug] e /[slug]/obrigado
 src/app/(painel)     painel dos organizadores em /painel
 src/features/inscricao  modelo do fluxo (etapas derivadas do rascunho), estado, etapas e UI
-src/lib              módulos puros e de servidor: pessoas, eventos, brincadeiras, inscritos, times, whatsapp, texto rico
+src/features/pagina-inicial  seções da página inicial e da prévia do painel
+src/lib              módulos puros e de servidor: pessoas, eventos, brincadeiras, inscritos, times, whatsapp, texto rico, página inicial
 ```
 
 ## Regras de negócio essenciais
 
+- Um evento só fica no ar depois de **publicado**: antes disso não aparece na página inicial, o `/<slug>` responde 404 e a inscrição pública é recusada. Eventos novos nascem em preparação, já com os contatos e as dúvidas do evento anterior.
 - Cada pessoa é inscrita uma vez por evento (unicidade por nome completo normalizado). Cônjuge e filhos cadastrados por alguém já contam como inscritos.
 - Idade calculada na data do evento. Casado só é perguntado a maiores de 18; filhos só a casados.
 - Comida e bebida: uma unidade por pessoa acima de 12 anos, com limite por tipo definido no evento.

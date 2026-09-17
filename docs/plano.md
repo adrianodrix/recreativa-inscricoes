@@ -380,6 +380,11 @@ Outbox → worker `POST /api/tarefas/outbox` (responde 202 e processa em `after(
 ## Página inicial (F7)
 Requisitos P1–P12. Visual: template do designer sobre o kit `branding/` (degradê com grão, Baloo 2, Caveat no subtítulo).
 
+**Diferenças entre o plano e o que foi feito**
+- "Em preparação" entrou como mais um motivo de `motivo_fechado`, em vez de reescrever `criar_inscricao`: o efeito no formulário público é o mesmo, a montagem de times não muda e o painel ganhou o rótulo "Evento em preparação".
+- A prévia saiu da F7.2 para a F7.3, porque reaproveita a página pública.
+- `dangerouslyAllowLocalIP` ligado só em desenvolvimento: o Next 16 bloqueia otimizar imagens de IP local, o que quebrava todo upload servido pelo Supabase local.
+
 **Banco — `0014_pagina_inicial.sql`**
 - `eventos` ganha: `publicado boolean not null default false` (a migration marca os existentes como `true`), `edicao smallint check (> 0)`, `subtitulo text` (≤ 80), `descricao text` (≤ 300), `link_fotos text` (`^https://`), `regras_gerais jsonb`.
 - **programacao**: id, evento_id, `hora_inicio time not null`, `hora_fim time` (nulo ou > início), `titulo` (2–80), `detalhe` (≤ 120), `brincadeira_id` com FK composta `(brincadeira_id, evento_id)` e `on delete set null (brincadeira_id)` (Postgres 17), `destaque boolean default false`. Ordem sempre pelo horário, sem coluna de ordem.
@@ -420,7 +425,7 @@ Cada fase termina com commit e push na `main` (ver "Git e GitHub").
 5. **F4 Times**: módulo puro com testes primeiro; CRUD de times; montagem, DnD, confirmação e diff. Verificável: 4 times com 30 crianças e 20 jovens ficam ±1 e média de idade próxima; conflito responsável+irmãos retorna erro estruturado.
 6. **F5 WhatsApp**: Evolution, outbox, templates, worker, pg_cron + Vault, lembrete, reenvio, status no painel. Verificável: mensagem chega no número de teste; chave duplicada não reenvia; 5xx entra em retentativa; lembrete enfileirado uma única vez no minuto certo.
 7. **F6 Operação**: README (restaurar projeto Supabase pausado, primeiro acesso do admin, rotacionar segredos, aplicar migrations), Lighthouse e bundle analyzer, revisão de acessibilidade.
-8. **F7 Página inicial** (ver "Página inicial (F7)"), em quatro etapas com commit e push cada:
+8. **F7 Página inicial** — **concluída em 17/09/2026** (commits `e409b85`, `13a17ef`, `312596e`, `292c0c2`). Falta só percorrer as telas novas do painel com um organizador logado. Ver "Página inicial (F7)"; as quatro etapas foram:
    - **F7.1 Banco**: migration 0014, RPCs, tipos, schemas e módulos puros com testes. Verificável: `db reset` limpo; `obter_pagina_inicial` escolhe o próximo evento, cai para o último realizado e ignora não publicados; `/[slug]` de evento não publicado dá 404; `criar_inscricao` recusa não publicado.
    - **F7.2 Painel**: campos novos, chave publicar, programação/dúvidas/contatos, cópia ao criar evento e prévia. Verificável: operador e analítico não editam; evento novo nasce não publicado já com contatos e dúvidas do anterior; prévia mostra o evento em preparação.
    - **F7.3 Página inicial `/`**: seções, fases e metadados. Verificável no navegador (celular e desktop, claro e escuro): sem evento publicado; inscrições em breve, abertas, encerradas por limite; evento realizado; seções vazias somem; prévia do link com título, descrição e imagem.
