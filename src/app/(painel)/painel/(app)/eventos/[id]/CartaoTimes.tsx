@@ -1,4 +1,6 @@
+import { Flag } from "lucide-react";
 import { Ocupacao } from "@/components/painel/Ocupacao";
+import { TituloCartao } from "@/components/painel/TituloCartao";
 import type { TimeComContagem } from "@/lib/times/consultas";
 import { equilibrioDoTime } from "@/lib/times/equilibrio";
 import styles from "../../painel.module.css";
@@ -17,7 +19,7 @@ export function CartaoTimes({ times, elegiveis, montagem }: Props) {
   return (
     <article className="rc-card">
       <header className="rc-card__header">
-        <h3 className="rc-card__title">Times</h3>
+        <TituloCartao icone={Flag}>Times</TituloCartao>
         {montados && (
           <span className={`rc-badge ${montagem === "confirmado" ? "rc-badge--success" : "rc-badge--warning"}`}>
             {montagem === "confirmado" ? "Montagem confirmada" : "Montagem em rascunho"}

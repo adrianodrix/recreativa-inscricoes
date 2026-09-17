@@ -1,4 +1,6 @@
+import { Utensils } from "lucide-react";
 import { Ocupacao } from "@/components/painel/Ocupacao";
+import { TituloCartao } from "@/components/painel/TituloCartao";
 import { ROTULO_COMIDA, TIPOS_COMIDA, type TipoComida } from "@/lib/eventos/comida";
 import styles from "../../painel.module.css";
 
@@ -13,7 +15,7 @@ export function CartaoComida({ limites, contagem }: Props) {
   return (
     <article className="rc-card">
       <header className="rc-card__header">
-        <h3 className="rc-card__title">Comida e bebida</h3>
+        <TituloCartao icone={Utensils}>Comida e bebida</TituloCartao>
       </header>
       {tipos.length === 0 ? (
         <p className="rc-hint">Este evento não pede comida ou bebida. Defina os limites na edição do evento.</p>

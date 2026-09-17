@@ -1,0 +1,20 @@
+.titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.icone {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  background: var(--color-secondary-soft);
+  color: var(--color-on-secondary-soft);
+}
+.icone svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+}

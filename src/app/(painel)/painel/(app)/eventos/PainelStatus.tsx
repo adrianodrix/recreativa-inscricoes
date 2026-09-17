@@ -1,10 +1,11 @@
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, ClipboardList } from "lucide-react";
 import { formatarDataHora } from "@/lib/datas";
 import type { EventoCompleto } from "@/lib/eventos/consultas";
 import { ROTULO_MOTIVO, statusInscricoes } from "@/lib/eventos/status";
 import { pode, type Perfil } from "@/lib/auth/permissoes";
 import { alternarInscricoes } from "./actions";
 import { Ocupacao } from "@/components/painel/Ocupacao";
+import { TituloCartao } from "@/components/painel/TituloCartao";
 import indicadores from "@/components/painel/indicadores.module.css";
 import painel from "../painel.module.css";
 
@@ -22,7 +23,7 @@ export function PainelStatus({ evento, perfil }: Props) {
       <div className={indicadores.comOcupacao}>
         <div>
           <header className="rc-card__header">
-            <h3 className="rc-card__title">Inscrições</h3>
+            <TituloCartao icone={ClipboardList}>Inscrições</TituloCartao>
             {status.aberto ? (
               <span className="rc-badge rc-badge--success">Abertas</span>
             ) : (

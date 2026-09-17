@@ -1,4 +1,6 @@
+import { PartyPopper } from "lucide-react";
 import { Ocupacao } from "@/components/painel/Ocupacao";
+import { TituloCartao } from "@/components/painel/TituloCartao";
 import type { BrincadeiraPainel } from "@/lib/brincadeiras/consultas";
 import styles from "../../painel.module.css";
 
@@ -7,7 +9,7 @@ export function CartaoBrincadeiras({ brincadeiras }: { brincadeiras: Brincadeira
   return (
     <article className="rc-card">
       <header className="rc-card__header">
-        <h3 className="rc-card__title">Vagas por brincadeira</h3>
+        <TituloCartao icone={PartyPopper}>Vagas por brincadeira</TituloCartao>
       </header>
       {brincadeiras.length === 0 ? (
         <p className="rc-hint">Nenhuma brincadeira cadastrada ainda.</p>

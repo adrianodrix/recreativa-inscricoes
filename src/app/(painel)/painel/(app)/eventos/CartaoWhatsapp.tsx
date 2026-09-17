@@ -5,6 +5,7 @@ import { resumoFila } from "@/lib/whatsapp/consultas";
 import { estadoConexao, whatsappConfigurado } from "@/lib/whatsapp/evolution";
 import { processarFilaAction } from "./[id]/whatsapp-actions";
 import styles from "../painel.module.css";
+import { TituloCartao } from "@/components/painel/TituloCartao";
 
 const ROTULO_ESTADO = { open: "conectado", close: "desconectado", connecting: "conectando", desconhecido: "sem resposta" } as const;
 
@@ -17,7 +18,7 @@ export async function CartaoWhatsapp({ eventoId, perfil }: { eventoId: string; p
   return (
     <article className={`rc-card ${styles.status}`}>
       <header className="rc-card__header">
-        <h3 className="rc-card__title">WhatsApp</h3>
+        <TituloCartao icone={MessageCircle}>WhatsApp</TituloCartao>
         {!configurado ? (
           <span className="rc-badge rc-badge--warning">Evolution API não configurada</span>
         ) : !ativo ? (

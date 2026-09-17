@@ -1,13 +1,15 @@
+import { Users } from "lucide-react";
 import { Contador } from "@/components/painel/Contador";
 import { CATEGORIAS_PESSOA, ROTULO_CATEGORIA_PESSOA, type CategoriaPessoa } from "@/lib/pessoas/categoria";
 import styles from "../../painel.module.css";
+import { TituloCartao } from "@/components/painel/TituloCartao";
 
 /* Inscritos em cada categoria de pessoa, a mesma partição que decide as brincadeiras. */
 export function CartaoCategorias({ contagem }: { contagem: Record<CategoriaPessoa, number> }) {
   return (
     <article className="rc-card">
       <header className="rc-card__header">
-        <h3 className="rc-card__title">Inscritos por categoria</h3>
+        <TituloCartao icone={Users}>Inscritos por categoria</TituloCartao>
       </header>
       <div className={styles.mosaico}>
         {CATEGORIAS_PESSOA.map((c) => (
