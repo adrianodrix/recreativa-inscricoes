@@ -75,6 +75,10 @@
   color: var(--color-text-muted);
 }
 
+.resumoLista {
+  margin: var(--spacing-4) 0;
+}
+
 .atalhos {
   display: grid;
   gap: var(--spacing-3);

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { Alerta } from "@/components/formulario/Alerta";
+import { Ocupacao } from "@/components/painel/Ocupacao";
+import ocupacao from "@/components/painel/Ocupacao.module.css";
 import { formatarWhatsapp } from "@/features/inscricao/modelo/validacoes";
 import { ROTULO_COMIDA } from "@/lib/eventos/schema";
 import { obterEvento } from "@/lib/eventos/consultas";
@@ -59,9 +61,17 @@ export default async function PaginaInscritos({ params, searchParams }: Props) {
           <Search className="rc-icon" aria-hidden="true" /> Buscar
         </button>
       </form>
-      <p className="rc-hint" style={{ margin: "var(--spacing-4) 0" }}>
-        {inscritos.length} {inscritos.length === 1 ? "pessoa" : "pessoas"} · {evento.total_inscritos} de {evento.limite_inscritos} no evento
-      </p>
+      <section className={`rc-card ${styles.resumoLista}`} aria-label="Resumo">
+        <div className={ocupacao.comOcupacao}>
+          <header className="rc-card__header">
+            <h3 className="rc-card__title">
+              {inscritos.length} {inscritos.length === 1 ? "pessoa" : "pessoas"}
+            </h3>
+            <p className="rc-hint">{busca ? `Resultado da busca por “${busca}”` : "Todas as inscrições deste evento"}</p>
+          </header>
+          <Ocupacao total={evento.total_inscritos} limite={evento.limite_inscritos} />
+        </div>
+      </section>
       {inscritos.length === 0 ? (
         <p className={styles.vazio}>Nenhum inscrito encontrado.</p>
       ) : (
