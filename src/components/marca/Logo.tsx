@@ -26,6 +26,7 @@ export function Logo({ variante = "auto", largura = 192, prioridade, className }
       width={largura}
       height={altura}
       priority={prioridade}
+      style={{ width: "100%", height: "auto" }}
       className={`${styles.logo} ${extra ?? ""}`}
     />
   );
