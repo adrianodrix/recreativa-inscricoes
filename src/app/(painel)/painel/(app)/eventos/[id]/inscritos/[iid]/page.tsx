@@ -1,4 +1,4 @@
-import { Trash2, X } from "lucide-react";
+import { Send, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormularioConfirmar } from "@/components/formulario/FormularioConfirmar";
@@ -6,7 +6,9 @@ import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { obterInscrito } from "@/lib/inscritos/consultas";
-import { excluirInscrito, removerParticipacao } from "../actions";
+import { formatarDataHora } from "@/lib/datas";
+import { avisosDoInscrito } from "@/lib/whatsapp/consultas";
+import { excluirInscrito, reenviarConfirmacao, removerParticipacao } from "../actions";
 import { FormularioComida } from "./FormularioComida";
 import { FormularioInscrito } from "./FormularioInscrito";
 import styles from "../../../../painel.module.css";
@@ -26,8 +28,11 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function PaginaInscrito({ params }: Props) {
   const [{ id, iid }, usuario] = await Promise.all([params, exigirLogin()]);
-  const [evento, inscrito] = await Promise.all([obterEvento(id), obterInscrito(id, iid)]);
+  const [evento, inscrito, avisos] = await Promise.all([obterEvento(id), obterInscrito(id, iid), avisosDoInscrito(iid)]);
   if (!evento || !inscrito) notFound();
+  const reenviar = reenviarConfirmacao.bind(null, id, iid);
+  const ROTULO_STATUS = { pendente: "na fila", enviando: "enviando", enviado: "enviado", falhou: "falhou" } as const;
+  const ROTULO_TIPO = { confirmacao_inscricao: "Confirmação", times_confirmacao: "Times", times_alteracao: "Times (alteração)", times_lembrete: "Lembrete 1h" } as const;
   const podeEditar = pode(usuario.perfil, "editar_inscrito");
   const excluir = excluirInscrito.bind(null, id, iid);
   const avisoExclusao =
@@ -86,6 +91,36 @@ export default async function PaginaInscrito({ params }: Props) {
             </ul>
           )}
         </section>
+        {inscrito.vinculo === "principal" && (
+          <section className={`rc-card ${styles.secao}`}>
+            <h2>WhatsApp</h2>
+            {!inscrito.whatsapp ? (
+              <p className="rc-hint">Sem WhatsApp cadastrado (não escolheu brincadeiras).</p>
+            ) : (
+              <>
+                {avisos.length === 0 && <p className="rc-hint">Nenhuma mensagem ainda.</p>}
+                <ul className={styles.lista}>
+                  {avisos.map((a) => (
+                    <li key={a.id} className={styles.statusLinha}>
+                      <span>
+                        {ROTULO_TIPO[a.tipo]} · {formatarDataHora(a.enviado_em ?? a.criado_em)}
+                        {a.erro ? ` · ${a.erro}` : ""}
+                      </span>
+                      <span className={`rc-badge ${a.status === "enviado" ? "rc-badge--success" : a.status === "falhou" ? "rc-badge--danger" : ""}`}>{ROTULO_STATUS[a.status]}</span>
+                    </li>
+                  ))}
+                </ul>
+                {pode(usuario.perfil, "reenviar_whatsapp") && (
+                  <form action={reenviar} className={styles.acoes}>
+                    <button type="submit" className="rc-btn rc-btn--sm rc-btn--secondary">
+                      <Send className="rc-icon" aria-hidden="true" /> Reenviar confirmação
+                    </button>
+                  </form>
+                )}
+              </>
+            )}
+          </section>
+        )}
       </div>
     </>
   );

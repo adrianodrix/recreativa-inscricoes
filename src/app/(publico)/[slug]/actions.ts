@@ -1,5 +1,7 @@
 "use server";
 
+import { after } from "next/server";
+import { processarPendentes } from "@/lib/whatsapp/outbox";
 import type { ResultadoEnvio } from "@/features/inscricao/modelo/erros";
 import { schemaPayload, type PayloadInscricao } from "@/features/inscricao/modelo/payload";
 import type { PessoaEncontrada } from "@/components/inscricao/PersonSearch";
@@ -24,6 +26,7 @@ export async function enviarInscricao(payload: PayloadInscricao): Promise<Result
   const supabase = await criarClienteServidor();
   const { error } = await supabase.rpc("criar_inscricao", { p: dados.data as unknown as Json });
   if (error) return { ok: false, erro: { codigo: error.message, detalhe: await detalheDe(error.details) } };
+  after(() => processarPendentes(5).catch((e) => console.error("[whatsapp] confirmação", e)));
   return { ok: true };
 }
 

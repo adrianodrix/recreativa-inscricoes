@@ -34,6 +34,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      avisos_whatsapp: {
+        Row: {
+          chave_idempotencia: string
+          criado_em: string
+          enviado_em: string | null
+          erro: string | null
+          evento_id: string
+          id: string
+          id_externo: string | null
+          inscrito_id: string
+          mensagem: string | null
+          proxima_tentativa_em: string
+          status: Database["public"]["Enums"]["status_envio"]
+          telefone: string
+          tentativas: number
+          tipo: Database["public"]["Enums"]["tipo_aviso"]
+        }
+        Insert: {
+          chave_idempotencia: string
+          criado_em?: string
+          enviado_em?: string | null
+          erro?: string | null
+          evento_id: string
+          id?: string
+          id_externo?: string | null
+          inscrito_id: string
+          mensagem?: string | null
+          proxima_tentativa_em?: string
+          status?: Database["public"]["Enums"]["status_envio"]
+          telefone: string
+          tentativas?: number
+          tipo: Database["public"]["Enums"]["tipo_aviso"]
+        }
+        Update: {
+          chave_idempotencia?: string
+          criado_em?: string
+          enviado_em?: string | null
+          erro?: string | null
+          evento_id?: string
+          id?: string
+          id_externo?: string | null
+          inscrito_id?: string
+          mensagem?: string | null
+          proxima_tentativa_em?: string
+          status?: Database["public"]["Enums"]["status_envio"]
+          telefone?: string
+          tentativas?: number
+          tipo?: Database["public"]["Enums"]["tipo_aviso"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_whatsapp_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: false
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_whatsapp_inscrito_id_fkey"
+            columns: ["inscrito_id"]
+            isOneToOne: false
+            referencedRelation: "inscritos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       brincadeiras: {
         Row: {
           ativo: boolean
@@ -530,6 +596,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      chamar_worker_whatsapp: { Args: never; Returns: undefined }
       comida_disponivel: { Args: { p_evento_id: string }; Returns: Json }
       confirmar_montagem: { Args: { p_evento_id: string }; Returns: string[] }
       criar_inscricao: { Args: { p: Json }; Returns: Json }
@@ -538,6 +605,27 @@ export type Database = {
         Returns: Json
       }
       criar_inscricao_painel: { Args: { p: Json }; Returns: Json }
+      destinatario_de: {
+        Args: { p_inscrito_id: string }
+        Returns: {
+          inscrito_id: string
+          telefone: string
+        }[]
+      }
+      enfileirar_avisos_times: {
+        Args: { p_evento_id: string; p_inscritos: string[] }
+        Returns: number
+      }
+      enfileirar_lembretes: { Args: never; Returns: number }
+      enfileirar_times_interno: {
+        Args: {
+          p_evento_id: string
+          p_inscritos: string[]
+          p_sufixo: string
+          p_tipo: Database["public"]["Enums"]["tipo_aviso"]
+        }
+        Returns: number
+      }
       erro_inscricao: {
         Args: { p_codigo: string; p_detalhe?: Json }
         Returns: undefined
@@ -601,6 +689,31 @@ export type Database = {
       registrar_participacao: {
         Args: { p_evento_id: string; p_ids: Json; p_part: Json }
         Returns: undefined
+      }
+      reservar_avisos: {
+        Args: { p_limite: number }
+        Returns: {
+          chave_idempotencia: string
+          criado_em: string
+          enviado_em: string | null
+          erro: string | null
+          evento_id: string
+          id: string
+          id_externo: string | null
+          inscrito_id: string
+          mensagem: string | null
+          proxima_tentativa_em: string
+          status: Database["public"]["Enums"]["status_envio"]
+          telefone: string
+          tentativas: number
+          tipo: Database["public"]["Enums"]["tipo_aviso"]
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "avisos_whatsapp"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       salvar_montagem: {
         Args: { p_alocacao: Json; p_evento_id: string; p_semente: number }

@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { processarPendentes } from "@/lib/whatsapp/outbox";
 import { exigirPerfil } from "@/lib/auth/perfil";
 import { errosPorCampo } from "@/lib/eventos/schema";
 import { criarClienteServidor } from "@/lib/supabase/server";
@@ -83,6 +85,13 @@ export async function confirmarMontagemAction(eventoId: string, alocacao: Alocac
   const { data, error } = await supabase.rpc("confirmar_montagem", { p_evento_id: eventoId });
   if (error) return { ok: false, erro: MENSAGENS[error.message] ?? `Não foi possível confirmar: ${error.message}` };
   revalidatePath(rota(eventoId));
-  const n = data?.length ?? 0;
-  return { ok: true, mensagem: n === 0 ? "Montagem confirmada. Ninguém mudou de time desde o último aviso." : `Montagem confirmada. ${n} ${n === 1 ? "pessoa será avisada" : "pessoas serão avisadas"} por WhatsApp.` };
+  const afetados = data ?? [];
+  let avisos = 0;
+  if (afetados.length > 0) {
+    const { data: qtd, error: erroFila } = await supabase.rpc("enfileirar_avisos_times", { p_evento_id: eventoId, p_inscritos: afetados });
+    if (erroFila) return { ok: false, erro: `Montagem confirmada, mas os avisos não foram enfileirados: ${erroFila.message}` };
+    avisos = qtd ?? 0;
+    after(() => processarPendentes(20).catch((e) => console.error("[whatsapp] times", e)));
+  }
+  return { ok: true, mensagem: avisos === 0 ? "Montagem confirmada. Ninguém mudou de time desde o último aviso." : `Montagem confirmada. ${avisos} ${avisos === 1 ? "mensagem enfileirada" : "mensagens enfileiradas"} no WhatsApp.` };
 }

@@ -7,6 +7,7 @@ import { pode } from "@/lib/auth/permissoes";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { FormularioEvento } from "../FormularioEvento";
 import { PainelStatus } from "../PainelStatus";
+import { CartaoWhatsapp } from "../CartaoWhatsapp";
 import styles from "../../painel.module.css";
 
 interface Props {
@@ -36,6 +37,7 @@ export default async function PaginaEvento({ params, searchParams }: Props) {
       {query.salvo && <Alerta tipo="success">Evento salvo.</Alerta>}
       <div className={styles.formulario}>
         <PainelStatus evento={evento} perfil={usuario.perfil} />
+        <CartaoWhatsapp eventoId={evento.id} perfil={usuario.perfil} />
         <nav className={styles.atalhos} aria-label="Seções do evento">
           <Link href={`/painel/eventos/${evento.id}/brincadeiras`} className="rc-btn rc-btn--secondary">Brincadeiras</Link>
           <Link href={`/painel/eventos/${evento.id}/inscritos`} className="rc-btn rc-btn--secondary">Inscritos</Link>

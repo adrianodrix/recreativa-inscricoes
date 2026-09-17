@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { processarPendentes } from "@/lib/whatsapp/outbox";
 import { detalheDe } from "@/app/(publico)/[slug]/actions";
 import type { ResultadoEnvio } from "@/features/inscricao/modelo/erros";
 import { schemaPayload, type PayloadInscricao } from "@/features/inscricao/modelo/payload";
@@ -27,6 +29,7 @@ export async function enviarInscricaoPainel(payload: PayloadInscricao): Promise<
   const { error } = await supabase.rpc("criar_inscricao_painel", { p: dados.data as unknown as Json });
   if (error) return { ok: false, erro: { codigo: error.message, detalhe: await detalheDe(error.details) } };
   revalidatePath(`/painel/eventos/${payload.evento_id}/inscritos`);
+  after(() => processarPendentes(5).catch((e) => console.error("[whatsapp] confirmação", e)));
   return { ok: true };
 }
 
@@ -99,4 +102,22 @@ export async function excluirInscrito(eventoId: string, id: string): Promise<voi
   if (error) throw new Error(`Não foi possível excluir: ${error.message}`);
   revalidatePath(`/painel/eventos/${eventoId}/inscritos`);
   redirect(`/painel/eventos/${eventoId}/inscritos`);
+}
+
+/* Reenvio manual da confirmação (operador ou administrador). */
+export async function reenviarConfirmacao(eventoId: string, id: string): Promise<void> {
+  await exigirPerfil("reenviar_whatsapp");
+  const supabase = await criarClienteServidor();
+  const { data: inscrito } = await supabase.from("inscritos").select("whatsapp").eq("id", id).single();
+  if (!inscrito?.whatsapp) throw new Error("Este inscrito não tem WhatsApp cadastrado.");
+  const { error } = await supabase.from("avisos_whatsapp").insert({
+    evento_id: eventoId,
+    inscrito_id: id,
+    tipo: "confirmacao_inscricao",
+    telefone: inscrito.whatsapp,
+    chave_idempotencia: `reenvio:${id}:${Date.now()}`,
+  });
+  if (error) throw new Error(`Não foi possível enfileirar: ${error.message}`);
+  after(() => processarPendentes(5).catch((e) => console.error("[whatsapp] reenvio", e)));
+  revalidatePath(`/painel/eventos/${eventoId}/inscritos/${id}`);
 }
