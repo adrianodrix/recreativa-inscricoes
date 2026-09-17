@@ -11,9 +11,12 @@ import { limparRascunho } from "../estado/useRascunho";
 import { etapaDoErro, mensagemDoErro } from "../modelo/erros";
 import { montarPayload } from "../modelo/payload";
 import { pessoasDoDraft } from "../modelo/regras";
+import type { EscolhaComida } from "../modelo/tipos";
 import { formatarWhatsapp } from "../modelo/validacoes";
 import { StepShell } from "../ui/StepShell";
 import styles from "../ui/formulario.module.css";
+
+const rotuloComida = (e: EscolhaComida) => (e === "nenhuma" ? "não vai contribuir" : ROTULO_COMIDA[e]);
 
 export function ResumoStep() {
   const { estado, evento, etapas, irPara, dispatch, enviar: enviarPayload, destino } = useInscricao();
@@ -71,7 +74,7 @@ export function ResumoStep() {
             <span className={styles.resumoRotulo}>Comida e bebida</span>
             {pessoas.filter((p) => d.comida[p.key]).map((p) => (
               <div key={p.key} className={styles.resumoLinha}>
-                <span>{p.nome}: {ROTULO_COMIDA[d.comida[p.key]!]}</span>
+                <span>{p.nome}: {rotuloComida(d.comida[p.key]!)}</span>
                 <BotaoEditar aoClicar={() => irPara(`comida:${p.key}`)} />
               </div>
             ))}

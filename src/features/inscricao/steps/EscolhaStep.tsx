@@ -5,7 +5,7 @@ import { ROTULO_COMIDA, TIPOS_COMIDA } from "@/lib/eventos/comida";
 import { useInscricao } from "../estado/InscricaoProvider";
 import type { Etapa } from "../modelo/etapas";
 import { pessoaPorKey } from "../modelo/regras";
-import type { InscricaoDraft, OpcaoDependente, TipoComida } from "../modelo/tipos";
+import type { EscolhaComida, InscricaoDraft, OpcaoDependente, TipoComida } from "../modelo/tipos";
 import { StepShell } from "../ui/StepShell";
 
 const SIM_NAO: Opcao<"sim" | "nao">[] = [
@@ -66,10 +66,11 @@ export function EscolhaStep({ etapa }: { etapa: Etapa }) {
       const pessoa = pessoaPorKey(d, evento, key);
       const nome = key === "principal" ? "você" : (pessoa?.nome ?? "");
       const usados = (tipo: TipoComida) => Object.entries(d.comida).filter(([k, t]) => k !== key && t === tipo).length;
-      const opcoes: Opcao<TipoComida>[] = TIPOS_COMIDA.map((tipo) => {
+      const opcoes: Opcao<EscolhaComida>[] = TIPOS_COMIDA.map((tipo) => {
         const restante = evento.comida_disponivel[tipo] - usados(tipo);
         return { valor: tipo, rotulo: ROTULO_COMIDA[tipo], descricao: restante > 0 ? undefined : "Esgotado", desabilitada: restante <= 0 };
       });
+      opcoes.push({ valor: "nenhuma", rotulo: key === "principal" ? "Não vou contribuir" : "Não vai contribuir" });
       return (
         <StepShell titulo={`O que ${nome} vai levar para compartilhar?`} descricao="Cada pessoa leva uma unidade do tipo escolhido." mostrarAvancar={false}>
           <ChoiceCards nome={etapa.id} opcoes={opcoes} valor={d.comida[key]} aoEscolher={(v) => concluir({ ...d, comida: { ...d.comida, [key]: v } })} />

@@ -86,6 +86,12 @@ describe("montarPayload", () => {
     expect(p.principal.whatsapp).toBe("5511999990000");
     expect(pessoasDoDraft(d, evento).map((x) => x.idade)).toEqual([41, 5, 10, 16]);
   });
+
+  it('"não vou contribuir" não vira colaboração de comida', () => {
+    const p = montarPayload({ ...familia, comida: { principal: "nenhuma", conjuge: "doce" } }, evento);
+    expect(p.principal.comida).toBeUndefined();
+    expect(p.conjuge?.comida).toBe("doce");
+  });
 });
 
 describe("etapaDoErro", () => {

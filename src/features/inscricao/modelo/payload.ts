@@ -46,7 +46,10 @@ const SITUACAO = { sim: "cadastrado", nao_cadastrar: "nao_quer_cadastrar", vai_s
 /* Só o que está visível no fluxo entra no payload (respostas antigas ficam no rascunho). */
 export function montarPayload(d: InscricaoDraft, evento: EventoPublico): PayloadInscricao {
   const visiveis = new Set(pessoasDoDraft(d, evento).map((p) => p.key));
-  const comidaDe = (key: PessoaKey) => (visiveis.has(key) ? d.comida[key] : undefined);
+  const comidaDe = (key: PessoaKey): TipoComida | undefined => {
+    const escolha = visiveis.has(key) ? d.comida[key] : undefined;
+    return escolha === "nenhuma" ? undefined : escolha;
+  };
   const casado = Boolean(d.principal.casado);
 
   return {

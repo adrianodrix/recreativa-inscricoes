@@ -1,6 +1,8 @@
 import type { TextoRico } from "@/lib/texto-rico/schema";
 
 export type TipoComida = "salgado" | "doce" | "refrigerante" | "suco";
+/* Resposta da etapa de comida: um tipo ou "não vou contribuir" (só no rascunho; no payload vira ausência). */
+export type EscolhaComida = TipoComida | "nenhuma";
 export type Categoria = "casais" | "jovens" | "criancas" | "pais_e_filhos";
 export type Formato = "individual" | "em_grupo";
 export type OpcaoDependente = "sim" | "nao_cadastrar" | "vai_se_cadastrar";
@@ -31,7 +33,7 @@ export interface InscricaoDraft {
   filhosOpcao?: OpcaoDependente;
   filhos: Pessoa[];
   papelPrincipal?: PapelPrincipal;
-  comida: Partial<Record<PessoaKey, TipoComida>>;
+  comida: Partial<Record<PessoaKey, EscolhaComida>>;
   /* Respostas "não" também ficam registradas, para não perguntar de novo. */
   recusadas: string[];
   participacoes: Participacao[];
