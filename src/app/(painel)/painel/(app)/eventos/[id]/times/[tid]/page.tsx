@@ -8,7 +8,7 @@ import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { listarMembrosDoTime, obterTime } from "@/lib/times/consultas";
-import { IconeTime } from "../IconeTime";
+import { IconeTime } from "@/components/times/IconeTime";
 import styles from "../../../../painel.module.css";
 
 interface Props {

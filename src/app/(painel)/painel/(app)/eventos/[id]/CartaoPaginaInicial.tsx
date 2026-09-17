@@ -1,4 +1,4 @@
-import { CalendarDays, ExternalLink, Globe, MessageCircleQuestion, Phone } from "lucide-react";
+import { CalendarDays, ExternalLink, Eye, Globe, MessageCircleQuestion, Phone } from "lucide-react";
 import Link from "next/link";
 import { TituloCartao } from "@/components/painel/TituloCartao";
 import { pode, type Perfil } from "@/lib/auth/permissoes";
@@ -49,12 +49,15 @@ export function CartaoPaginaInicial({ eventoId, slug, perfil, publicado, emDesta
       </ul>
 
       <footer className="rc-card__footer">
+        <Link href={`/painel/eventos/${eventoId}/previa`} className="rc-btn rc-btn--sm">
+          <Eye className="rc-icon" aria-hidden="true" /> Prévia
+        </Link>
         {publicado ? (
           <a href={`/${slug}`} target="_blank" rel="noreferrer" className="rc-btn rc-btn--sm">
             <ExternalLink className="rc-icon" aria-hidden="true" /> Ver /{slug}
           </a>
         ) : (
-          <span className={styles.statusLinha}>Enquanto está em preparação, a página e a inscrição ficam fora do ar.</span>
+          <span className={styles.statusLinha}>Em preparação: página e inscrição fora do ar.</span>
         )}
         {pode(perfil, "editar_pagina_inicial") && (
           <form action={alternar}>

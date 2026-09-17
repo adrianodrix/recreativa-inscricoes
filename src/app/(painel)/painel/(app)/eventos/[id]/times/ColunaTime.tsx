@@ -7,7 +7,7 @@ import { GripVertical } from "lucide-react";
 import type { TimeComContagem } from "@/lib/times/consultas";
 import type { PessoaTime } from "@/lib/times/tipos";
 import { CartaoPessoa } from "./CartaoPessoa";
-import { IconeTime } from "./IconeTime";
+import { IconeTime } from "@/components/times/IconeTime";
 import styles from "./quadro.module.css";
 
 interface Props {

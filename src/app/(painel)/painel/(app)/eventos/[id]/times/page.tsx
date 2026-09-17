@@ -11,7 +11,7 @@ import { statusInscricoes } from "@/lib/eventos/status";
 import { carregarMontagem, listarTimes } from "@/lib/times/consultas";
 import { equilibrioDoTime } from "@/lib/times/equilibrio";
 import { reordenarTimes } from "./actions";
-import { IconeTime } from "./IconeTime";
+import { IconeTime } from "@/components/times/IconeTime";
 import { QuadroTimes } from "./QuadroTimes";
 import styles from "../../../painel.module.css";
 import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
