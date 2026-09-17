@@ -3,6 +3,7 @@ import { exigirPerfil } from "@/lib/auth/perfil";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { FormularioBrincadeira } from "../FormularioBrincadeira";
 import styles from "../../../../painel.module.css";
+import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
 
 export const metadata = { title: "Nova brincadeira" };
 
@@ -14,7 +15,7 @@ export default async function PaginaNovaBrincadeira({ params }: { params: Promis
     <>
       <div className={styles.titulo}>
         <div>
-          <p className="rc-hint">{evento.nome}</p>
+          <Trilha passos={[...trilhaEvento(id, evento.nome), { rotulo: "Brincadeiras", href: `/painel/eventos/${id}/brincadeiras` }]} />
           <h1>Nova brincadeira</h1>
         </div>
       </div>

@@ -11,6 +11,7 @@ import { ROTULO_COMIDA } from "@/lib/eventos/schema";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { listarInscritos } from "@/lib/inscritos/consultas";
 import styles from "../../../painel.module.css";
+import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -32,9 +33,7 @@ export default async function PaginaInscritos({ params, searchParams }: Props) {
     <>
       <div className={styles.titulo}>
         <div>
-          <p className="rc-hint">
-            <Link href={`/painel/eventos/${id}`} className="rc-link">{evento.nome}</Link>
-          </p>
+          <Trilha passos={trilhaEvento(id, evento.nome)} />
           <h1>Inscritos</h1>
         </div>
         <div className={styles.acoes}>

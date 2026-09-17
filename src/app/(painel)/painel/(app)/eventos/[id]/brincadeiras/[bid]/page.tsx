@@ -7,6 +7,7 @@ import { obterEvento } from "@/lib/eventos/consultas";
 import { excluirBrincadeira } from "../actions";
 import { FormularioBrincadeira } from "../FormularioBrincadeira";
 import styles from "../../../../painel.module.css";
+import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
 
 interface Props {
   params: Promise<{ id: string; bid: string }>;
@@ -29,7 +30,7 @@ export default async function PaginaBrincadeira({ params }: Props) {
     <>
       <div className={styles.titulo}>
         <div>
-          <p className="rc-hint">{evento.nome}</p>
+          <Trilha passos={[...trilhaEvento(id, evento.nome), { rotulo: "Brincadeiras", href: `/painel/eventos/${id}/brincadeiras` }]} />
           <h1>{brincadeira.nome}</h1>
         </div>
         {podeEditar && brincadeira.vagas_ocupadas === 0 && (

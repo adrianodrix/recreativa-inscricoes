@@ -1,5 +1,4 @@
 import { Send, Trash2, X } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormularioConfirmar } from "@/components/formulario/FormularioConfirmar";
 import { exigirLogin } from "@/lib/auth/perfil";
@@ -12,6 +11,7 @@ import { excluirInscrito, reenviarConfirmacao, removerParticipacao } from "../ac
 import { FormularioComida } from "./FormularioComida";
 import { FormularioInscrito } from "./FormularioInscrito";
 import styles from "../../../../painel.module.css";
+import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
 
 interface Props {
   params: Promise<{ id: string; iid: string }>;
@@ -44,9 +44,7 @@ export default async function PaginaInscrito({ params }: Props) {
     <>
       <div className={styles.titulo}>
         <div>
-          <p className="rc-hint">
-            <Link href={`/painel/eventos/${id}/inscritos`} className="rc-link">Inscritos · {evento.nome}</Link>
-          </p>
+          <Trilha passos={[...trilhaEvento(id, evento.nome), { rotulo: "Inscritos", href: `/painel/eventos/${id}/inscritos` }]} />
           <h1>{inscrito.nome_completo}</h1>
           <p className="rc-hint">
             {VINCULO[inscrito.vinculo]}

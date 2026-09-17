@@ -12,6 +12,7 @@ import { ROTULO_CATEGORIA, UNIDADE_VAGA } from "@/lib/brincadeiras/schema";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { reordenarBrincadeiras } from "./actions";
 import styles from "../../../painel.module.css";
+import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -31,9 +32,7 @@ export default async function PaginaBrincadeiras({ params, searchParams }: Props
     <>
       <div className={styles.titulo}>
         <div>
-          <p className="rc-hint">
-            <Link href={`/painel/eventos/${id}`} className="rc-link">{evento.nome}</Link>
-          </p>
+          <Trilha passos={trilhaEvento(id, evento.nome)} />
           <h1>Brincadeiras</h1>
         </div>
         {podeEditar && (

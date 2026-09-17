@@ -18,6 +18,7 @@ import { CartaoCategorias } from "./CartaoCategorias";
 import { CartaoComida } from "./CartaoComida";
 import { CartaoTimes } from "./CartaoTimes";
 import styles from "../../painel.module.css";
+import { Trilha, trilhaEventos } from "@/components/painel/Trilha";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -53,6 +54,7 @@ export default async function PaginaEvento({ params, searchParams }: Props) {
     <>
       <div className={styles.titulo}>
         <div>
+          <Trilha passos={[trilhaEventos]} />
           <h1>{evento.nome}</h1>
           <p className="rc-hint">
             {dataExtenso.charAt(0).toUpperCase() + dataExtenso.slice(1)} · {formatarHora(evento.hora_inicio)} às {formatarHora(evento.hora_fim)} · {emDias(diasAte(evento.data_evento))}

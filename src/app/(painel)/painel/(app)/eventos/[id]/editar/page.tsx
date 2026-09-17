@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigirLogin } from "@/lib/auth/perfil";
 import { pode } from "@/lib/auth/permissoes";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { FormularioEvento } from "../../FormularioEvento";
 import styles from "../../../painel.module.css";
+import { Trilha, trilhaEvento } from "@/components/painel/Trilha";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -21,9 +21,7 @@ export default async function PaginaEditarEvento({ params }: Props) {
     <>
       <div className={styles.titulo}>
         <div>
-          <p className="rc-hint">
-            <Link href={`/painel/eventos/${id}`} className="rc-link">{evento.nome}</Link>
-          </p>
+          <Trilha passos={trilhaEvento(id, evento.nome)} />
           <h1>Editar evento</h1>
         </div>
       </div>
