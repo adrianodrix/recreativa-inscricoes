@@ -18,6 +18,7 @@ Webapp de inscrições da Recreativa (evento anual de famílias, jovens e crian�
 
 ## Git
 - Um só branch: `main`. Commit e push ao concluir cada etapa. Repositório público: nada sensível no git.
+- Sem pull request: o fluxo é push direto na `main`, então o `/ship` não se aplica aqui.
 - Commits em pt-BR, no imperativo, terminando com `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
 
 ## Especificação
