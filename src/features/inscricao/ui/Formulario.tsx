@@ -10,6 +10,7 @@ import { BoasVindasStep } from "../steps/BoasVindasStep";
 import { BrincadeiraStep } from "../steps/BrincadeiraStep";
 import { EscolhaStep } from "../steps/EscolhaStep";
 import { NascimentoStep } from "../steps/NascimentoStep";
+import { NomeStep } from "../steps/NomeStep";
 import { PaisFilhosStep } from "../steps/PaisFilhosStep";
 import { PessoaStep } from "../steps/PessoaStep";
 import { ResumoStep } from "../steps/ResumoStep";
@@ -23,6 +24,7 @@ function EtapaAtual({ etapa }: { etapa: Etapa }) {
     case "boas_vindas":
       return <BoasVindasStep />;
     case "nome":
+      return <NomeStep />;
     case "apelido":
     case "whatsapp":
       return <TextoStep tipo={etapa.tipo} />;
@@ -69,11 +71,13 @@ interface Props {
   evento: EventoPublico;
   enviar: (payload: PayloadInscricao) => Promise<ResultadoEnvio>;
   destino: string;
+  /* Saída de quem já está inscrito; no público, a página "já inscrito" do evento. */
+  saida?: string;
 }
 
-export function Formulario({ evento, enviar, destino }: Props) {
+export function Formulario({ evento, enviar, destino, saida = `/${evento.slug}/ja-inscrito` }: Props) {
   return (
-    <InscricaoProvider evento={evento} enviar={enviar} destino={destino}>
+    <InscricaoProvider evento={evento} enviar={enviar} destino={destino} saida={saida}>
       <Tela />
     </InscricaoProvider>
   );

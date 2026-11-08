@@ -138,3 +138,14 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-on-primary-soft);
 }
+
+/* Aviso de nome já inscrito: mensagem e as saídas, uma embaixo da outra. */
+.aviso,
+.avisoAcoes {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.aviso p {
+  margin: var(--spacing-2) 0 0;
+}

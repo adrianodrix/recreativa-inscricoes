@@ -90,3 +90,16 @@ export function montarEtapas(d: InscricaoDraft, evento: EventoPublico): Etapa[] 
 export function indiceDaEtapa(etapas: Etapa[], id: string): number {
   return etapas.findIndex((e) => e.id === id);
 }
+
+/*
+ * Próxima etapa depois de responder a atual. Se a resposta tirou a própria etapa
+ * da lista (ex.: o cônjuge já inscrito saiu do rascunho), segue para a primeira
+ * etapa seguinte da lista antiga que continua existindo.
+ */
+export function proximaEtapa(antigas: Etapa[], atualId: string, novas: Etapa[]): Etapa {
+  const i = indiceDaEtapa(novas, atualId);
+  if (i !== -1) return novas[Math.min(i + 1, novas.length - 1)];
+  const existe = new Set(novas.map((e) => e.id));
+  const seguinte = antigas.slice(indiceDaEtapa(antigas, atualId) + 1).find((e) => existe.has(e.id));
+  return novas.find((e) => e.id === seguinte?.id) ?? novas[novas.length - 1];
+}

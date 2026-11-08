@@ -1,0 +1,12 @@
+.lista {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* O telefone não quebra no meio. */
+.numero {
+  white-space: nowrap;
+}

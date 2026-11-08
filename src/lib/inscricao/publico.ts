@@ -1,5 +1,5 @@
 import "server-only";
-import type { BrincadeiraPublica, EventoPublico, TipoComida } from "@/features/inscricao/modelo/tipos";
+import type { BrincadeiraPublica, ContatoEvento, EventoPublico, TipoComida } from "@/features/inscricao/modelo/tipos";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { TextoRico } from "@/lib/texto-rico/schema";
 
@@ -52,5 +52,6 @@ export async function obterEventoPublico(slug: string): Promise<EventoPublico | 
         vagas_restantes: b.vagas_restantes,
       }),
     ),
+    contatos: Array.isArray(e.contatos) ? (e.contatos as ContatoEvento[]) : [],
   };
 }

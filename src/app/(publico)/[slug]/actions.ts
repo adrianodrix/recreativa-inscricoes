@@ -2,6 +2,7 @@
 
 import { after } from "next/server";
 import { processarPendentes } from "@/lib/whatsapp/outbox";
+import { lerSituacaoNome, type SituacaoNome } from "@/features/inscricao/modelo/dependentes";
 import type { ResultadoEnvio } from "@/features/inscricao/modelo/erros";
 import type { PayloadInscricao } from "@/features/inscricao/modelo/payload";
 import { schemaPayload } from "@/features/inscricao/modelo/payload-schema";
@@ -31,11 +32,12 @@ export async function enviarInscricao(payload: PayloadInscricao): Promise<Result
   return { ok: true };
 }
 
-export async function verificarNome(eventoId: string, nome: string): Promise<boolean> {
+/* Se o nome já tem inscrição no evento, e se foi a própria pessoa ou um familiar que inscreveu. */
+export async function consultarNome(eventoId: string, nome: string): Promise<SituacaoNome> {
   const supabase = await criarClienteServidor();
-  const { data, error } = await supabase.rpc("verificar_nome_disponivel", { p_evento_id: eventoId, p_nome: nome });
-  if (error) return true; // em caso de falha, a RPC final ainda valida
-  return Boolean(data);
+  const { data, error } = await supabase.rpc("consultar_nome_inscrito", { p_evento_id: eventoId, p_nome: nome });
+  if (error) return "livre"; // em caso de falha, a RPC final ainda valida
+  return lerSituacaoNome(data);
 }
 
 export async function buscarResponsaveis(eventoId: string, brincadeiraId: string, termo: string): Promise<PessoaEncontrada[]> {

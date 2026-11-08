@@ -1,9 +1,9 @@
-import { Calendar, CircleCheck, ExternalLink, MapPin } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Logo } from "@/components/marca/Logo";
-import { formatarDataExtenso, formatarHora, formatarValor } from "@/lib/datas";
 import { obterEventoPublico } from "@/lib/inscricao/publico";
 import { RichText } from "@/lib/texto-rico/RichText";
+import { DetalhesEvento } from "../DetalhesEvento";
 import { LimparRascunho } from "./LimparRascunho";
 import styles from "../publico.module.css";
 
@@ -30,28 +30,7 @@ export default async function PaginaObrigado({ params }: { params: Promise<{ slu
       </div>
       <h1>Obrigado!</h1>
       <RichText doc={evento.agradecimento} />
-      <ul className="rc-card__meta">
-        <li>
-          <Calendar className="rc-icon" aria-hidden="true" />
-          {formatarDataExtenso(evento.data_evento)}, {formatarHora(evento.hora_inicio)} às {formatarHora(evento.hora_fim)}
-        </li>
-        <li>
-          <MapPin className="rc-icon" aria-hidden="true" />
-          {evento.endereco}{" "}
-          <a href={evento.link_maps} target="_blank" rel="noreferrer" className="rc-link">
-            ver no mapa <ExternalLink className="rc-icon rc-icon--sm" aria-hidden="true" />
-          </a>
-        </li>
-        {evento.valor_inscricao > 0 && <li>Valor da inscrição: {formatarValor(evento.valor_inscricao)}</li>}
-      </ul>
-      {evento.recomendacoes && (
-        <section className="rc-card">
-          <header className="rc-card__header">
-            <h2 className="rc-card__title">Recomendações importantes</h2>
-          </header>
-          <RichText doc={evento.recomendacoes} />
-        </section>
-      )}
+      <DetalhesEvento evento={evento} />
     </main>
   );
 }

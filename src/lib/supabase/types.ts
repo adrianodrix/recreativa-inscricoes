@@ -747,6 +747,10 @@ export type Database = {
       chamar_worker_whatsapp: { Args: never; Returns: undefined }
       comida_disponivel: { Args: { p_evento_id: string }; Returns: Json }
       confirmar_montagem: { Args: { p_evento_id: string }; Returns: string[] }
+      consultar_nome_inscrito: {
+        Args: { p_evento_id: string; p_nome: string }
+        Returns: string
+      }
       copiar_contatos_e_duvidas: {
         Args: { p_evento_id: string }
         Returns: undefined
@@ -889,10 +893,6 @@ export type Database = {
       }
       total_inscritos: { Args: { p_evento_id: string }; Returns: number }
       validar_nome_completo: { Args: { p_nome: string }; Returns: boolean }
-      verificar_nome_disponivel: {
-        Args: { p_evento_id: string; p_nome: string }
-        Returns: boolean
-      }
     }
     Enums: {
       categoria_brincadeira: "casais" | "jovens" | "criancas" | "pais_e_filhos"

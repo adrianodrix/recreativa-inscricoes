@@ -34,6 +34,7 @@ export function eventoFixture(brincadeiras?: BrincadeiraPublica[]): EventoPublic
     valor_inscricao: 0,
     motivo_fechado: null,
     comida_disponivel: { salgado: 10, doce: 10, refrigerante: 10, suco: 10 },
+    contatos: [],
     brincadeiras: brincadeiras ?? [
       brincadeira({ id: "a0000000-0000-0000-0000-00000000000a", categoria: "criancas" }),
       brincadeira({ id: "b0000000-0000-0000-0000-00000000000b", categoria: "jovens" }),

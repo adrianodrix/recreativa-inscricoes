@@ -1,16 +1,20 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { CampoTexto } from "@/components/formulario/CampoTexto";
-import { verificarNome } from "@/app/(publico)/[slug]/actions";
-import { normalizarNome } from "@/lib/pessoas/nome";
+import { normalizarNome, primeiroNome } from "@/lib/pessoas/nome";
 import { useInscricao } from "../estado/InscricaoProvider";
+import { useNomeInscrito } from "../estado/useNomeInscrito";
+import { removerFilho, seguirSemConjuge, seguirSemFilho } from "../modelo/dependentes";
 import type { Etapa } from "../modelo/etapas";
 import { idadeNoEvento } from "../modelo/regras";
 import { validarNascimento, validarNome } from "../modelo/validacoes";
 import type { InscricaoDraft, Pessoa } from "../modelo/tipos";
+import { AvisoNomeInscrito } from "../ui/AvisoNomeInscrito";
 import { StepShell } from "../ui/StepShell";
+
+const ID_NOME = "campo-pessoa-nome";
 
 /* Cônjuge ou filho: nome e nascimento na mesma tela. */
 export function PessoaStep({ etapa }: { etapa: Etapa }) {
@@ -23,6 +27,8 @@ export function PessoaStep({ etapa }: { etapa: Etapa }) {
   const [nascimento, setNascimento] = useState(atual.nascimento);
   const [erros, setErros] = useState<{ nome?: string; nascimento?: string }>({});
   const idade = idadeNoEvento(nascimento, evento);
+  const { situacao, verificando, verificar, limpar } = useNomeInscrito(atual.nome);
+  const inscrito = situacao !== "livre";
 
   const titulo = ehFilho ? `Dados do ${indice + 1}º filho` : "Dados do seu cônjuge";
 
@@ -33,30 +39,53 @@ export function PessoaStep({ etapa }: { etapa: Etapa }) {
   }
 
   async function avancar() {
+    if (verificando) return;
     const rn = validarNome(nome);
     const rd = validarNascimento(nascimento);
     const novos: typeof erros = {};
     if (!rn.ok) novos.nome = rn.erro;
     else if (nomeRepetidoNoFluxo(rn.valor)) novos.nome = "Esse nome já foi usado nesta inscrição.";
-    else if (!(await verificarNome(evento.id, rn.valor))) novos.nome = "Este nome já está inscrito neste evento.";
     if (!rd.ok) novos.nascimento = rd.erro;
     else if (ehFilho && idade !== null && idade >= 18) novos.nascimento = "Só filhos menores de 18 anos são cadastrados aqui.";
     if (novos.nome || novos.nascimento) return setErros(novos);
 
     if (!rn.ok || !rd.ok) return;
+    setErros({});
+    if ((await verificar(rn.valor)) !== "livre") return; // mostra o aviso com as saídas
     const pessoa: Pessoa = { nome: rn.valor, nascimento: rd.valor };
     concluir(ehFilho ? escreverFilho(d, indice, pessoa) : { ...d, conjuge: pessoa });
   }
 
   function remover() {
-    atualizar({ ...d, filhos: d.filhos.filter((_, i) => i !== indice) });
+    atualizar(removerFilho(d, indice));
     voltar();
   }
 
+  /* Já tem inscrição: tira a pessoa deste cadastro e segue o fluxo. */
+  function seguirSem() {
+    concluir(ehFilho ? seguirSemFilho(d, indice) : seguirSemConjuge(d));
+  }
+
+  function corrigir() {
+    limpar();
+    document.getElementById(ID_NOME)?.focus();
+  }
+
   return (
-    <StepShell titulo={titulo} erro={undefined} onAvancar={avancar}>
+    <StepShell titulo={titulo} erro={undefined} mostrarAvancar={!inscrito} rotuloAvancar={verificando ? "Verificando…" : "Continuar"} onAvancar={avancar}>
       <div className="campo-anima" style={{ "--i": 0 } as React.CSSProperties}>
-        <CampoTexto id="campo-pessoa-nome" rotulo="Nome completo" autoComplete="off" autoCapitalize="words" value={nome} erro={erros.nome} onChange={(e) => setNome(e.target.value)} />
+        <CampoTexto
+          id={ID_NOME}
+          rotulo="Nome completo"
+          autoComplete="off"
+          autoCapitalize="words"
+          value={nome}
+          erro={erros.nome}
+          onChange={(e) => {
+            setNome(e.target.value);
+            limpar();
+          }}
+        />
       </div>
       <div className="campo-anima" style={{ "--i": 1 } as React.CSSProperties}>
         <CampoTexto
@@ -71,7 +100,27 @@ export function PessoaStep({ etapa }: { etapa: Etapa }) {
           onChange={(e) => setNascimento(e.target.value)}
         />
       </div>
-      {ehFilho && d.filhos.length > 1 && (
+      {inscrito && (
+        <AvisoNomeInscrito
+          titulo={`${primeiroNome(nome)} já está inscrito(a)`}
+          acoes={
+            <>
+              <button type="button" className="rc-btn rc-btn--primary rc-btn--lg rc-btn--block" onClick={seguirSem}>
+                Seguir sem cadastrar <ArrowRight className="rc-icon" aria-hidden="true" />
+              </button>
+              <button type="button" className="rc-btn rc-btn--secondary rc-btn--block" onClick={corrigir}>
+                <Pencil className="rc-icon" aria-hidden="true" /> Corrigir o nome
+              </button>
+            </>
+          }
+        >
+          <p>
+            {situacao === "familiar" ? "Esse nome já foi inscrito neste evento por alguém da família." : "Essa pessoa já fez a própria inscrição neste evento."} Não
+            precisa cadastrar de novo.
+          </p>
+        </AvisoNomeInscrito>
+      )}
+      {!inscrito && ehFilho && d.filhos.length > 1 && (
         <button type="button" className="rc-btn rc-btn--sm" onClick={remover}>
           <Trash2 className="rc-icon" aria-hidden="true" /> Remover este filho
         </button>

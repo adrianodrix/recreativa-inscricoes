@@ -40,7 +40,7 @@ export function ResumoStep() {
       const etapaId = etapaDoErro(resultado.erro, etapas);
       const mensagem = mensagemDoErro(resultado.erro);
       if (etapaId === "resumo") setErroGeral(mensagem);
-      else dispatch({ tipo: "ERRO_SERVIDOR", etapaId, mensagem });
+      else dispatch({ tipo: "ERRO_SERVIDOR", etapaId, erro: { codigo: resultado.erro.codigo, mensagem } });
       router.refresh();
     });
   }

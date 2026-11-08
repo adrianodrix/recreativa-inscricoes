@@ -1,7 +1,7 @@
 "use client";
 
 import { addTransitionType, createContext, startTransition, useCallback, useContext, useMemo, useReducer, type ReactNode } from "react";
-import { indiceDaEtapa, montarEtapas, type Etapa } from "../modelo/etapas";
+import { indiceDaEtapa, montarEtapas, proximaEtapa, type Etapa } from "../modelo/etapas";
 import { estadoInicial, reducer, type AcaoFormulario, type Direcao, type EstadoFormulario } from "../modelo/reducer";
 import type { ResultadoEnvio } from "../modelo/erros";
 import type { PayloadInscricao } from "../modelo/payload";
@@ -12,6 +12,8 @@ export interface ContextoInscricao {
   evento: EventoPublico;
   enviar: (payload: PayloadInscricao) => Promise<ResultadoEnvio>;
   destino: string;
+  /* Para onde vai quem descobre que já está inscrito e escolhe sair. */
+  saida: string;
   estado: EstadoFormulario;
   etapas: Etapa[];
   etapaAtual: Etapa;
@@ -31,10 +33,11 @@ interface ProviderProps {
   evento: EventoPublico;
   enviar: (payload: PayloadInscricao) => Promise<ResultadoEnvio>;
   destino: string;
+  saida: string;
   children: ReactNode;
 }
 
-export function InscricaoProvider({ evento, enviar, destino, children }: ProviderProps) {
+export function InscricaoProvider({ evento, enviar, destino, saida, children }: ProviderProps) {
   const primeira = useMemo(() => montarEtapas({ principal: { nome: "", nascimento: "" }, filhos: [], comida: {}, recusadas: [], participacoes: [] }, evento)[0].id, [evento]);
   const [estado, dispatch] = useReducer(reducer, primeira, estadoInicial);
   const { pronto } = useRascunho(evento, estado, dispatch);
@@ -55,13 +58,11 @@ export function InscricaoProvider({ evento, enviar, destino, children }: Provide
   const concluir = useCallback(
     (novoDraft?: InscricaoDraft) => {
       const draft = novoDraft ?? estado.draft;
-      const novas = montarEtapas(draft, evento);
-      const i = indiceDaEtapa(novas, estado.etapaAtualId);
-      const proxima = novas[Math.min(i + 1, novas.length - 1)] ?? novas[0];
+      const proxima = proximaEtapa(etapas, estado.etapaAtualId, montarEtapas(draft, evento));
       dispatch({ tipo: "LIMPAR_ERRO", etapaId: estado.etapaAtualId });
       navegar(proxima.id, "avancar", novoDraft);
     },
-    [estado.draft, estado.etapaAtualId, evento, navegar],
+    [estado.draft, estado.etapaAtualId, etapas, evento, navegar],
   );
 
   const atualizar = useCallback((novoDraft: InscricaoDraft) => dispatch({ tipo: "ATUALIZAR_DRAFT", draft: novoDraft }), []);
@@ -73,8 +74,8 @@ export function InscricaoProvider({ evento, enviar, destino, children }: Provide
   const irPara = useCallback((etapaId: string) => navegar(etapaId, "voltar"), [navegar]);
 
   const valor = useMemo<ContextoInscricao>(
-    () => ({ evento, enviar, destino, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara, dispatch }),
-    [evento, enviar, destino, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara],
+    () => ({ evento, enviar, destino, saida, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara, dispatch }),
+    [evento, enviar, destino, saida, estado, etapas, etapaAtual, indice, pronto, concluir, atualizar, voltar, irPara],
   );
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;

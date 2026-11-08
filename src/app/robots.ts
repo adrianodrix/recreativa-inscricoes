@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { urlAbsoluta } from "@/lib/seo/metadados";
 
-/* Público aberto aos buscadores; painel, API e confirmação, não. */
+/* Público aberto aos buscadores; painel, API e páginas de confirmação, não. */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/painel", "/api", "/*/obrigado"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/painel", "/api", "/*/obrigado", "/*/ja-inscrito"] }],
     sitemap: urlAbsoluta("/sitemap.xml"),
   };
 }

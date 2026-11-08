@@ -59,6 +59,13 @@ export interface BrincadeiraPublica {
   vagas_restantes: number;
 }
 
+/* Contato da organização (WhatsApp no formato 55DDDN…). */
+export interface ContatoEvento {
+  id: string;
+  nome: string;
+  whatsapp: string;
+}
+
 export interface EventoPublico {
   id: string;
   nome: string;
@@ -78,6 +85,7 @@ export interface EventoPublico {
   motivo_fechado: string | null;
   comida_disponivel: Record<TipoComida, number>;
   brincadeiras: BrincadeiraPublica[];
+  contatos: ContatoEvento[];
 }
 
 /* Pessoa do rascunho com os dados derivados usados pelas regras. */

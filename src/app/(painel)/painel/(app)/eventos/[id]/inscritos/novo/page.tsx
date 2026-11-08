@@ -14,5 +14,5 @@ export default async function PaginaNovoInscrito({ params }: { params: Promise<{
   if (!evento) notFound();
   const publico = await obterEventoPublico(evento.slug);
   if (!publico) notFound();
-  return <Formulario evento={publico} enviar={enviarInscricaoPainel} destino={`/painel/eventos/${id}/inscritos?salvo=1`} />;
+  return <Formulario evento={publico} enviar={enviarInscricaoPainel} destino={`/painel/eventos/${id}/inscritos?salvo=1`} saida={`/painel/eventos/${id}/inscritos`} />;
 }

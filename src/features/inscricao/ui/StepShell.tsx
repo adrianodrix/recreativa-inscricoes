@@ -25,7 +25,7 @@ export function StepShell({ titulo, chapeu, descricao, erro, rotuloAvancar = "Co
   // As boas-vindas não são pergunta: a contagem começa na primeira de verdade.
   const perguntas = etapas.filter((e) => e.tipo !== "boas_vindas");
   const posicao = perguntas.findIndex((e) => e.id === etapaAtual.id);
-  const mensagemErro = erro ?? erroServidor;
+  const mensagemErro = erro ?? erroServidor?.mensagem;
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {

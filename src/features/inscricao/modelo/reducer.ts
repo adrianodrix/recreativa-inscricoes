@@ -2,17 +2,23 @@ import { DRAFT_INICIAL, type InscricaoDraft } from "./tipos";
 
 export type Direcao = "avancar" | "voltar";
 
+/* Recusa da RPC levada à etapa que precisa ser corrigida. */
+export interface ErroServidor {
+  codigo: string;
+  mensagem: string;
+}
+
 export interface EstadoFormulario {
   draft: InscricaoDraft;
   etapaAtualId: string;
   direcao: Direcao;
-  errosServidor: Record<string, string>;
+  errosServidor: Record<string, ErroServidor>;
 }
 
 export type AcaoFormulario =
   | { tipo: "ATUALIZAR_DRAFT"; draft: InscricaoDraft }
   | { tipo: "IR_PARA"; etapaId: string; direcao: Direcao }
-  | { tipo: "ERRO_SERVIDOR"; etapaId: string; mensagem: string }
+  | { tipo: "ERRO_SERVIDOR"; etapaId: string; erro: ErroServidor }
   | { tipo: "LIMPAR_ERRO"; etapaId: string }
   | { tipo: "HIDRATAR"; estado: EstadoFormulario };
 
@@ -31,7 +37,7 @@ export function reducer(estado: EstadoFormulario, acao: AcaoFormulario): EstadoF
         ...estado,
         etapaAtualId: acao.etapaId,
         direcao: "voltar",
-        errosServidor: { ...estado.errosServidor, [acao.etapaId]: acao.mensagem },
+        errosServidor: { ...estado.errosServidor, [acao.etapaId]: acao.erro },
       };
     case "LIMPAR_ERRO": {
       if (!(acao.etapaId in estado.errosServidor)) return estado;
