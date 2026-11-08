@@ -1,9 +1,11 @@
-import { Users } from "lucide-react";
+import { Clock, Users } from "lucide-react";
 import Image from "next/image";
 import type { BrincadeiraPublica } from "@/features/inscricao/modelo/tipos";
+import { faixasHorario } from "@/lib/pagina-inicial/programacao";
 import { urlImagem } from "@/lib/storage/url";
 import { RichText } from "@/lib/texto-rico/RichText";
 import { VideoEmbed } from "./VideoEmbed";
+import styles from "./gamecard.module.css";
 
 export const ROTULO_CATEGORIA = {
   casais: "Casais",
@@ -14,9 +16,10 @@ export const ROTULO_CATEGORIA = {
 
 const UNIDADE = { casais: "casais", jovens: "vagas", criancas: "vagas", pais_e_filhos: "duplas" } as const;
 
-/* Cartão de uma brincadeira: foto, categoria, vagas, regras e vídeo. */
+/* Cartão de uma brincadeira: foto, categoria, horário em destaque, vagas, regras e vídeo. */
 export function GameCard({ brincadeira }: { brincadeira: BrincadeiraPublica }) {
   const foto = urlImagem(brincadeira.foto_path);
+  const horario = faixasHorario(brincadeira.horarios);
   return (
     <article className="rc-card campo-anima">
       {foto && (
@@ -28,6 +31,15 @@ export function GameCard({ brincadeira }: { brincadeira: BrincadeiraPublica }) {
         <h2 className="rc-card__title">{brincadeira.nome}</h2>
         <span className="rc-badge rc-badge--roxo">{ROTULO_CATEGORIA[brincadeira.categoria]}</span>
       </header>
+      {horario && (
+        <p className={styles.horario}>
+          <Clock className="rc-icon" aria-hidden="true" />
+          <span className={styles.horarioTexto}>
+            <span className={styles.horarioRotulo}>{brincadeira.horarios.length > 1 ? "Horários" : "Horário"}</span>
+            <span className={styles.horarioValor}>{horario}</span>
+          </span>
+        </p>
+      )}
       <ul className="rc-card__meta">
         <li>
           <Users className="rc-icon" aria-hidden="true" />

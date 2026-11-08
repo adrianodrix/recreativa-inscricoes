@@ -1,0 +1,31 @@
+/* Horário da brincadeira em destaque: logo abaixo do nome, na cor da marca. */
+.horario {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin: 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-on-primary-soft);
+}
+
+.horario > .rc-icon {
+  flex: none;
+  width: var(--icon-md);
+  height: var(--icon-md);
+}
+
+.horarioTexto {
+  display: grid;
+}
+
+.horarioRotulo {
+  font-size: var(--text-sm);
+}
+
+.horarioValor {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-snug);
+}

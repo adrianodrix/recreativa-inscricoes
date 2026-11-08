@@ -1,7 +1,25 @@
 import "server-only";
 import type { BrincadeiraPublica, ContatoEvento, EventoPublico, TipoComida } from "@/features/inscricao/modelo/tipos";
+import type { Faixa } from "@/lib/pagina-inicial/programacao";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { TextoRico } from "@/lib/texto-rico/schema";
+
+interface LinhaHorario {
+  brincadeira_id: string;
+  hora_inicio: string;
+  hora_fim: string | null;
+}
+
+/* Itens da programação ligados a brincadeiras (já em ordem de horário), agrupados por brincadeira. */
+function horariosPorBrincadeira(bruto: unknown): Map<string, Faixa[]> {
+  const mapa = new Map<string, Faixa[]>();
+  for (const h of Array.isArray(bruto) ? (bruto as LinhaHorario[]) : []) {
+    const lista = mapa.get(h.brincadeira_id) ?? [];
+    lista.push({ inicio: h.hora_inicio, fim: h.hora_fim });
+    mapa.set(h.brincadeira_id, lista);
+  }
+  return mapa;
+}
 
 /* Evento pelo slug com brincadeiras disponíveis, via RPCs públicas (anon). */
 export async function obterEventoPublico(slug: string): Promise<EventoPublico | null> {
@@ -17,6 +35,7 @@ export async function obterEventoPublico(slug: string): Promise<EventoPublico | 
   if (erroB) throw new Error(`Falha ao carregar brincadeiras: ${erroB.message}`);
 
   const comida = (e.comida_disponivel ?? {}) as Partial<Record<TipoComida, number>>;
+  const horarios = horariosPorBrincadeira(e.horarios_brincadeiras);
   return {
     id: e.id as string,
     nome: e.nome as string,
@@ -50,6 +69,7 @@ export async function obterEventoPublico(slug: string): Promise<EventoPublico | 
         categoria: b.categoria,
         formato: b.formato,
         vagas_restantes: b.vagas_restantes,
+        horarios: horarios.get(b.id) ?? [],
       }),
     ),
     contatos: Array.isArray(e.contatos) ? (e.contatos as ContatoEvento[]) : [],

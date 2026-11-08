@@ -1,3 +1,4 @@
+import type { Faixa } from "@/lib/pagina-inicial/programacao";
 import type { TextoRico } from "@/lib/texto-rico/schema";
 
 export type TipoComida = "salgado" | "doce" | "refrigerante" | "suco";
@@ -57,6 +58,8 @@ export interface BrincadeiraPublica {
   categoria: Categoria;
   formato: Formato | null;
   vagas_restantes: number;
+  /* Da programação do dia, em ordem; vazio quando a brincadeira não está na programação. */
+  horarios: Faixa[];
 }
 
 /* Contato da organização (WhatsApp no formato 55DDDN…). */

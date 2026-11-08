@@ -44,6 +44,7 @@ O objetivo é construir um webapp para gerenciar as inscrições desse evento. O
   - Na inscrição, **uma brincadeira aparece por vez**, filtrada pela **regra de idade e tipo do participante** (idade calculada, estado civil e vínculo).
   - Só aparecem brincadeiras do evento em questão que ainda tenham vaga (ver regra de quantidade máxima).
   - Para cada brincadeira exibida o participante indica se vai participar ou não. Pode escolher várias, todas se quiser.
+  - O cartão da brincadeira mostra **em destaque o horário** dela, tirado da programação do dia (itens ligados à brincadeira; pode haver mais de um). Sem item na programação, o cartão não mostra horário. O resumo (E9) repete o horário ao lado de cada brincadeira escolhida.
 
 - [E9] **Resumo / revisão**. Antes de concluir, o formulário mostra um **resumo de tudo que foi informado** (dados pessoais, cônjuge, filhos, comida/bebida, brincadeiras), para a pessoa conferir e **voltar para alterar** o que quiser. Só depois de confirmar a inscrição é gravada.
 - [E10] **Página de agradecimento**. Exibida após a confirmação. Contém, nesta ordem: (1) o **texto de agradecimento** configurado pelo administrador por evento (campo aberto para informar mais detalhes) e (2) logo abaixo, o **texto de recomendações importantes** do evento. Ambos com o mesmo editor de texto rico das regras das brincadeiras (negrito, itálico, cores, emojis).

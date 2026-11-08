@@ -10,6 +10,7 @@ export function brincadeira(parcial: Partial<BrincadeiraPublica> & Pick<Brincade
     regras,
     formato: parcial.categoria === "casais" ? null : "em_grupo",
     vagas_restantes: 10,
+    horarios: [],
     ...parcial,
   };
 }

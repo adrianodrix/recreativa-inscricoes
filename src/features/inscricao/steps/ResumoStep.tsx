@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { Alerta } from "@/components/formulario/Alerta";
 import { ROTULO_COMIDA } from "@/lib/eventos/comida";
 import { formatarData, formatarValor } from "@/lib/datas";
+import { faixasHorario } from "@/lib/pagina-inicial/programacao";
 import { useInscricao } from "../estado/InscricaoProvider";
 import { limparRascunho } from "../estado/useRascunho";
 import { etapaDoErro, mensagemDoErro } from "../modelo/erros";
@@ -25,7 +26,12 @@ export function ResumoStep() {
   const [enviando, iniciar] = useTransition();
   const [erroGeral, setErroGeral] = useState<string>();
   const pessoas = pessoasDoDraft(d, evento);
-  const brincadeiraNome = (id: string) => evento.brincadeiras.find((b) => b.id === id)?.nome ?? "Brincadeira";
+  // Nome com o horário da programação, para a família conferir quando cada um brinca.
+  const brincadeiraNome = (id: string) => {
+    const b = evento.brincadeiras.find((x) => x.id === id);
+    const horario = b ? faixasHorario(b.horarios) : null;
+    return `${b?.nome ?? "Brincadeira"}${horario ? ` (${horario})` : ""}`;
+  };
   const nomeDe = (key: string) => pessoas.find((p) => p.key === key)?.nome ?? "";
 
   function enviar() {

@@ -21,6 +21,18 @@ export function faixaHorario(inicio: string, fim: string | null): string {
   return fim ? `${hora(inicio)} – ${hora(fim)}` : hora(inicio);
 }
 
+/* Horário de um item da programação, como vem do banco ("13:00:00"). */
+export interface Faixa {
+  inicio: string;
+  fim: string | null;
+}
+
+/* Vários horários de uma brincadeira numa linha: "10h – 11h · 15h". Sem nenhum, null. */
+export function faixasHorario(faixas: readonly Faixa[]): string | null {
+  const textos = [...new Set(faixas.map((f) => faixaHorario(f.inicio, f.fim)))];
+  return textos.length > 0 ? textos.join(" · ") : null;
+}
+
 /*
  * O "dia resumido" mostra poucos momentos: os marcados como destaque ou, se
  * nenhum foi marcado, os primeiros da lista (que já vem ordenada por horário).

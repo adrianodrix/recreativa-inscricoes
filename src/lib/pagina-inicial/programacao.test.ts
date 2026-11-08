@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { faixaHorario, resumoDoDia, type ItemProgramacao } from "./programacao";
+import { faixaHorario, faixasHorario, resumoDoDia, type ItemProgramacao } from "./programacao";
 
 const item = (id: string, destaque = false): ItemProgramacao => ({
   id,
@@ -20,6 +20,22 @@ describe("faixaHorario", () => {
   it("junta início e fim quando há os dois", () => {
     expect(faixaHorario("14:30", "15:15")).toBe("14h30 – 15h15");
     expect(faixaHorario("13:00", "14:00")).toBe("13h – 14h");
+  });
+});
+
+describe("faixasHorario", () => {
+  it("junta os horários na ordem recebida, sem repetir", () => {
+    expect(
+      faixasHorario([
+        { inicio: "10:00:00", fim: "11:00:00" },
+        { inicio: "15:00:00", fim: null },
+        { inicio: "10:00:00", fim: "11:00:00" },
+      ]),
+    ).toBe("10h – 11h · 15h");
+  });
+
+  it("sem horário na programação, devolve null", () => {
+    expect(faixasHorario([])).toBeNull();
   });
 });
 
