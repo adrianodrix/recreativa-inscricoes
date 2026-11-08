@@ -29,3 +29,12 @@
   font-weight: var(--font-weight-bold);
   line-height: var(--leading-snug);
 }
+
+/* Vídeo enviado no cadastro, no mesmo formato do vídeo do YouTube. */
+.video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}

@@ -2,7 +2,7 @@ import { Clock, Users } from "lucide-react";
 import Image from "next/image";
 import type { BrincadeiraPublica } from "@/features/inscricao/modelo/tipos";
 import { faixasHorario } from "@/lib/pagina-inicial/programacao";
-import { urlImagem } from "@/lib/storage/url";
+import { urlImagem, urlVideo } from "@/lib/storage/url";
 import { RichText } from "@/lib/texto-rico/RichText";
 import { VideoEmbed } from "./VideoEmbed";
 import styles from "./gamecard.module.css";
@@ -16,9 +16,10 @@ export const ROTULO_CATEGORIA = {
 
 const UNIDADE = { casais: "casais", jovens: "vagas", criancas: "vagas", pais_e_filhos: "duplas" } as const;
 
-/* Cartão de uma brincadeira: foto, categoria, horário em destaque, vagas, regras e vídeo. */
+/* Cartão de uma brincadeira: foto, categoria, horário em destaque, vagas, regras e vídeos (enviado e/ou link). */
 export function GameCard({ brincadeira }: { brincadeira: BrincadeiraPublica }) {
   const foto = urlImagem(brincadeira.foto_path);
+  const video = urlVideo(brincadeira.video_path);
   const horario = faixasHorario(brincadeira.horarios);
   return (
     <article className="rc-card campo-anima">
@@ -48,6 +49,10 @@ export function GameCard({ brincadeira }: { brincadeira: BrincadeiraPublica }) {
         </li>
       </ul>
       <RichText doc={brincadeira.regras} />
+      {video && (
+        // Só baixa quando a pessoa aperta o play; a foto serve de capa.
+        <video src={video} poster={foto ?? undefined} controls preload="none" playsInline className={styles.video} aria-label={`Vídeo: ${brincadeira.nome}`} />
+      )}
       {brincadeira.video_url && <VideoEmbed url={brincadeira.video_url} titulo={brincadeira.nome} />}
     </article>
   );

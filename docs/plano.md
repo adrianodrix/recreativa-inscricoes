@@ -86,7 +86,7 @@ Rascunho aprovado pelo usuário com os ajustes abaixo.
 Cada brincadeira pertence a um evento e tem os campos:
 - [B1] **Nome** (obrigatório).
 - [B2] **Foto** (opcional). Upload de imagem.
-- [B3] **Vídeo** (opcional). **Somente URL** (YouTube, Instagram ou qualquer outra). Sem upload de vídeo.
+- [B3] **Vídeo** (opcional). Link (YouTube, Instagram ou qualquer outro) **e/ou** um vídeo curto enviado (MP4, MOV ou WebM, até 50 MB; bucket `videos`, migration 0018). O enviado toca no próprio cartão, só carregando ao apertar o play; vídeos longos devem ir pelo link, porque cada exibição do enviado conta no tráfego do Supabase. Foto e vídeo trocados ou removidos são apagados do Storage ao salvar (vale também para capa do evento e imagem do time).
 - [B4] **Regras** (obrigatório). Campo de texto livre com formatação básica: **negrito, itálico e cores**. Deve aceitar **emojis**. Exige um editor de texto rico simples no admin e renderização segura (sanitizada) na inscrição.
 - [B5] **Categoria** (uma por brincadeira): `casais`, `jovens`, `crianças`, `pais e filhos`.
   - **casais**: aceita somente inscritos **casados**. Como a vaga é do casal (2 pessoas), a brincadeira **só é oferecida quando o cônjuge foi cadastrado no mesmo fluxo** (opção "sim" em E5). Decisão do usuário.
@@ -126,7 +126,7 @@ Cada brincadeira pertence a um evento e tem os campos:
 - **Evento**: nome, slug, data (dia único), horário de início, horário de fim, endereço, link do Google Maps, texto de recomendações importantes, período de inscrições (início/fim), status manual (aberto/encerrado), limite máximo de inscritos, valor da inscrição (0 = gratuito), limites de comida/bebida por tipo (salgado, doce, refrigerante, suco), texto de boas-vindas, texto da página de agradecimento, imagem de capa.
 - **Inscrito** (um registro por pessoa): evento, nome completo, nome normalizado (para unicidade), apelido, data de nascimento, idade (calculada e gravada), casado (sim/não), tem filhos menores (sim/não), inscrito principal (referência a quem cadastrou, nulo se for o próprio), tipo de vínculo (principal, cônjuge, filho(a)), WhatsApp (só no principal, quando exigido), situação do cônjuge/filhos não cadastrados (vai se cadastrar / não quer cadastrar), data/hora da inscrição.
 - **Colaboração comida/bebida**: inscrito, evento, tipo (salgado, doce, refrigerante, suco). Uma linha por inscrito (1 unidade). Único (inscrito).
-- **Brincadeira**: evento, nome, foto (arquivo enviado), vídeo (URL), regras (texto rico), categoria (casais | jovens | crianças | pais e filhos), quantidade máxima (casais/duplas/pessoas conforme categoria), formato (individual | em grupo; não se aplica a casais), ativo.
+- **Brincadeira**: evento, nome, foto (arquivo enviado), vídeo (URL e/ou arquivo enviado), regras (texto rico), categoria (casais | jovens | crianças | pais e filhos), quantidade máxima (casais/duplas/pessoas conforme categoria), formato (individual | em grupo; não se aplica a casais), ativo.
 - **Participação em brincadeira** (uma linha por vaga ocupada):
   - crianças/jovens: inscrito, brincadeira. Único (inscrito, brincadeira).
   - casais: inscrito principal, cônjuge, brincadeira. Único por casal e brincadeira.
@@ -152,7 +152,7 @@ Cada brincadeira pertence a um evento e tem os campos:
 ### Stack (preferência do usuário, aberta a recomendações)
 - **TypeScript** em toda a stack.
 - Hospedagem **Vercel**.
-- **Supabase**: banco de dados (Postgres), auth, storage (fotos), edge functions se necessário.
+- **Supabase**: banco de dados (Postgres), auth, storage (fotos e vídeos curtos), edge functions se necessário.
 - Preferência por serviços **gratuitos ou com bom plano gratuito**.
 - WhatsApp via **Evolution API** (instância do organizador).
 - Observação: a conexão MCP `postgres` configurada nesta sessão falhou ao conectar; se for a base do projeto, verificar depois.
@@ -319,7 +319,7 @@ Padrão: toda tabela filha carrega `evento_id` e FK composta `(x_id, evento_id)`
 - **limites_comida**: `(evento_id, tipo)` pk, `limite`.
 - **inscritos**: id, evento_id, `nome_completo`, `nome_normalizado` (coluna gerada por `normalizar_nome()` = lower + unaccent + espaços únicos), `apelido`, `data_nascimento`, `idade` (na data do evento), `casado`, `tem_filhos_menores`, `inscrito_principal_id` (self FK), `vinculo`, `conjuge_situacao`, `filhos_situacao`, `whatsapp` (`^55\d{10,11}$`), `inscrito_em`, `criado_por`. Constraints: `unique (evento_id, nome_normalizado)`; principal ⇔ `inscrito_principal_id is null`; um cônjuge por principal.
 - **colaboracoes**: `inscrito_id` pk, evento_id, `tipo`. Uma unidade por inscrito.
-- **brincadeiras**: id, evento_id, nome, `foto_path`, `video_url`, `regras` jsonb not null, `categoria`, `limite_participantes`, `formato` (nulo ⇔ casais), `ativo`, `ordem`.
+- **brincadeiras**: id, evento_id, nome, `foto_path`, `video_url`, `video_path`, `regras` jsonb not null, `categoria`, `limite_participantes`, `formato` (nulo ⇔ casais), `ativo`, `ordem`.
 - **participacoes** (1 linha = 1 vaga): id, evento_id, brincadeira_id, categoria, criado_em. **participantes**: `(participacao_id, inscrito_id)` pk, brincadeira_id, `papel`; **`unique (brincadeira_id, inscrito_id)`** cobre todas as unicidades (pessoa, cônjuge, filho, parceiro).
 - **times**: id, evento_id, nome, `imagem_path`, `cor_padrao`, `icone_padrao`, ordem; `unique (evento_id, nome)`.
 - **membros_time**: `(evento_id, inscrito_id)` pk, `time_id`, **`time_notificado_id`** (último time comunicado; diferença com `time_id` define quem recebe reenvio).

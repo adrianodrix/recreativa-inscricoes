@@ -114,6 +114,7 @@ export type Database = {
           nome: string
           ordem: number
           regras: Json
+          video_path: string | null
           video_url: string | null
         }
         Insert: {
@@ -129,6 +130,7 @@ export type Database = {
           nome: string
           ordem?: number
           regras: Json
+          video_path?: string | null
           video_url?: string | null
         }
         Update: {
@@ -144,6 +146,7 @@ export type Database = {
           nome?: string
           ordem?: number
           regras?: Json
+          video_path?: string | null
           video_url?: string | null
         }
         Relationships: [
@@ -821,6 +824,7 @@ export type Database = {
           ordem: number
           regras: Json
           vagas_restantes: number
+          video_path: string
           video_url: string
         }[]
       }

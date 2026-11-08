@@ -7,6 +7,7 @@ export function brincadeira(parcial: Partial<BrincadeiraPublica> & Pick<Brincade
     nome: `Brincadeira ${parcial.id}`,
     foto_path: null,
     video_url: null,
+    video_path: null,
     regras,
     formato: parcial.categoria === "casais" ? null : "em_grupo",
     vagas_restantes: 10,

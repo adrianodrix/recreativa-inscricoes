@@ -8,6 +8,9 @@ import { exigirPerfil } from "@/lib/auth/perfil";
 import { errosPorCampo } from "@/lib/eventos/schema";
 import { gravarOrdem, proximaOrdem } from "@/lib/supabase/ordem";
 import { criarClienteServidor } from "@/lib/supabase/server";
+import { arquivosSubstituidos } from "@/lib/storage/arquivos";
+import { removerArquivos } from "@/lib/storage/remover";
+import { BUCKET_IMAGENS } from "@/lib/storage/url";
 import type { Json } from "@/lib/supabase/types";
 import { carregarMontagem } from "@/lib/times/consultas";
 import { montarTimes } from "@/lib/times/montar";
@@ -31,7 +34,9 @@ export async function salvarTime(eventoId: string, id: string | null, _: EstadoF
   const linha = { ...dados.data, evento_id: eventoId };
   let error;
   let timeId = id;
+  let imagemAntes: string | null = null;
   if (id) {
+    imagemAntes = await imagemDoTime(supabase, eventoId, id);
     ({ error } = await supabase.from("times").update(linha).eq("id", id).eq("evento_id", eventoId));
   } else {
     // Entra no fim da lista; a cor e o ícone padrão vêm da posição e ficam fixos depois.
@@ -45,6 +50,7 @@ export async function salvarTime(eventoId: string, id: string | null, _: EstadoF
     if (error.message.includes("times_evento_id_nome_key")) return { erros: { nome: "Já existe um time com esse nome." }, erro: "Confira os campos." };
     return { erro: `Não foi possível salvar: ${error.message}` };
   }
+  await removerArquivos(supabase, BUCKET_IMAGENS, arquivosSubstituidos([imagemAntes], [linha.imagem_path]));
   revalidatePath(rota(eventoId));
   redirect(`${rota(eventoId)}/${timeId}?salvo=1`);
 }
@@ -60,8 +66,10 @@ export async function reordenarTimes(eventoId: string, ids: string[]): Promise<v
 export async function excluirTime(eventoId: string, id: string): Promise<void> {
   await exigirPerfil("gerir_times");
   const supabase = await criarClienteServidor();
+  const imagemAntes = await imagemDoTime(supabase, eventoId, id);
   const { error } = await supabase.from("times").delete().eq("id", id).eq("evento_id", eventoId);
   if (error) throw new Error(`Não foi possível excluir: ${error.message}`);
+  await removerArquivos(supabase, BUCKET_IMAGENS, arquivosSubstituidos([imagemAntes], []));
   revalidatePath(rota(eventoId));
   redirect(rota(eventoId));
 }
@@ -111,4 +119,9 @@ export async function confirmarMontagemAction(eventoId: string, alocacao: Alocac
     after(() => processarPendentes(20).catch((e) => console.error("[whatsapp] times", e)));
   }
   return { ok: true, mensagem: avisos === 0 ? "Montagem confirmada. Ninguém mudou de time desde o último aviso." : `Montagem confirmada. ${avisos} ${avisos === 1 ? "mensagem enfileirada" : "mensagens enfileiradas"} no WhatsApp.` };
+}
+
+async function imagemDoTime(supabase: Awaited<ReturnType<typeof criarClienteServidor>>, eventoId: string, id: string): Promise<string | null> {
+  const { data } = await supabase.from("times").select("imagem_path").eq("id", id).eq("evento_id", eventoId).maybeSingle();
+  return data?.imagem_path ?? null;
 }

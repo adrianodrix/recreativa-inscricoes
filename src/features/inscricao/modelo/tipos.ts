@@ -54,6 +54,8 @@ export interface BrincadeiraPublica {
   nome: string;
   foto_path: string | null;
   video_url: string | null;
+  /* Vídeo enviado no cadastro (bucket "videos"); o link acima continua valendo. */
+  video_path: string | null;
   regras: TextoRico;
   categoria: Categoria;
   formato: Formato | null;

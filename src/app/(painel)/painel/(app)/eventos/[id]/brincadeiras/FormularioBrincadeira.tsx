@@ -6,6 +6,7 @@ import { Alerta } from "@/components/formulario/Alerta";
 import { BotaoEnviar } from "@/components/formulario/BotaoEnviar";
 import { CampoTexto } from "@/components/formulario/CampoTexto";
 import { UploadImagem } from "@/components/upload/UploadImagem";
+import { UploadVideo } from "@/components/upload/UploadVideo";
 import type { BrincadeiraPainel } from "@/lib/brincadeiras/consultas";
 import { CATEGORIAS, ROTULO_CATEGORIA, UNIDADE_VAGA, type Categoria } from "@/lib/brincadeiras/schema";
 import { salvarBrincadeira, type EstadoFormBrincadeira } from "./actions";
@@ -73,7 +74,14 @@ export function FormularioBrincadeira({ eventoId, brincadeira }: Props) {
       <section className={styles.secao}>
         <h2>Mídia</h2>
         <UploadImagem name="foto_path" rotulo="Foto" prefixo={`brincadeiras/${eventoId}`} valorInicial={brincadeira?.foto_path} ajuda="JPG, PNG ou WebP. Redimensionada automaticamente." />
-        <CampoTexto id="video_url" name="video_url" type="url" inputMode="url" rotulo="Link do vídeo" ajuda="YouTube, Instagram ou qualquer link https." defaultValue={brincadeira?.video_url ?? ""} erro={e.video_url} opcional />
+        <UploadVideo
+          name="video_path"
+          rotulo="Vídeo curto"
+          prefixo={`brincadeiras/${eventoId}`}
+          valorInicial={brincadeira?.video_path}
+          ajuda="MP4, MOV ou WebM, até 50 MB (cerca de 1 minuto). Toca dentro do formulário. Vídeos longos ficam melhor no YouTube, pelo link abaixo."
+        />
+        <CampoTexto id="video_url" name="video_url" type="url" inputMode="url" rotulo="Link do vídeo" ajuda="YouTube (toca dentro do formulário), Instagram ou qualquer link https." defaultValue={brincadeira?.video_url ?? ""} erro={e.video_url} opcional />
       </section>
 
       <section className={styles.secao}>

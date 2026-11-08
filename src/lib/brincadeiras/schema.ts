@@ -28,6 +28,7 @@ export const schemaBrincadeira = z
       .transform((v) => v || null)
       .refine((v) => v === null || /^https:\/\//.test(v), "O link do vídeo precisa começar com https://"),
     foto_path: z.string().transform((v) => v || null),
+    video_path: z.string().optional().transform((v) => v || null),
     regras: textoRicoObrigatorio("Escreva as regras da brincadeira"),
     ativo: z.preprocess((v) => v === "on" || v === "true", z.boolean()),
   })

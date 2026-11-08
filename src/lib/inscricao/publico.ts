@@ -65,6 +65,7 @@ export async function obterEventoPublico(slug: string): Promise<EventoPublico | 
         nome: b.nome,
         foto_path: b.foto_path,
         video_url: b.video_url,
+        video_path: b.video_path,
         regras: b.regras as TextoRico,
         categoria: b.categoria,
         formato: b.formato,

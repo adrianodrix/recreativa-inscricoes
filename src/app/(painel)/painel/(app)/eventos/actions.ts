@@ -5,6 +5,9 @@ import { redirect } from "next/navigation";
 import { exigirPerfil } from "@/lib/auth/perfil";
 import { errosPorCampo, schemaEvento, TIPOS_COMIDA, type DadosEvento } from "@/lib/eventos/schema";
 import { criarClienteServidor } from "@/lib/supabase/server";
+import { arquivosSubstituidos } from "@/lib/storage/arquivos";
+import { removerArquivos } from "@/lib/storage/remover";
+import { BUCKET_IMAGENS } from "@/lib/storage/url";
 import type { Json } from "@/lib/supabase/types";
 
 export interface EstadoFormEvento {
@@ -56,8 +59,10 @@ export async function salvarEvento(id: string | null, _: EstadoFormEvento, form:
   const supabase = await criarClienteServidor();
   let eventoId = id;
   if (eventoId) {
+    const { data: antes } = await supabase.from("eventos").select("capa_path").eq("id", eventoId).maybeSingle();
     const { error } = await supabase.from("eventos").update(linhaEvento(dados.data)).eq("id", eventoId);
     if (error) return { erro: mensagemErroBanco(error.message) };
+    await removerArquivos(supabase, BUCKET_IMAGENS, arquivosSubstituidos([antes?.capa_path], [dados.data.capa_path]));
   } else {
     const { data, error } = await supabase.from("eventos").insert(linhaEvento(dados.data)).select("id").single();
     if (error) return { erro: mensagemErroBanco(error.message) };
