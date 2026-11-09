@@ -3,6 +3,7 @@ import { listarBrincadeiras } from "@/lib/brincadeiras/consultas";
 import { obterEvento } from "@/lib/eventos/consultas";
 import { statusInscricoes } from "@/lib/eventos/status";
 import { listarContatos, listarPerguntas, listarProgramacao } from "@/lib/pagina-inicial/consultas";
+import { horarioPorBrincadeira, type ItemProgramacao } from "@/lib/pagina-inicial/programacao";
 import { listarTimes } from "@/lib/times/consultas";
 import type { DadosPaginaInicial } from "./tipos";
 
@@ -22,6 +23,17 @@ export async function carregarPrevia(eventoId: string): Promise<DadosPaginaInici
     listarBrincadeiras(eventoId),
   ]);
   const nomeBrincadeira = new Map(brincadeiras.map((b) => [b.id, b.nome]));
+  const itensProgramacao: ItemProgramacao[] = programacao.map((p) => ({
+    id: p.id,
+    hora_inicio: p.hora_inicio,
+    hora_fim: p.hora_fim,
+    titulo: p.titulo,
+    detalhe: p.detalhe,
+    destaque: p.destaque,
+    brincadeira: p.brincadeira_id ? (nomeBrincadeira.get(p.brincadeira_id) ?? null) : null,
+    brincadeira_id: p.brincadeira_id,
+  }));
+  const horarios = horarioPorBrincadeira(itensProgramacao);
   const status = statusInscricoes(evento, evento.total_inscritos);
 
   return {
@@ -48,15 +60,7 @@ export async function carregarPrevia(eventoId: string): Promise<DadosPaginaInici
       recomendacoes: evento.recomendacoes,
       regras_gerais: evento.regras_gerais,
     },
-    programacao: programacao.map((p) => ({
-      id: p.id,
-      hora_inicio: p.hora_inicio,
-      hora_fim: p.hora_fim,
-      titulo: p.titulo,
-      detalhe: p.detalhe,
-      destaque: p.destaque,
-      brincadeira: p.brincadeira_id ? (nomeBrincadeira.get(p.brincadeira_id) ?? null) : null,
-    })),
+    programacao: itensProgramacao,
     perguntas: perguntas.map((q) => ({ id: q.id, pergunta: q.pergunta, resposta: q.resposta })),
     contatos: contatos.map((c) => ({ id: c.id, nome: c.nome, whatsapp: c.whatsapp })),
     times: times.map((t) => ({
@@ -74,6 +78,7 @@ export async function carregarPrevia(eventoId: string): Promise<DadosPaginaInici
         foto_path: b.foto_path,
         categoria: b.categoria,
         lotada: b.vagas_ocupadas >= b.limite_participantes,
+        horario: horarios.get(b.id) ?? null,
       })),
   };
 }

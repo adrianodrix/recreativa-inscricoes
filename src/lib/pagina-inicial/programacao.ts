@@ -7,7 +7,8 @@ export interface ItemProgramacao {
   titulo: string;
   detalhe: string | null;
   destaque: boolean;
-  brincadeira: string | null;
+  brincadeira: string | null; // nome
+  brincadeira_id: string | null;
 }
 
 /* "13:00" → "13h"; "14:30" → "14h30" */
@@ -31,6 +32,21 @@ export interface Faixa {
 export function faixasHorario(faixas: readonly Faixa[]): string | null {
   const textos = [...new Set(faixas.map((f) => faixaHorario(f.inicio, f.fim)))];
   return textos.length > 0 ? textos.join(" · ") : null;
+}
+
+/* Horário de cada brincadeira na programação ("10h – 11h · 15h"), pelo id. Os itens já vêm em ordem. */
+export function horarioPorBrincadeira(itens: readonly ItemProgramacao[]): Map<string, string> {
+  const faixas = new Map<string, Faixa[]>();
+  for (const i of itens) {
+    if (!i.brincadeira_id) continue;
+    faixas.set(i.brincadeira_id, [...(faixas.get(i.brincadeira_id) ?? []), { inicio: i.hora_inicio, fim: i.hora_fim }]);
+  }
+  const horarios = new Map<string, string>();
+  for (const [id, lista] of faixas) {
+    const texto = faixasHorario(lista);
+    if (texto) horarios.set(id, texto);
+  }
+  return horarios;
 }
 
 /*

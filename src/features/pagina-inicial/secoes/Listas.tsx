@@ -1,4 +1,4 @@
-import { Camera, Users } from "lucide-react";
+import { Camera, Clock, Users } from "lucide-react";
 import Image from "next/image";
 import { IconeTime } from "@/components/times/IconeTime";
 import { ROTULO_CATEGORIA } from "@/lib/brincadeiras/schema";
@@ -37,6 +37,12 @@ export function Brincadeiras({ itens }: { itens: BrincadeiraPublica[] }) {
               )}
               <div>
                 <strong>{b.nome}</strong>
+                {b.horario && (
+                  <span className={styles.horarioBrincadeira}>
+                    <Clock className="rc-icon" aria-hidden="true" />
+                    {b.horario}
+                  </span>
+                )}
                 <span className="rc-badge rc-badge--roxo">{ROTULO_CATEGORIA[b.categoria]}</span>
                 {b.lotada && <span className="rc-badge rc-badge--warning">Vagas esgotadas</span>}
               </div>

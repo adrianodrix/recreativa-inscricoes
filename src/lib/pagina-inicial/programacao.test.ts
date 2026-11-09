@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { faixaHorario, faixasHorario, resumoDoDia, type ItemProgramacao } from "./programacao";
+import { faixaHorario, faixasHorario, horarioPorBrincadeira, resumoDoDia, type ItemProgramacao } from "./programacao";
 
 const item = (id: string, destaque = false): ItemProgramacao => ({
   id,
@@ -9,6 +9,7 @@ const item = (id: string, destaque = false): ItemProgramacao => ({
   detalhe: null,
   destaque,
   brincadeira: null,
+  brincadeira_id: null,
 });
 
 describe("faixaHorario", () => {
@@ -36,6 +37,21 @@ describe("faixasHorario", () => {
 
   it("sem horário na programação, devolve null", () => {
     expect(faixasHorario([])).toBeNull();
+  });
+});
+
+describe("horarioPorBrincadeira", () => {
+  it("junta os horários de cada brincadeira e ignora itens sem brincadeira", () => {
+    const itens: ItemProgramacao[] = [
+      { ...item("a"), hora_inicio: "10:00:00", hora_fim: "11:00:00", brincadeira_id: "b1" },
+      { ...item("almoço"), hora_inicio: "12:00:00" },
+      { ...item("b"), hora_inicio: "14:00:00", brincadeira_id: "b2" },
+      { ...item("c"), hora_inicio: "15:00:00", brincadeira_id: "b1" },
+    ];
+    const mapa = horarioPorBrincadeira(itens);
+    expect(mapa.get("b1")).toBe("10h – 11h · 15h");
+    expect(mapa.get("b2")).toBe("14h");
+    expect(mapa.size).toBe(2);
   });
 });
 

@@ -395,7 +395,7 @@ Requisitos P1–P12. Visual: template do designer sobre o kit `branding/` (degra
 - RLS igual à de times: leitura para qualquer perfil ativo, escrita só administrador.
 - `evento_publico_json(e)`: extrai o JSON que `obter_evento_publico` já monta (mais `subtitulo`, `descricao`, `edicao`), para as duas RPCs não duplicarem campos.
 - `obter_evento_publico(slug)` passa a filtrar `publicado`. `/[slug]` e `/[slug]/obrigado` dão 404 para evento não publicado.
-- `obter_pagina_inicial()` (anon, `security definer`): escolhe o evento (publicado; menor `data_evento >= hoje` em `America/Sao_Paulo`, senão o maior `data_evento` anterior) e devolve `evento_publico_json` + `programacao[]` + `perguntas[]` + `contatos[]` + `times[]` (nome, imagem, cor, ícone) + `brincadeiras[]` ativas (nome, foto, categoria, formato, lotada). Nunca expõe inscritos.
+- `obter_pagina_inicial()` (anon, `security definer`): escolhe o evento (publicado; menor `data_evento >= hoje` em `America/Sao_Paulo`, senão o maior `data_evento` anterior) e devolve `evento_publico_json` + `programacao[]` + `perguntas[]` + `contatos[]` + `times[]` (nome, imagem, cor, ícone) + `brincadeiras[]` ativas (nome, foto, categoria, formato, lotada; a página mostra em destaque o horário de cada uma, ligando-a aos itens da programação pelo `brincadeira_id`, migration 0019). Nunca expõe inscritos.
 - `criar_inscricao` recusa evento não publicado (`inscricoes_fechadas`, motivo `nao_publicado`). `motivo_fechado` não muda, porque a montagem de times depende dele; a inclusão pelo painel continua liberada.
 - `copiar_contatos_e_duvidas(p_evento_id)` (security invoker): copia do evento mais recente anterior; chamada ao criar evento (P11).
 - `pnpm db:types`.

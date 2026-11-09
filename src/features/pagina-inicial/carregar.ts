@@ -1,6 +1,6 @@
 import "server-only";
 import type { MotivoFechado } from "@/lib/eventos/status";
-import type { ItemProgramacao } from "@/lib/pagina-inicial/programacao";
+import { horarioPorBrincadeira, type ItemProgramacao } from "@/lib/pagina-inicial/programacao";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { TextoRico } from "@/lib/texto-rico/schema";
 import type {
@@ -32,6 +32,19 @@ export async function carregarPaginaInicial(): Promise<DadosPaginaInicial | null
 }
 
 export function montar(e: Bruto): DadosPaginaInicial {
+  const programacao = lista(e.programacao).map(
+    (p): ItemProgramacao => ({
+      id: p.id as string,
+      hora_inicio: p.hora_inicio as string,
+      hora_fim: (p.hora_fim as string | null) ?? null,
+      titulo: p.titulo as string,
+      detalhe: (p.detalhe as string | null) ?? null,
+      destaque: Boolean(p.destaque),
+      brincadeira: (p.brincadeira as string | null) ?? null,
+      brincadeira_id: (p.brincadeira_id as string | null) ?? null,
+    }),
+  );
+  const horarios = horarioPorBrincadeira(programacao);
   return {
     evento: {
       id: e.id as string,
@@ -56,17 +69,7 @@ export function montar(e: Bruto): DadosPaginaInicial {
       recomendacoes: (e.recomendacoes as TextoRico | null) ?? null,
       regras_gerais: (e.regras_gerais as TextoRico | null) ?? null,
     },
-    programacao: lista(e.programacao).map(
-      (p): ItemProgramacao => ({
-        id: p.id as string,
-        hora_inicio: p.hora_inicio as string,
-        hora_fim: (p.hora_fim as string | null) ?? null,
-        titulo: p.titulo as string,
-        detalhe: (p.detalhe as string | null) ?? null,
-        destaque: Boolean(p.destaque),
-        brincadeira: (p.brincadeira as string | null) ?? null,
-      }),
-    ),
+    programacao,
     perguntas: lista(e.perguntas).map(
       (q): PerguntaPublica => ({ id: q.id as string, pergunta: q.pergunta as string, resposta: q.resposta as TextoRico }),
     ),
@@ -89,6 +92,7 @@ export function montar(e: Bruto): DadosPaginaInicial {
         foto_path: (b.foto_path as string | null) ?? null,
         categoria: b.categoria as BrincadeiraPublica["categoria"],
         lotada: Boolean(b.lotada),
+        horario: horarios.get(b.id as string) ?? null,
       }),
     ),
   };

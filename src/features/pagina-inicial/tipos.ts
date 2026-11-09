@@ -55,6 +55,7 @@ export interface BrincadeiraPublica {
   foto_path: string | null;
   categoria: Categoria;
   lotada: boolean;
+  horario: string | null; // da programação do dia
 }
 
 export interface DadosPaginaInicial {
