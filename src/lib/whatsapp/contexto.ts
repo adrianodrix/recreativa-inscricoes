@@ -1,10 +1,19 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { ROTULO_COMIDA } from "@/lib/eventos/schema";
+import { faixasHorario, type Faixa } from "@/lib/pagina-inicial/programacao";
 import type { Database } from "@/lib/supabase/types";
 import { paraWhatsapp } from "@/lib/texto-rico/whatsapp";
 import type { TextoRico } from "@/lib/texto-rico/schema";
-import { mensagemConfirmacao, mensagemLembrete, mensagemTimes, type EventoMensagem, type ItemTime, type PessoaMensagem } from "./templates";
+import {
+  mensagemConfirmacao,
+  mensagemLembrete,
+  mensagemTimes,
+  type BrincadeiraMensagem,
+  type EventoMensagem,
+  type ItemTime,
+  type PessoaMensagem,
+} from "./templates";
 
 type Admin = SupabaseClient<Database>;
 export type AvisoLinha = Database["public"]["Tables"]["avisos_whatsapp"]["Row"];
@@ -24,6 +33,23 @@ async function carregarEvento(admin: Admin, eventoId: string): Promise<EventoMen
     valor_inscricao: Number(e.valor_inscricao),
     recomendacoes: e.recomendacoes ? paraWhatsapp(e.recomendacoes as TextoRico) : null,
   };
+}
+
+/* Horários de cada brincadeira na programação do dia (pode haver mais de um), em ordem. */
+async function horariosDasBrincadeiras(admin: Admin, eventoId: string): Promise<Map<string, Faixa[]>> {
+  const { data } = await admin
+    .from("programacao")
+    .select("brincadeira_id, hora_inicio, hora_fim")
+    .eq("evento_id", eventoId)
+    .not("brincadeira_id", "is", null)
+    .order("hora_inicio")
+    .order("hora_fim");
+  const mapa = new Map<string, Faixa[]>();
+  for (const p of data ?? []) {
+    if (!p.brincadeira_id) continue;
+    mapa.set(p.brincadeira_id, [...(mapa.get(p.brincadeira_id) ?? []), { inicio: p.hora_inicio, fim: p.hora_fim }]);
+  }
+  return mapa;
 }
 
 /* Monta o texto de um aviso a partir do estado atual do banco (nunca de um snapshot antigo). */
@@ -49,11 +75,17 @@ export async function montarMensagem(admin: Admin, aviso: AvisoLinha): Promise<s
   const todos = participantes.data ?? [];
 
   if (aviso.tipo === "confirmacao_inscricao") {
+    const horarios = await horariosDasBrincadeiras(admin, aviso.evento_id);
+    const brincadeirasDe = (inscritoId: string): BrincadeiraMensagem[] =>
+      [...new Set(todos.filter((p) => p.inscrito_id === inscritoId).map((p) => p.brincadeira_id))].map((id) => ({
+        nome: nomeBrincadeira.get(id) ?? "?",
+        horario: faixasHorario(horarios.get(id) ?? []),
+      }));
     const pessoa = (i: (typeof casa)[number]): PessoaMensagem => ({
       nome: i.nome_completo,
       apelido: i.apelido,
       comida: comida.get(i.id) ?? null,
-      brincadeiras: [...new Set(todos.filter((p) => p.inscrito_id === i.id).map((p) => nomeBrincadeira.get(p.brincadeira_id) ?? "?"))],
+      brincadeiras: brincadeirasDe(i.id),
     });
     return mensagemConfirmacao({ evento, principal: pessoa(principal), dependentes: (dependentes ?? []).map(pessoa) });
   }

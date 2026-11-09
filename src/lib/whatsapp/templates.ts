@@ -12,11 +12,16 @@ export interface EventoMensagem {
   recomendacoes: string | null; // já convertido para texto do WhatsApp
 }
 
+export interface BrincadeiraMensagem {
+  nome: string;
+  horario: string | null; // da programação do dia, ex.: "10h – 11h · 15h"
+}
+
 export interface PessoaMensagem {
   nome: string;
   apelido?: string | null;
   comida?: string | null;
-  brincadeiras: string[];
+  brincadeiras: BrincadeiraMensagem[];
 }
 
 export interface ContextoConfirmacao {
@@ -48,10 +53,15 @@ function cabecalhoEvento(e: EventoMensagem): string {
   ].join("\n");
 }
 
+/* "Corrida do saco (⏰ 10h – 11h)"; sem horário na programação, só o nome. */
+function textoBrincadeira(b: BrincadeiraMensagem): string {
+  return b.horario ? `${b.nome} (⏰ ${b.horario})` : b.nome;
+}
+
 function linhaPessoa(p: PessoaMensagem): string {
   const partes = [`• *${p.nome}*${p.apelido ? ` (${p.apelido})` : ""}`];
   if (p.comida) partes.push(`  Leva: ${p.comida}`);
-  if (p.brincadeiras.length) partes.push(`  Brincadeiras: ${p.brincadeiras.join(", ")}`);
+  if (p.brincadeiras.length) partes.push(`  Brincadeiras: ${p.brincadeiras.map(textoBrincadeira).join(", ")}`);
   return partes.join("\n");
 }
 

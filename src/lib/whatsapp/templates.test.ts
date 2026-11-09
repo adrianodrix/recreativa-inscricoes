@@ -13,17 +13,27 @@ const evento: EventoMensagem = {
 };
 
 describe("mensagens de WhatsApp", () => {
-  it("confirmação lista a família, comida, brincadeiras e recomendações", () => {
+  it("confirmação lista a família, comida, brincadeiras com horário e recomendações", () => {
     const texto = mensagemConfirmacao({
       evento,
       principal: { nome: "João da Silva", apelido: "Jota", comida: "Salgado", brincadeiras: [] },
-      dependentes: [{ nome: "Pedro da Silva", comida: null, brincadeiras: ["Bíblia ou Bexiga"] }],
+      dependentes: [
+        {
+          nome: "Pedro da Silva",
+          comida: null,
+          brincadeiras: [
+            { nome: "Bíblia ou Bexiga", horario: "10h – 11h" },
+            { nome: "Corrida do saco", horario: null },
+          ],
+        },
+      ],
     });
     expect(texto).toContain("Olá, João!");
     expect(texto).toContain("*Recreativa 2026*");
     expect(texto).toContain("sábado, 21 de novembro de 2026, das 08:00 às 17:00");
     expect(texto).toContain("• *João da Silva* (Jota)\n  Leva: Salgado");
-    expect(texto).toContain("• *Pedro da Silva*\n  Brincadeiras: Bíblia ou Bexiga");
+    // Com horário na programação, ele vai ao lado da brincadeira; sem, só o nome.
+    expect(texto).toContain("• *Pedro da Silva*\n  Brincadeiras: Bíblia ou Bexiga (⏰ 10h – 11h), Corrida do saco");
     expect(texto).toContain("*Recomendações importantes:*\nTraga *água* e boné.");
     expect(texto).not.toContain("Valor da inscrição");
   });

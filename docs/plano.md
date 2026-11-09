@@ -57,7 +57,7 @@ O objetivo é construir um webapp para gerenciar as inscrições desse evento. O
 
 ### Confirmação por WhatsApp
 - Após confirmar a inscrição, enviar mensagem de confirmação pelo WhatsApp do inscrito principal via **Evolution API** (instância própria do organizador; URL e API key em variáveis de ambiente). Só para inscrições que informaram WhatsApp (ou seja, com participação em brincadeira).
-- Conteúdo sugerido: nome do evento, data, horário, local com link do Google Maps, resumo (pessoas inscritas, comida/bebida, brincadeiras) e recomendações importantes.
+- Conteúdo sugerido: nome do evento, data, horário, local com link do Google Maps, resumo (pessoas inscritas, comida/bebida, brincadeiras com o horário de cada uma, tirado da programação do dia) e recomendações importantes.
 - Envio assíncrono e tolerante a falha: a inscrição é gravada mesmo se o envio falhar; registrar status do envio para o admin reenviar.
 
 ### Cadastro de eventos (administrador)
